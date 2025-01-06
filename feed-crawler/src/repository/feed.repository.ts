@@ -3,8 +3,14 @@ import logger from "../common/logger";
 import { mysqlConnection } from "../common/mysql-access";
 import { redisConstant } from "../common/constant";
 import { redisConnection } from "../common/redis-access";
+import {inject, injectable} from "tsyringe";
+import {DEPENDENCY_SYMBOLS} from "../types/dependency-symbols";
+import {DatabaseConnection} from "../types/database-connection";
 
-class FeedRepository {
+@injectable()
+export class FeedRepository {
+  constructor(@inject(DEPENDENCY_SYMBOLS.DatabaseConnection) private readonly dbConnection: DatabaseConnection) {};
+
   public async insertFeeds(resultData: FeedDetail[]) {
     const query = `
             INSERT INTO feed (blog_id, created_at, title, path, thumbnail)
@@ -102,5 +108,3 @@ class FeedRepository {
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
   }
 }
-
-export const feedRepository = new FeedRepository();
