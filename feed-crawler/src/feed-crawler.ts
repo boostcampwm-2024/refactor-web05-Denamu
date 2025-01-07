@@ -1,5 +1,5 @@
-import { feedRepository } from "./repository/feed.repository";
-import { rssRepository } from "./repository/rss.repository";
+import { FeedRepository } from "./repository/feed.repository";
+import { RssRepository } from "./repository/rss.repository";
 import logger from "./common/logger";
 import { RssObj, FeedDetail, RawFeed } from "./common/types";
 import { XMLParser } from "fast-xml-parser";
@@ -7,17 +7,14 @@ import { parse } from "node-html-parser";
 import { unescape } from "html-escaper";
 import { ONE_MINUTE } from "./common/constant";
 
-class FeedCrawler {
-  private rssParser: RssParser;
-
-  constructor() {
-    this.rssParser = new RssParser();
-  }
+export class FeedCrawler {
+  private rssParser: RssParser = new RssParser();
+  constructor(private readonly rssRepository: RssRepository, private readonly feedRepository: FeedRepository) {};
 
   async start() {
-    await feedRepository.deleteRecentFeed();
+    await this.feedRepository.deleteRecentFeed();
 
-    const rssObjects = await rssRepository.selectAllRss();
+    const rssObjects = await this.rssRepository.selectAllRss();
 
     if (!rssObjects || !rssObjects.length) {
       logger.info("등록된 RSS가 없습니다.");
@@ -33,9 +30,9 @@ class FeedCrawler {
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
-    const insertedData = await feedRepository.insertFeeds(newFeeds);
+    const insertedData = await this.feedRepository.insertFeeds(newFeeds);
 
-    await feedRepository.setRecentFeedList(insertedData);
+    await this.feedRepository.setRecentFeedList(insertedData);
   }
 
   private async findNewFeeds(
@@ -175,5 +172,3 @@ class RssParser {
     return unescape(feedTitle);
   }
 }
-
-export const feedCrawler = new FeedCrawler();

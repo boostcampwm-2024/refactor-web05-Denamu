@@ -1,6 +1,7 @@
 import * as mysql from "mysql2/promise";
 import { CONNECTION_LIMIT } from "./constant";
 import { PoolConnection } from "mysql2/promise";
+import { DatabaseConnection } from "../types/database-connection";
 import logger from "./logger";
 import * as dotenv from "dotenv";
 
@@ -8,7 +9,7 @@ dotenv.config({
   path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
 });
 
-class MySQLConnection {
+export class MySQLConnection implements DatabaseConnection {
   private pool: mysql.Pool;
   private nameTag: string;
   constructor() {
@@ -57,5 +58,3 @@ class MySQLConnection {
     await this.pool.end();
   }
 }
-
-export const mysqlConnection = new MySQLConnection();
