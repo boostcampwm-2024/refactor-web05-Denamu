@@ -1,4 +1,3 @@
-import { mysqlConnection } from "../common/mysql-access";
 import { RssObj } from "../common/types";
 import { DatabaseConnection } from "../types/database-connection";
 import { DEPENDENCY_SYMBOLS } from "../types/dependency-symbols";
@@ -11,6 +10,6 @@ export class RssRepository {
   public async selectAllRss(): Promise<RssObj[]> {
     const query = `SELECT id, rss_url as rssUrl, name as blogName, blog_platform as blogPlatform
         FROM rss_accept`;
-    return mysqlConnection.executeQuery(query);
+    return this.dbConnection.executeQuery(query, []);
   }
 }

@@ -1,6 +1,5 @@
 import { FeedDetail } from "../common/types";
 import logger from "../common/logger";
-import { mysqlConnection } from "../common/mysql-access";
 import { redisConstant } from "../common/constant";
 import { redisConnection } from "../common/redis-access";
 import {inject, injectable} from "tsyringe";
@@ -18,7 +17,7 @@ export class FeedRepository {
         `;
 
     const insertPromises = resultData.map(async (feed) => {
-      return mysqlConnection.executeQuery(query, [
+      return this.dbConnection.executeQuery(query, [
         feed.blogId,
         feed.pubDate,
         feed.title,
