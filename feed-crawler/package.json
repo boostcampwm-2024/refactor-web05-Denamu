@@ -7,6 +7,7 @@
     "mysql2": "^3.11.3",
     "node-cron": "^3.0.3",
     "node-html-parser": "^6.1.13",
+    "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.8.0",
     "winston": "^3.16.0"
   },

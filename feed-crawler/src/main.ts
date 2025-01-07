@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import logger from "./common/logger.js";
 import { FeedCrawler } from "./feed-crawler.js";
 import { container } from "./container";
@@ -10,8 +11,8 @@ async function main() {
   logger.info("==========작업 시작==========");
   const startTime = Date.now();
 
-  const rssRepository = container.resolve<RssRepository>("RssRepository");
-  const feedRepository = container.resolve<FeedRepository>("FeedRepository");
+  const rssRepository = container.resolve<RssRepository>(DEPENDENCY_SYMBOLS.RssRepository);
+  const feedRepository = container.resolve<FeedRepository>(DEPENDENCY_SYMBOLS.FeedRepository);
   const dbConnection = container.resolve<DatabaseConnection>(DEPENDENCY_SYMBOLS.DatabaseConnection);
 
   const feedCrawler = new FeedCrawler(rssRepository, feedRepository);
