@@ -1,14 +1,14 @@
 import { FeedDetail } from "../common/types";
 import logger from "../common/logger";
 import { redisConstant } from "../common/constant";
-import { redisConnection } from "../common/redis-access";
+import {RedisConnection} from "../common/redis-access";
 import {inject, injectable} from "tsyringe";
 import {DEPENDENCY_SYMBOLS} from "../types/dependency-symbols";
 import {DatabaseConnection} from "../types/database-connection";
 
 @injectable()
 export class FeedRepository {
-  constructor(@inject(DEPENDENCY_SYMBOLS.DatabaseConnection) private readonly dbConnection: DatabaseConnection) {};
+  constructor(@inject(DEPENDENCY_SYMBOLS.DatabaseConnection) private readonly dbConnection: DatabaseConnection, @inject(DEPENDENCY_SYMBOLS.RedisConnection) private readonly redisConnection: RedisConnection) {};
 
   public async insertFeeds(resultData: FeedDetail[]) {
     const query = `
@@ -48,11 +48,11 @@ export class FeedRepository {
 
   async deleteRecentFeed() {
     try {
-      redisConnection.connect();
+      this.redisConnection.connect();
       const keysToDelete = [];
       let cursor = "0";
       do {
-        const [newCursor, keys] = await redisConnection.command.scan(
+        const [newCursor, keys] = await this.redisConnection.command.scan(
           cursor,
           "MATCH",
           redisConstant.FEED_RECENT_ALL_KEY,
@@ -64,7 +64,7 @@ export class FeedRepository {
       } while (cursor !== "0");
 
       if (keysToDelete.length > 0) {
-        await redisConnection.command.del(...keysToDelete);
+        await this.redisConnection.command.del(...keysToDelete);
       }
     } catch (error) {
       logger.error(
@@ -73,15 +73,15 @@ export class FeedRepository {
         스택 트레이스: ${error.stack}`
       );
     } finally {
-      await redisConnection.quit();
+      await this.redisConnection.quit();
     }
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 삭제되었습니다.`);
   }
 
   async setRecentFeedList(feedLists: FeedDetail[]) {
     try {
-      redisConnection.connect();
-      const pipeLine = redisConnection.command.pipeline();
+      this.redisConnection.connect();
+      const pipeLine = this.redisConnection.command.pipeline();
       for (const feed of feedLists) {
         pipeLine.hset(`feed:recent:${feed.id}`, {
           id: feed.id,
@@ -102,7 +102,7 @@ export class FeedRepository {
         스택 트레이스: ${error.stack}`
       );
     } finally {
-      await redisConnection.quit();
+      await this.redisConnection.quit();
     }
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
   }

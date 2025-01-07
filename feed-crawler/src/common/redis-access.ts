@@ -1,12 +1,14 @@
 import Redis from "ioredis";
 import logger from "../common/logger";
 import * as dotenv from "dotenv";
+import {injectable} from "tsyringe";
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
 });
 
-class RedisConnection {
+@injectable()
+export class RedisConnection {
   private redis: Redis;
   private nameTag: string;
 
@@ -41,5 +43,3 @@ class RedisConnection {
     return this.redis;
   }
 }
-
-export const redisConnection = new RedisConnection();
