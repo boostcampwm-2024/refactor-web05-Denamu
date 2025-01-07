@@ -1,4 +1,4 @@
-import { Feed } from '../feed.entity';
+import { Feed } from '../../feed/entity/feed.entity';
 import { IsDefined, IsEnum, IsInt, IsString, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 

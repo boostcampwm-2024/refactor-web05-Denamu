@@ -1,4 +1,4 @@
-import { Admin } from '../../src/admin/admin.entity';
+import { Admin } from '../../src/admin/entity/admin.entity';
 
 export class AdminFixture {
   static readonly GENERAL_ADMIN = {
