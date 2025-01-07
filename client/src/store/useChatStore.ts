@@ -1,9 +1,9 @@
 import { io, Socket } from "socket.io-client";
 import { create } from "zustand";
 
-import { ChatType } from "@/types/chat";
+import { CHAT_SERVER_URL } from "@/constants/endpoints";
 
-const CHAT_SERVER_URL = "https://denamu.site";
+import { ChatType } from "@/types/chat";
 
 interface ChatStore {
   chatHistory: ChatType[];
