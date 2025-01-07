@@ -9,7 +9,7 @@ dotenv.config({
   path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
 });
 
-class MySQLConnection implements DatabaseConnection {
+export class MySQLConnection implements DatabaseConnection {
   private pool: mysql.Pool;
   private nameTag: string;
   constructor() {
@@ -58,5 +58,3 @@ class MySQLConnection implements DatabaseConnection {
     await this.pool.end();
   }
 }
-
-export const mysqlConnection = new MySQLConnection();
