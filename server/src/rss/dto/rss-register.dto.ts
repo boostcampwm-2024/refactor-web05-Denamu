@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, IsUrl, Length } from 'class-validator';
-import { RssInformation } from '../rss.entity';
+import { RssInformation } from '../entity/rss.entity';
 
 export class RssRegisterDto {
   @ApiProperty({

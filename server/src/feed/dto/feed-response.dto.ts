@@ -1,4 +1,4 @@
-import { FeedView } from '../feed.entity';
+import { FeedView } from '../../feed/entity/feed.entity';
 
 export class FeedPaginationResponseDto {
   private constructor(
