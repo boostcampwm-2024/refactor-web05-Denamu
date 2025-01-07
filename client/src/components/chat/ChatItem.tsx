@@ -9,7 +9,7 @@ import { ChatType } from "@/types/chat";
 
 type ChatItemProps = {
   chatItem: ChatType;
-  isSameUser: Boolean;
+  isSameUser: boolean;
 };
 const chatStyle = "p-3 bg-gray-200 text-black break-words whitespace-pre-wrap rounded-md inline-block max-w-[90%]";
 export default function ChatItem({ chatItem, isSameUser }: ChatItemProps) {
