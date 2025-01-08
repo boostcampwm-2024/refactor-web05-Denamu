@@ -8,6 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { ChatService } from './chat.service';
+import { ChatScheduler } from './chat.scheduler';
 
 type BroadcastPayload = {
   username: string;
@@ -26,7 +27,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly chatScheduler: ChatScheduler,
+  ) {}
 
   async handleConnection(client: Socket) {
     const userCount = this.server.engine.clientsCount;
@@ -65,10 +69,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       timestamp: new Date(),
     };
 
-    const midnightMessage = await this.chatService.handleDateMessage();
+    const midnightMessage = await this.chatScheduler.handleDateMessage();
+
     if (midnightMessage) {
       this.server.emit('message', midnightMessage);
     }
+
     await this.chatService.saveMessageToRedis(broadcastPayload);
     this.server.emit('message', broadcastPayload);
   }
