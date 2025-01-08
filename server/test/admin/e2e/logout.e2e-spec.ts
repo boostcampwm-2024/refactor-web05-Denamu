@@ -8,7 +8,7 @@ describe('POST /api/admin/logout E2E Test', () => {
   beforeAll(async () => {
     app = global.testApp;
     const redisService = app.get(RedisService);
-    await redisService.redisClient.sadd('auth:sid', 'test1234');
+    await redisService.sadd('auth:sid', 'test1234');
   });
 
   it('관리자 로그인이 되어 있으면 로그아웃을 정상적으로 할 수 있다.', async () => {

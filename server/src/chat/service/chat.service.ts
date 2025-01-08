@@ -40,17 +40,12 @@ export class ChatService {
   }
 
   private async getClientName(redisKey: string) {
-    return await this.redisService.redisClient.get(redisKey);
+    return await this.redisService.get(redisKey);
   }
 
   private async setClientName(redisKey: string) {
     const clientName = this.generateRandomUsername();
-    await this.redisService.redisClient.set(
-      redisKey,
-      clientName,
-      'EX',
-      3600 * 24,
-    );
+    await this.redisService.set(redisKey, clientName, 'EX', 3600 * 24);
     return clientName;
   }
 
@@ -67,7 +62,7 @@ export class ChatService {
   }
 
   private async getRecentChatMessages() {
-    return await this.redisService.redisClient.lrange(
+    return await this.redisService.lrange(
       CHAT_HISTORY_KEY,
       0,
       CHAT_HISTORY_LIMIT - 1,
@@ -75,15 +70,8 @@ export class ChatService {
   }
 
   async saveMessageToRedis(payload: BroadcastPayload) {
-    await this.redisService.redisClient.lpush(
-      CHAT_HISTORY_KEY,
-      JSON.stringify(payload),
-    );
+    await this.redisService.lpush(CHAT_HISTORY_KEY, JSON.stringify(payload));
 
-    await this.redisService.redisClient.ltrim(
-      CHAT_HISTORY_KEY,
-      0,
-      CHAT_HISTORY_LIMIT - 1,
-    );
+    await this.redisService.ltrim(CHAT_HISTORY_KEY, 0, CHAT_HISTORY_LIMIT - 1);
   }
 }

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Redis, { ChainableCommander } from 'ioredis';
-import { Callback } from 'ioredis/built/types';
 import { RedisKey } from 'ioredis/built/utils/RedisCommander';
 
 @Injectable()
@@ -54,15 +53,19 @@ export class RedisService {
     return this.redisClient.lrange(key, start, stop);
   }
 
-  async lpush(key: string, ...values: string[]): Promise<number> {
+  async lpush(key: string, ...values: (string | number)[]): Promise<number> {
     return this.redisClient.lpush(key, ...values);
+  }
+
+  async rpush(key: string, ...values: (string | number)[]): Promise<number> {
+    return this.redisClient.rpush(key, ...values);
   }
 
   async zrevrange(
     key: string,
     start: number,
     stop: number,
-    withScores: 'WITHSCORES',
+    withScores?: 'WITHSCORES',
   ): Promise<string[]> {
     if (withScores) {
       return this.redisClient.zrevrange(key, start, stop, 'WITHSCORES');

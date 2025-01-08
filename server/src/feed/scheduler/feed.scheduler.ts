@@ -16,25 +16,21 @@ export class FeedScheduler {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async resetTrendTable() {
-    await this.redisService.redisClient.del(redisKeys.FEED_TREND_KEY);
+    await this.redisService.del(redisKeys.FEED_TREND_KEY);
   }
 
   @Cron(CronExpression.EVERY_30_SECONDS)
   async analyzeTrend() {
     const [originTrend, nowTrend] = await Promise.all([
-      this.redisService.redisClient.lrange(
-        redisKeys.FEED_ORIGIN_TREND_KEY,
-        0,
-        3,
-      ),
-      this.redisService.redisClient.zrevrange(redisKeys.FEED_TREND_KEY, 0, 3),
+      this.redisService.lrange(redisKeys.FEED_ORIGIN_TREND_KEY, 0, 3),
+      this.redisService.zrevrange(redisKeys.FEED_TREND_KEY, 0, 3),
     ]);
 
     if (!_.isEqual(originTrend, nowTrend)) {
-      const redisPipeline = this.redisService.redisClient.pipeline();
-      redisPipeline.del(redisKeys.FEED_ORIGIN_TREND_KEY);
-      redisPipeline.rpush(redisKeys.FEED_ORIGIN_TREND_KEY, ...nowTrend);
-      await redisPipeline.exec();
+      await this.redisService.executePipeline((pipeline) => {
+        pipeline.del(redisKeys.FEED_ORIGIN_TREND_KEY);
+        pipeline.rpush(redisKeys.FEED_ORIGIN_TREND_KEY, ...nowTrend);
+      });
       const trendFeeds = await this.feedService.readTrendFeedList();
       this.eventService.emit('ranking-update', trendFeeds);
     }
@@ -42,11 +38,10 @@ export class FeedScheduler {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async resetIpTable() {
-    const redis = this.redisService.redisClient;
-    const keys = await redis.keys(redisKeys.FEED_ALL_IP_KEY);
+    const keys = await this.redisService.keys(redisKeys.FEED_ALL_IP_KEY);
 
     if (keys.length > 0) {
-      await redis.del(...keys);
+      await this.redisService.del(...keys);
     }
   }
 }

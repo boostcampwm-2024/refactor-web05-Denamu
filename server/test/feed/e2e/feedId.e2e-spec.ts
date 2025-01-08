@@ -30,7 +30,7 @@ describe('POST /api/feed/:feedId E2E Test', () => {
 
     await Promise.all([
       feedRepository.save(feeds),
-      redisService.redisClient.sadd(`feed:${testFeedId}:ip`, testIp),
+      redisService.sadd(`feed:${testFeedId}:ip`, testIp),
     ]);
   });
 
@@ -44,7 +44,7 @@ describe('POST /api/feed/:feedId E2E Test', () => {
         .post(`/api/feed/${testFeedId}`)
         .set('X-Forwarded-For', testNewIp);
       const feedDailyViewCount = parseInt(
-        await redisService.redisClient.zscore(
+        await redisService.zscore(
           redisKeys.FEED_TREND_KEY,
           testFeedId.toString(),
         ),
@@ -59,11 +59,8 @@ describe('POST /api/feed/:feedId E2E Test', () => {
     } finally {
       //cleanup
       await Promise.all([
-        redisService.redisClient.zrem(
-          redisKeys.FEED_TREND_KEY,
-          testFeedId.toString(),
-        ),
-        redisService.redisClient.srem(`feed:${testFeedId}:ip`, testNewIp),
+        redisService.zrem(redisKeys.FEED_TREND_KEY, testFeedId.toString()),
+        redisService.srem(`feed:${testFeedId}:ip`, testNewIp),
       ]);
     }
   });
@@ -87,7 +84,7 @@ describe('POST /api/feed/:feedId E2E Test', () => {
       .post(`/api/feed/${testFeedId}`)
       .set('Cookie', `View_count_${testFeedId}=${testFeedId}`)
       .set('X-Forwarded-For', testIp);
-    const feedDailyViewCount = await redisService.redisClient.zscore(
+    const feedDailyViewCount = await redisService.zscore(
       redisKeys.FEED_TREND_KEY,
       testFeedId.toString(),
     );
@@ -102,7 +99,7 @@ describe('POST /api/feed/:feedId E2E Test', () => {
     const response = await request(app.getHttpServer())
       .post(`/api/feed/${testFeedId}`)
       .set('X-Forwarded-For', testIp);
-    const feedDailyViewCount = await redisService.redisClient.zscore(
+    const feedDailyViewCount = await redisService.zscore(
       redisKeys.FEED_TREND_KEY,
       testFeedId.toString(),
     );
