@@ -74,11 +74,10 @@ export class RssService {
         const feeds = await this.feedCrawlerService.loadRssFeeds(
           newRssAccept.rssUrl,
         );
-        feeds.forEach((feed) => (feed.blog = newRssAccept));
         return [newRssAccept, feeds];
       },
     );
-    await this.feedCrawlerService.saveRssFeeds(feeds);
+    await this.feedCrawlerService.saveRssFeeds(feeds, newRssAccept);
     this.emailService.sendMail(newRssAccept, true);
   }
 
