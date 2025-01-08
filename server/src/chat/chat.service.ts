@@ -22,7 +22,7 @@ export class ChatService {
 
   constructor(private readonly redisService: RedisService) {}
 
-  async isMaxClientExceeded(userCount: number) {
+  isMaxClientExceeded(userCount: number) {
     return userCount > MAX_CLIENTS;
   }
 

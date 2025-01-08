@@ -30,7 +30,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     const userCount = this.server.engine.clientsCount;
-    if (await this.chatService.isMaxClientExceeded(userCount)) {
+    if (this.chatService.isMaxClientExceeded(userCount)) {
       client.emit('maximum_exceeded', {
         message: '채팅 서버의 한계에 도달했습니다. 잠시후 재시도 해주세요.',
       });
