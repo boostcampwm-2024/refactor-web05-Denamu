@@ -16,8 +16,7 @@ import { useFetchRss, useFetchAccept, useFetchReject } from "@/hooks/queries/use
 import { useAdminAccept, useAdminReject } from "@/hooks/queries/useRssActions";
 
 import { useAdminSearchStore } from "@/store/useSearchStore";
-import { AdminRssData } from "@/types/rss";
-import { AdminRequest } from "@/types/rss";
+import { AdminRssData, AdminRequest } from "@/types/rss";
 
 type SelectedBlogType = {
   blogName: string;
@@ -74,7 +73,11 @@ export const AdminTabs = ({ setLogout }: { setLogout: () => void }) => {
   const { mutate: rejectMutate } = useAdminReject(onSuccess, onError);
 
   const handleActions = (data: AdminRequest, actions: "accept" | "reject") => {
-    actions === "accept" ? acceptMutate(data) : rejectMutate(data);
+    if (actions === "accept") {
+      acceptMutate(data);
+    } else {
+      rejectMutate(data);
+    }
   };
 
   const handleSelectedBlog = ({ blogName, blogId }: SelectedBlogType) => {

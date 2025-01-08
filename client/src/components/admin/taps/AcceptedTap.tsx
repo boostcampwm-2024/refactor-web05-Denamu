@@ -7,7 +7,7 @@ interface AcceptedTabProps {
   data: AdminRssData[];
 }
 
-export default function AcceptedTab({ data }: AcceptedTabProps) {
+export default function AcceptedTab({ data }: Readonly<AcceptedTabProps>) {
   return (
     <TabsContent value="accepted" className="space-y-4 mt-4">
       {data.map((request) => (
