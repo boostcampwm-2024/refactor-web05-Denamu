@@ -38,7 +38,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    const clientName = await this.chatService.getOrSetClientNameByIp(client);
+    const clientName = await this.chatService.getClientNameByIp(client);
     const chatHistory = await this.chatService.getChatHistory();
 
     client.emit('chatHistory', chatHistory);
@@ -57,7 +57,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload: { message: string }) {
-    const clientName = await this.chatService.getOrSetClientNameByIp(client);
+    const clientName = await this.chatService.getClientNameByIp(client);
 
     const broadcastPayload: BroadcastPayload = {
       username: clientName,

@@ -35,22 +35,22 @@ export class ChatService {
     return ip;
   }
 
-  async getOrSetClientNameByIp(client: Socket) {
+  async getClientNameByIp(client: Socket) {
     const ip = this.getClientIp(client);
     const redisKey = CLIENT_KEY_PREFIX + ip;
-    const clientName: string = await this.getClientNameByIp(redisKey);
+    const clientName: string = await this.getClientName(redisKey);
     if (clientName) {
       return clientName;
     }
-    const createdClientName = this.setClientNameByIp(redisKey);
+    const createdClientName = this.setClientName(redisKey);
     return createdClientName;
   }
 
-  private async getClientNameByIp(redisKey: string) {
+  private async getClientName(redisKey: string) {
     return await this.redisService.redisClient.get(redisKey);
   }
 
-  private async setClientNameByIp(redisKey: string) {
+  private async setClientName(redisKey: string) {
     const clientName = this.generateRandomUsername();
     await this.redisService.redisClient.set(
       redisKey,
