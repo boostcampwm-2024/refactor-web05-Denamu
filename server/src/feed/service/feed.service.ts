@@ -117,7 +117,6 @@ export class FeedService {
     return searchType.hasOwnProperty(type);
   }
 
-  // 여기 안쓰는 함수 추가요~
   async updateFeedViewCount(
     feedId: number,
     request: Request,
@@ -129,7 +128,7 @@ export class FeedService {
       const [feed, hasCookie, hasIpFlag] = await Promise.all([
         this.feedRepository.findOne({ where: { id: feedId } }),
         Boolean(cookie?.includes(`View_count_${feedId}=${feedId}`)),
-        this.redisService.redisClient.sismember(`feed:${feedId}:ip`, ip),
+        this.redisService.sismember(`feed:${feedId}:ip`, ip),
       ]);
 
       if (!feed) {
@@ -149,7 +148,7 @@ export class FeedService {
         this.feedRepository.update(feedId, {
           viewCount: () => 'view_count + 1',
         }),
-        this.redisService.redisClient.zincrby(
+        this.redisService.zincrby(
           redisKeys.FEED_TREND_KEY,
           1,
           feedId.toString(),

@@ -115,4 +115,16 @@ export class RedisService {
   async flushdb(): Promise<string> {
     return this.redisClient.flushdb();
   }
+
+  async sismember(key: string, member: string | number): Promise<number> {
+    return this.redisClient.sismember(key, member);
+  }
+
+  async zincrby(
+    key: string,
+    increment: number | string,
+    member: string | number,
+  ): Promise<string> {
+    return this.redisClient.zincrby(key, increment, member);
+  }
 }
