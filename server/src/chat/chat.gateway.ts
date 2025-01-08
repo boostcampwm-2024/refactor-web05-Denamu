@@ -7,8 +7,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { ChatService } from './chat.service';
-import { ChatScheduler } from './chat.scheduler';
+import { ChatService } from './service/chat.service';
+import { ChatScheduler } from './scheduler/chat.scheduler';
 import type { BroadcastPayload } from './chat.type';
 
 @Injectable()

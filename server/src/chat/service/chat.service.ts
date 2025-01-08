@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { RedisService } from '../common/redis/redis.service';
+import { RedisService } from '../../common/redis/redis.service';
 import { getRandomNickname } from '@woowa-babble/random-nickname';
-import type { BroadcastPayload } from './chat.type';
+import type { BroadcastPayload } from '../chat.type';
 
 const MAX_CLIENTS = 500;
 const CLIENT_KEY_PREFIX = 'socket_client:';
