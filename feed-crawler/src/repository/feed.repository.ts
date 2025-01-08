@@ -49,22 +49,10 @@ export class FeedRepository {
   async deleteRecentFeed() {
     try {
       this.redisConnection.connect();
-      const keysToDelete = [];
-      let cursor = "0";
-      do {
-        const [newCursor, keys] = await this.redisConnection.command.scan(
-          cursor,
-          "MATCH",
-          redisConstant.FEED_RECENT_ALL_KEY,
-          "COUNT",
-          "100"
-        );
-        keysToDelete.push(...keys);
-        cursor = newCursor;
-      } while (cursor !== "0");
+      const keysToDelete = await this.redisConnection.scan(redisConstant.FEED_RECENT_ALL_KEY);
 
       if (keysToDelete.length > 0) {
-        await this.redisConnection.command.del(...keysToDelete);
+        await this.redisConnection.del(...keysToDelete);
       }
     } catch (error) {
       logger.error(
@@ -80,24 +68,23 @@ export class FeedRepository {
 
   async setRecentFeedList(feedLists: FeedDetail[]) {
     try {
-      this.redisConnection.connect();
-      const pipeLine = this.redisConnection.command.pipeline();
-      for (const feed of feedLists) {
-        pipeLine.hset(`feed:recent:${feed.id}`, {
-          id: feed.id,
-          blogPlatform: feed.blogPlatform,
-          createdAt: feed.pubDate,
-          viewCount: 0,
-          blogName: feed.blogName,
-          thumbnail: feed.imageUrl,
-          path: feed.link,
-          title: feed.title,
-        });
-      }
-      await pipeLine.exec();
+      await this.redisConnection.executePipeline((pipeline) => {
+        for (const feed of feedLists) {
+          pipeline.hset(`feed:recent:${feed.id}`, {
+            id: feed.id,
+            blogPlatform: feed.blogPlatform,
+            createdAt: feed.pubDate,
+            viewCount: 0,
+            blogName: feed.blogName,
+            thumbnail: feed.imageUrl,
+            path: feed.link,
+            title: feed.title,
+          });
+        }
+      });
     } catch (error) {
       logger.error(
-        `[Redis] 최근 게시글 캐시를 저장하는 도중 에러가 발생했습니다.
+          `[Redis] 최근 게시글 캐시를 저장하는 도중 에러가 발생했습니다.
         에러 메시지: ${error.message}
         스택 트레이스: ${error.stack}`
       );
