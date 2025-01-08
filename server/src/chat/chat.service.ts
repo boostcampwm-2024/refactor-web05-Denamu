@@ -2,17 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { RedisService } from '../common/redis/redis.service';
 import { getRandomNickname } from '@woowa-babble/random-nickname';
+import type { BroadcastPayload } from './chat.type';
 
 const MAX_CLIENTS = 500;
 const CLIENT_KEY_PREFIX = 'socket_client:';
 const CHAT_HISTORY_KEY = 'chat:history';
 const CHAT_HISTORY_LIMIT = 20;
-
-type BroadcastPayload = {
-  username: string;
-  message: string;
-  timestamp: Date;
-};
 
 @Injectable()
 export class ChatService {

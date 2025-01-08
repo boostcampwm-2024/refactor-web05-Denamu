@@ -9,12 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatScheduler } from './chat.scheduler';
-
-type BroadcastPayload = {
-  username: string;
-  message: string;
-  timestamp: Date;
-};
+import type { BroadcastPayload } from './chat.type';
 
 @Injectable()
 @WebSocketGateway({
