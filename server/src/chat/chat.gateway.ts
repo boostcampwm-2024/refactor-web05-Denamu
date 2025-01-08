@@ -65,12 +65,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       timestamp: new Date(),
     };
 
-    await this.chatService.saveMessageToRedis(broadcastPayload);
-
     const midnightMessage = await this.chatService.handleDateMessage();
     if (midnightMessage) {
       this.server.emit('message', midnightMessage);
     }
+    await this.chatService.saveMessageToRedis(broadcastPayload);
     this.server.emit('message', broadcastPayload);
   }
 }
