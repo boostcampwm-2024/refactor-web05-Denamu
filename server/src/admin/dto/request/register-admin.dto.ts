@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 const PASSWORD_REG = /^(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]+$/;
 
-export class RegisterAdminDto {
+export class RegisterAdminRequestDto {
   @ApiProperty({
     example: 'minseokjo',
     description: '관리자 로그인 아이디를 입력해주세요.',

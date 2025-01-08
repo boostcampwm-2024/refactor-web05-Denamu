@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { AdminService } from '../../../src/admin/service/admin.service';
-import { LoginAdminDto } from '../../../src/admin/dto/login-admin.dto';
-import { RegisterAdminDto } from '../../../src/admin/dto/register-admin.dto';
+import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
+import { RegisterAdminRequestDto } from '../../../src/admin/dto/request/register-admin.dto';
 import * as request from 'supertest';
 
 describe('POST api/admin/register E2E Test', () => {
@@ -9,11 +9,11 @@ describe('POST api/admin/register E2E Test', () => {
   let adminService: AdminService;
 
   //given
-  const loginAdminDto: LoginAdminDto = {
+  const loginAdminDto: LoginAdminRequestDto = {
     loginId: 'testAdminId',
     password: 'testAdminPassword!',
   };
-  const registerAdminDto: RegisterAdminDto = {
+  const registerAdminDto: RegisterAdminRequestDto = {
     loginId: 'testNewAdminId',
     password: 'testNewAdminPassword!',
   };
@@ -55,7 +55,7 @@ describe('POST api/admin/register E2E Test', () => {
 
   it('관리자가 로그아웃 상태면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const registerAdminDto: RegisterAdminDto = {
+    const registerAdminDto: RegisterAdminRequestDto = {
       loginId: 'testNewAdminId',
       password: 'testNewAdminPassword!',
     };

@@ -1,11 +1,11 @@
-import { RegisterAdminDto } from '../../../src/admin/dto/register-admin.dto';
+import { RegisterAdminRequestDto } from '../../../src/admin/dto/request/register-admin.dto';
 import { validate } from 'class-validator';
 
 describe('LoginAdminDto Test', () => {
-  let registerAdminDto: RegisterAdminDto;
+  let registerAdminDto: RegisterAdminRequestDto;
 
   beforeEach(() => {
-    registerAdminDto = new RegisterAdminDto();
+    registerAdminDto = new RegisterAdminRequestDto();
   });
 
   it('ID의 길이가 6 이상, 255 이하가 아니라면 유효성 검사에 실패한다.', async () => {

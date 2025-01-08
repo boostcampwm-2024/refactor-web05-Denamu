@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AdminService } from '../service/admin.service';
-import { RegisterAdminDto } from '../dto/register-admin.dto';
+import { RegisterAdminRequestDto } from '../dto/request/register-admin.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '../../common/response/common.response';
-import { LoginAdminDto } from '../dto/login-admin.dto';
+import { LoginAdminRequestDto } from '../dto/request/login-admin.dto';
 import { CookieAuthGuard } from '../../common/guard/auth.guard';
 import { ApiLoginAdmin } from '../api-docs/loginAdmin.api-docs';
 import { ApiReadSessionIdAdmin } from '../api-docs/readSessionIdAdmin.api-docs';
@@ -33,7 +33,7 @@ export class AdminController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(ValidationPipe)
   async loginAdmin(
-    @Body() loginAdminDto: LoginAdminDto,
+    @Body() loginAdminDto: LoginAdminRequestDto,
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request,
   ) {
@@ -49,8 +49,7 @@ export class AdminController {
   @Post('/logout')
   async logoutAdmin(
     @Req() request: Request,
-    @Res({ passthrough: true })
-    response: Response,
+    @Res({ passthrough: true }) response: Response,
   ) {
     await this.adminService.logoutAdmin(request, response);
     return ApiResponse.responseWithNoContent(
@@ -62,7 +61,7 @@ export class AdminController {
   @UseGuards(CookieAuthGuard)
   @Post('/register')
   @UsePipes(ValidationPipe)
-  async createAdmin(@Body() registerAdminDto: RegisterAdminDto) {
+  async createAdmin(@Body() registerAdminDto: RegisterAdminRequestDto) {
     await this.adminService.createAdmin(registerAdminDto);
     return ApiResponse.responseWithNoContent(
       '성공적으로 관리자 계정이 생성되었습니다.',

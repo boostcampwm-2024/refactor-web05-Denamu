@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { AdminService } from '../../../src/admin/service/admin.service';
-import { LoginAdminDto } from '../../../src/admin/dto/login-admin.dto';
+import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
 import * as request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,7 +9,7 @@ describe('GET api/admin/sessionId E2E Test', () => {
   let adminService: AdminService;
 
   //given
-  const loginAdminDto: LoginAdminDto = {
+  const loginAdminDto: LoginAdminRequestDto = {
     loginId: 'testAdminId',
     password: 'testAdminPassword!',
   };
