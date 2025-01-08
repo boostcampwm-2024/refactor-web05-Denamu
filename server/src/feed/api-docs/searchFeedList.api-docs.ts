@@ -5,7 +5,7 @@ import {
   ApiOperation,
   ApiQuery,
 } from '@nestjs/swagger';
-import { SearchType } from '../dto/search-feed.dto';
+import { SearchType } from '../dto/request/search-feed.dto';
 
 export function ApiSearchFeedList() {
   return applyDecorators(

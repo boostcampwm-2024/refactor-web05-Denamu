@@ -1,8 +1,8 @@
 import { DataSource, Repository } from 'typeorm';
 import { Feed, FeedView } from '../entity/feed.entity';
 import { Injectable } from '@nestjs/common';
-import { QueryFeedDto } from '../dto/query-feed.dto';
-import { SearchType } from '../dto/search-feed.dto';
+import { FeedPaginationRequestDto } from '../dto/request/feed-pagination.dto';
+import { SearchType } from '../dto/request/search-feed.dto';
 
 @Injectable()
 export class FeedRepository extends Repository<Feed> {
@@ -67,7 +67,7 @@ export class FeedViewRepository extends Repository<FeedView> {
     super(FeedView, dataSource.createEntityManager());
   }
 
-  async findFeedPagination(queryFeedDto: QueryFeedDto) {
+  async findFeedPagination(queryFeedDto: FeedPaginationRequestDto) {
     const { lastId, limit } = queryFeedDto;
     const query = this.createQueryBuilder()
       .where((qb) => {

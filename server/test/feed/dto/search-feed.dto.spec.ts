@@ -1,15 +1,15 @@
 import {
-  SearchFeedReq,
+  SearchFeedRequestDto,
   SearchType,
-} from './../../../src/feed/dto/search-feed.dto';
+} from '../../../src/feed/dto/request/search-feed.dto';
 import { validate } from 'class-validator';
 
-describe('SearchFeedReq DTO Test', () => {
+describe('SearchFeedRequestDto Test', () => {
   //given
-  let searchFeedDto: SearchFeedReq;
+  let searchFeedDto: SearchFeedRequestDto;
 
   beforeEach(() => {
-    searchFeedDto = new SearchFeedReq({
+    searchFeedDto = new SearchFeedRequestDto({
       find: 'test',
       type: SearchType.TITLE,
       page: 1,

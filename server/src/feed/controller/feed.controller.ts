@@ -15,8 +15,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { FeedService } from '../service/feed.service';
-import { QueryFeedDto } from '../dto/query-feed.dto';
-import { SearchFeedReq } from '../dto/search-feed.dto';
+import { FeedPaginationRequestDto } from '../dto/request/feed-pagination.dto';
+import { SearchFeedRequestDto } from '../dto/request/search-feed.dto';
 import { Response, Request } from 'express';
 import { Observable } from 'rxjs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -25,7 +25,7 @@ import { ApiReadTrendFeedList } from '../api-docs/readTrendFeedList.api-docs';
 import { ApiSearchFeedList } from '../api-docs/searchFeedList.api-docs';
 import { ApiUpdateFeedViewCount } from '../api-docs/updateFeedViewCount.api-docs';
 import { ApiReadRecentFeedList } from '../api-docs/readRecentFeedList.api-docs';
-import { Feed } from '../entity/feed.entity';
+import { FeedTrendResponseDto } from '../dto/response/feed-pagination.dto';
 
 @ApiTags('Feed')
 @Controller('feed')
@@ -43,7 +43,7 @@ export class FeedController {
       transform: true,
     }),
   )
-  async readFeedPagination(@Query() queryFeedDto: QueryFeedDto) {
+  async readFeedPagination(@Query() queryFeedDto: FeedPaginationRequestDto) {
     return ApiResponse.responseWithData(
       '피드 조회 완료',
       await this.feedService.readFeedPagination(queryFeedDto),
@@ -54,22 +54,27 @@ export class FeedController {
   @Sse('trend/sse')
   async readTrendFeedList() {
     return new Observable((observer) => {
-      this.feedService.readTrendFeedList().then((trendData) => {
-        observer.next({
-          data: {
-            message: '현재 트렌드 피드 수신 완료',
-            data: trendData,
-          },
+      this.feedService
+        .readTrendFeedList()
+        .then((trendData: FeedTrendResponseDto[]) => {
+          observer.next({
+            data: {
+              message: '현재 트렌드 피드 수신 완료',
+              data: trendData,
+            },
+          });
         });
-      });
-      this.eventService.on('ranking-update', (trendData: Feed[]) => {
-        observer.next({
-          data: {
-            message: '새로운 트렌드 피드 수신 완료',
-            data: trendData,
-          },
-        });
-      });
+      this.eventService.on(
+        'ranking-update',
+        (trendData: FeedTrendResponseDto[]) => {
+          observer.next({
+            data: {
+              message: '새로운 트렌드 피드 수신 완료',
+              data: trendData,
+            },
+          });
+        },
+      );
     });
   }
 
@@ -82,7 +87,7 @@ export class FeedController {
     }),
     new ValidationPipe(),
   )
-  async searchFeedList(@Query() searchFeedReq: SearchFeedReq) {
+  async searchFeedList(@Query() searchFeedReq: SearchFeedRequestDto) {
     const data = await this.feedService.searchFeedList(searchFeedReq);
     return ApiResponse.responseWithData('검색 결과 조회 완료', data);
   }

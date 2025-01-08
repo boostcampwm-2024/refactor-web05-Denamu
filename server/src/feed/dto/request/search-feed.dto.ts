@@ -1,4 +1,3 @@
-import { Feed } from '../../feed/entity/feed.entity';
 import { IsDefined, IsEnum, IsInt, IsString, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -8,7 +7,7 @@ export enum SearchType {
   ALL = 'all',
 }
 
-export class SearchFeedReq {
+export class SearchFeedRequestDto {
   @IsDefined({
     message: '검색어를 입력해주세요.',
   })
@@ -37,38 +36,7 @@ export class SearchFeedReq {
   @Type(() => Number)
   limit?: number = 4;
 
-  constructor(partial: Partial<SearchFeedReq>) {
+  constructor(partial: Partial<SearchFeedRequestDto>) {
     Object.assign(this, partial);
   }
-}
-
-export class SearchFeedResult {
-  constructor(
-    private id: number,
-    private blogName: string,
-    private title: string,
-    private path: string,
-    private createdAt: Date,
-  ) {}
-
-  static feedsToResults(feeds: Feed[]): SearchFeedResult[] {
-    return feeds.map((item) => {
-      return new SearchFeedResult(
-        item.id,
-        item.blog.name,
-        item.title,
-        item.path,
-        item.createdAt,
-      );
-    });
-  }
-}
-
-export class SearchFeedRes {
-  constructor(
-    private totalCount: number,
-    private result: SearchFeedResult[],
-    private totalPages: number,
-    private limit: number,
-  ) {}
 }

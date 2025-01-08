@@ -7,25 +7,30 @@ import {
   FeedRepository,
   FeedViewRepository,
 } from '../repository/feed.repository';
-import { QueryFeedDto } from '../dto/query-feed.dto';
+import { FeedPaginationRequestDto } from '../dto/request/feed-pagination.dto';
 import { FeedView } from '../entity/feed.entity';
 import {
-  FeedPaginationResult,
   FeedPaginationResponseDto,
+  FeedPaginationResult,
+  FeedResult,
   FeedTrendResponseDto,
-} from '../dto/feed-response.dto';
+} from '../dto/response/feed-pagination.dto';
 import { RedisService } from '../../common/redis/redis.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as _ from 'lodash';
-import {
-  SearchFeedReq,
-  SearchFeedRes,
-  SearchFeedResult,
-} from '../dto/search-feed.dto';
+import { SearchFeedRequestDto } from '../dto/request/search-feed.dto';
 import { Response, Request } from 'express';
 import { cookieConfig } from '../../common/cookie/cookie.config';
 import { redisKeys } from '../../common/redis/redis.constant';
+import {
+  SearchFeedResponseDto,
+  SearchFeedResult,
+} from '../dto/response/search-feed.dto';
+import {
+  FeedRecentRedis,
+  FeedRecentResponseDto,
+} from '../dto/response/recent.dto';
 
 @Injectable()
 export class FeedService {
@@ -36,18 +41,15 @@ export class FeedService {
     private readonly eventService: EventEmitter2,
   ) {}
 
-  async readFeedPagination(queryFeedDto: QueryFeedDto) {
+  async readFeedPagination(queryFeedDto: FeedPaginationRequestDto) {
     const feedList =
       await this.feedViewRepository.findFeedPagination(queryFeedDto);
     const hasMore = this.existNextFeed(feedList, queryFeedDto.limit);
     if (hasMore) feedList.pop();
     const lastId = this.getLastIdFromFeedList(feedList);
     const newCheckFeedList = await this.checkNewFeeds(feedList);
-    const result =
-      FeedPaginationResponseDto.mapToPaginationResponseDtoArray(
-        newCheckFeedList,
-      );
-    return { result, lastId, hasMore };
+    const result = FeedResult.toPaginationResultDtoArray(newCheckFeedList);
+    return new FeedPaginationResponseDto(result, lastId, hasMore);
   }
 
   private existNextFeed(feedList: FeedView[], limit: number) {
@@ -116,7 +118,7 @@ export class FeedService {
     }
   }
 
-  async searchFeedList(searchFeedReq: SearchFeedReq) {
+  async searchFeedList(searchFeedReq: SearchFeedRequestDto) {
     const { find, page, limit, type } = searchFeedReq;
     const offset = (page - 1) * limit;
     if (this.validateSearchType(type)) {
@@ -130,7 +132,7 @@ export class FeedService {
       const results = SearchFeedResult.feedsToResults(result);
       const totalPages = Math.ceil(totalCount / limit);
 
-      return new SearchFeedRes(totalCount, results, totalPages, limit);
+      return new SearchFeedResponseDto(totalCount, results, totalPages, limit);
     }
     throw new BadRequestException('검색 타입이 잘못되었습니다.');
   }
@@ -215,29 +217,32 @@ export class FeedService {
   async readRecentFeedList() {
     const redis = this.redisService.redisClient;
     const recentKeys = await redis.keys(redisKeys.FEED_RECENT_ALL_KEY);
-    const recentFeedList: FeedPaginationResult[] = [];
 
     if (!recentKeys.length) {
-      return recentFeedList;
+      return [];
     }
 
+    let recentFeedList: FeedRecentRedis[] = [];
     const pipeLine = redis.pipeline();
     for (const key of recentKeys) {
       pipeLine.hgetall(key);
     }
     const result = await pipeLine.exec();
+
     recentFeedList.push(
-      ...result.map(([, feed]: [any, FeedPaginationResult]) => {
+      ...result.map(([, feed]: [any, FeedRecentRedis]) => {
         feed.isNew = true;
         return feed;
       }),
     );
 
-    return recentFeedList.sort((currentFeed, nextFeed) => {
+    recentFeedList = recentFeedList.sort((currentFeed, nextFeed) => {
       const dateCurrent = new Date(currentFeed.createdAt);
       const dateNext = new Date(nextFeed.createdAt);
       return dateNext.getTime() - dateCurrent.getTime();
     });
+
+    return FeedRecentResponseDto.toRecentResponseDtoArray(recentFeedList);
   }
 
   private getIp(request: Request) {

@@ -1,6 +1,6 @@
-import { FeedView } from '../../feed/entity/feed.entity';
+import { FeedView } from '../../entity/feed.entity';
 
-export class FeedPaginationResponseDto {
+export class FeedResult {
   private constructor(
     private id: number,
     private author: string,
@@ -13,8 +13,8 @@ export class FeedPaginationResponseDto {
     private isNew: boolean,
   ) {}
 
-  private static toFeedPaginationResponseDto(feed: FeedPaginationResult) {
-    return new FeedPaginationResponseDto(
+  private static toPaginationResultDto(feed: FeedPaginationResult) {
+    return new FeedResult(
       feed.feedId,
       feed.blogName,
       feed.blogPlatform,
@@ -27,11 +27,17 @@ export class FeedPaginationResponseDto {
     );
   }
 
-  public static mapToPaginationResponseDtoArray(
-    FeedList: FeedPaginationResult[],
-  ) {
-    return FeedList.map(this.toFeedPaginationResponseDto);
+  public static toPaginationResultDtoArray(feedList: FeedPaginationResult[]) {
+    return feedList.map(this.toPaginationResultDto);
   }
+}
+
+export class FeedPaginationResponseDto {
+  constructor(
+    private result: FeedResult[],
+    private lastId: number,
+    private hasMore: boolean,
+  ) {}
 }
 
 export type FeedPaginationResult = FeedView & { isNew: boolean };
