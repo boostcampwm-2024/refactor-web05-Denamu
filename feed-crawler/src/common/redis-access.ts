@@ -1,7 +1,7 @@
-import Redis, {ChainableCommander} from "ioredis";
+import Redis, { ChainableCommander } from "ioredis";
 import logger from "../common/logger";
 import * as dotenv from "dotenv";
-import {injectable} from "tsyringe";
+import { injectable } from "tsyringe";
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
@@ -33,40 +33,41 @@ export class RedisConnection {
         logger.error(
           `${this.nameTag} connection quit 중 오류 발생
           에러 메시지: ${error.message}
-          스택 트레이스: ${error.stack}`
+          스택 트레이스: ${error.stack}`,
         );
       }
     }
   }
 
-  async del(...keys: string[]){
-    this.redis.del(...keys);
+  async del(...keys: string[]): Promise<number> {
+    return this.redis.del(...keys);
   }
 
-  async scan(pattern: string, count: number = 100): Promise<string[]> {
-    let cursor = "0";
-    const resultKeys: string[] = [];
-
-    do {
-      const [newCursor, keys] = await this.redis.scan(cursor, "MATCH", pattern, "COUNT",  count.toString())
-      resultKeys.push(...keys);
-      cursor = newCursor;
-    } while (cursor !== "0");
-
-    return resultKeys;
+  async scan(
+    cursor: string | number,
+    match?: string,
+    count?: number,
+  ): Promise<[cursor: string, keys: string[]]> {
+    const result = await this.redis.scan(
+      cursor,
+      "MATCH",
+      match || "*",
+      "COUNT",
+      count || 10,
+    );
+    return [result[0], result[1]];
   }
 
   async executePipeline(commands: (pipeline: ChainableCommander) => void) {
     const pipeline = this.redis.pipeline();
     try {
       commands(pipeline);
-      const results = await pipeline.exec();
-      return results;
+      return pipeline.exec();
     } catch (error) {
       logger.error(
-          `${this.nameTag} 파이프라인 실행 중 오류 발생:
+        `${this.nameTag} 파이프라인 실행 중 오류 발생:
         메시지: ${error.message}
-        스택 트레이스: ${error.stack}`
+        스택 트레이스: ${error.stack}`,
       );
       throw error;
     }
