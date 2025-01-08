@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Rss, RssReject } from '../../../src/rss/entity/rss.entity';
 import { RssFixture } from '../../fixture/rss.fixture';
 import { RedisService } from '../../../src/common/redis/redis.service';
-import { RejectRssDto } from '../../../src/rss/dto/rss-reject.dto';
+import { RejectRssRequestDto } from '../../../src/rss/dto/request/rss-reject.dto';
 import {
   RssRejectRepository,
   RssRepository,
@@ -37,7 +37,7 @@ describe('Rss Reject E2E Test', () => {
         const REJECT_REASON = '거절 사유';
         const rssFixture = RssFixture.createRssFixture();
         const rss = await rssRepository.save(rssFixture);
-        const rejectRssDto = new RejectRssDto(REJECT_REASON);
+        const rejectRssDto = new RejectRssRequestDto(REJECT_REASON);
 
         // when
         const response = await request(app.getHttpServer())
@@ -59,7 +59,7 @@ describe('Rss Reject E2E Test', () => {
       it('존재하지 않는 rss를 거절할 때', async () => {
         // given
         const REJECT_REASON = '거절 사유';
-        const rejectRssDto = new RejectRssDto(REJECT_REASON);
+        const rejectRssDto = new RejectRssRequestDto(REJECT_REASON);
 
         // when
         const response = await request(app.getHttpServer())

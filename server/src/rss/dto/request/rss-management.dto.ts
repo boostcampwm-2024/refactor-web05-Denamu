@@ -1,7 +1,7 @@
 import { IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class RssManagementDto {
+export class RssManagementRequestDto {
   @IsInt({
     message: '정수를 입력해주세요.',
   })
