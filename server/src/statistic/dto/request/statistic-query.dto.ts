@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Min } from 'class-validator';
 
-export class StatisticQueryDto {
+export class StatisticRequestDto {
   @ApiProperty({
     description: '최대로 가져올 데이터 개수를 입력하세요.',
   })

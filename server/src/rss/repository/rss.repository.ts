@@ -36,7 +36,7 @@ export class RssAcceptRepository extends Repository<RssAccept> {
 
   countByBlogPlatform() {
     return this.createQueryBuilder()
-      .select(['blog_platform as platform'])
+      .select('blog_platform', 'platform')
       .addSelect('COUNT(blog_platform)', 'count')
       .groupBy('blog_platform')
       .orderBy('count', 'DESC')

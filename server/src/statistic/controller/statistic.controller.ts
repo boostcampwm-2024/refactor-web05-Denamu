@@ -8,7 +8,7 @@ import {
 import { StatisticService } from '../service/statistic.service';
 import { ApiResponse } from '../../common/response/common.response';
 import { ApiTags } from '@nestjs/swagger';
-import { StatisticQueryDto } from '../dto/statistic-query.dto';
+import { StatisticRequestDto } from '../dto/request/statistic-query.dto';
 import { ApiReadPlatformStatistic } from '../api-docs/readPlatformStatistic.api-docs';
 import { ApiStatistic } from '../api-docs/statistic.api-docs';
 
@@ -24,7 +24,7 @@ export class StatisticController {
       transform: true,
     }),
   )
-  async readTodayStatistic(@Query() queryObj: StatisticQueryDto) {
+  async readTodayStatistic(@Query() queryObj: StatisticRequestDto) {
     const data = await this.statisticService.readTodayStatistic(queryObj.limit);
     return ApiResponse.responseWithData('금일 조회수 통계 조회 완료', data);
   }
@@ -36,7 +36,7 @@ export class StatisticController {
       transform: true,
     }),
   )
-  async readAllStatistic(@Query() queryObj: StatisticQueryDto) {
+  async readAllStatistic(@Query() queryObj: StatisticRequestDto) {
     const data = await this.statisticService.readAllStatistic(queryObj.limit);
     return ApiResponse.responseWithData('전체 조회수 통계 조회 완료', data);
   }
