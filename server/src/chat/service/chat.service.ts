@@ -1,20 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { RedisService } from '../common/redis/redis.service';
+import { RedisService } from '../../common/redis/redis.service';
 import { getRandomNickname } from '@woowa-babble/random-nickname';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import type { BroadcastPayload } from '../chat.type';
 
 const MAX_CLIENTS = 500;
 const CLIENT_KEY_PREFIX = 'socket_client:';
 const CHAT_HISTORY_KEY = 'chat:history';
 const CHAT_HISTORY_LIMIT = 20;
-const CHAT_MIDNIGHT_CLIENT_NAME = 'system';
-
-type BroadcastPayload = {
-  username: string;
-  message: string;
-  timestamp: Date;
-};
 
 @Injectable()
 export class ChatService {
@@ -92,29 +85,5 @@ export class ChatService {
       0,
       CHAT_HISTORY_LIMIT - 1,
     );
-  }
-
-  async saveDateMessage() {
-    const broadcastPayload: BroadcastPayload = {
-      username: CHAT_MIDNIGHT_CLIENT_NAME,
-      message: '',
-      timestamp: new Date(),
-    };
-
-    await this.saveMessageToRedis(broadcastPayload);
-
-    return broadcastPayload;
-  }
-
-  async handleDateMessage() {
-    if (this.dayInit) {
-      this.dayInit = false;
-      return await this.saveDateMessage();
-    }
-  }
-
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  private midnightInitializer() {
-    this.dayInit = true;
   }
 }
