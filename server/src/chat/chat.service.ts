@@ -42,7 +42,7 @@ export class ChatService {
     if (clientName) {
       return clientName;
     }
-    const createdClientName = this.setClientName(redisKey);
+    const createdClientName = await this.setClientName(redisKey);
     return createdClientName;
   }
 
