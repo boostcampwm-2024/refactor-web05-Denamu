@@ -13,7 +13,7 @@ export class FeedResult {
     private isNew: boolean,
   ) {}
 
-  private static toPaginationResultDto(feed: FeedPaginationResult) {
+  private static toResultDto(feed: FeedPaginationResult) {
     return new FeedResult(
       feed.feedId,
       feed.blogName,
@@ -27,8 +27,8 @@ export class FeedResult {
     );
   }
 
-  public static toPaginationResultDtoArray(feedList: FeedPaginationResult[]) {
-    return feedList.map(this.toPaginationResultDto);
+  public static toResultDtoArray(feedList: FeedPaginationResult[]) {
+    return feedList.map(this.toResultDto);
   }
 }
 
@@ -54,7 +54,7 @@ export class FeedTrendResponseDto {
     private viewCount: number,
   ) {}
 
-  private static toFeedTrendResponseDto(feed: FeedView) {
+  private static toResponseDto(feed: FeedView) {
     return new FeedTrendResponseDto(
       feed.feedId,
       feed.blogName,
@@ -67,7 +67,7 @@ export class FeedTrendResponseDto {
     );
   }
 
-  public static toFeedTrendResponseDtoArray(FeedList: FeedView[]) {
-    return FeedList.map(this.toFeedTrendResponseDto);
+  public static toResponseDtoArray(FeedList: FeedView[]) {
+    return FeedList.map(this.toResponseDto);
   }
 }

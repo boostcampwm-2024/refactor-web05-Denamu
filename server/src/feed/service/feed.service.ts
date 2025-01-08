@@ -48,7 +48,7 @@ export class FeedService {
     if (hasMore) feedList.pop();
     const lastId = this.getLastIdFromFeedList(feedList);
     const newCheckFeedList = await this.checkNewFeeds(feedList);
-    const result = FeedResult.toPaginationResultDtoArray(newCheckFeedList);
+    const result = FeedResult.toResultDtoArray(newCheckFeedList);
     return new FeedPaginationResponseDto(result, lastId, hasMore);
   }
 
@@ -87,7 +87,7 @@ export class FeedService {
         this.feedViewRepository.findFeedById(parseInt(feedId)),
       ),
     );
-    return FeedTrendResponseDto.toFeedTrendResponseDtoArray(
+    return FeedTrendResponseDto.toResponseDtoArray(
       trendFeeds.filter((feed) => feed !== null),
     );
   }
@@ -121,20 +121,27 @@ export class FeedService {
   async searchFeedList(searchFeedReq: SearchFeedRequestDto) {
     const { find, page, limit, type } = searchFeedReq;
     const offset = (page - 1) * limit;
-    if (this.validateSearchType(type)) {
-      const [result, totalCount] = await this.feedRepository.searchFeedList(
-        find,
-        limit,
-        type,
-        offset,
-      );
 
-      const results = SearchFeedResult.feedsToResults(result);
-      const totalPages = Math.ceil(totalCount / limit);
-
-      return new SearchFeedResponseDto(totalCount, results, totalPages, limit);
+    if (!this.validateSearchType(type)) {
+      throw new BadRequestException('검색 타입이 잘못되었습니다.');
     }
-    throw new BadRequestException('검색 타입이 잘못되었습니다.');
+
+    const [result, totalCount] = await this.feedRepository.searchFeedList(
+      find,
+      limit,
+      type,
+      offset,
+    );
+
+    const feeds = SearchFeedResult.toResultDtoArray(result);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return SearchFeedResponseDto.toResponseDto(
+      totalCount,
+      feeds,
+      totalPages,
+      limit,
+    );
   }
 
   private validateSearchType(type: string) {
@@ -242,7 +249,7 @@ export class FeedService {
       return dateNext.getTime() - dateCurrent.getTime();
     });
 
-    return FeedRecentResponseDto.toRecentResponseDtoArray(recentFeedList);
+    return FeedRecentResponseDto.toResponseDtoArray(recentFeedList);
   }
 
   private getIp(request: Request) {

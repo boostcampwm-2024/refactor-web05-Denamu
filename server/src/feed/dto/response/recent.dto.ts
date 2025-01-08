@@ -11,7 +11,7 @@ export class FeedRecentResponseDto {
     private isNew: boolean,
   ) {}
 
-  static toRecentResponseDto(feed: FeedRecentRedis) {
+  static toResponseDto(feed: FeedRecentRedis) {
     return new FeedRecentResponseDto(
       feed.id,
       feed.blogName,
@@ -25,8 +25,8 @@ export class FeedRecentResponseDto {
     );
   }
 
-  static toRecentResponseDtoArray(feeds: FeedRecentRedis[]) {
-    return feeds.map(this.toRecentResponseDto);
+  static toResponseDtoArray(feeds: FeedRecentRedis[]) {
+    return feeds.map(this.toResponseDto);
   }
 }
 

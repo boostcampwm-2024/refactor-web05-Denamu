@@ -1,7 +1,7 @@
 import { Feed } from '../../entity/feed.entity';
 
 export class SearchFeedResult {
-  constructor(
+  private constructor(
     private id: number,
     private blogName: string,
     private title: string,
@@ -9,24 +9,35 @@ export class SearchFeedResult {
     private createdAt: Date,
   ) {}
 
-  static feedsToResults(feeds: Feed[]): SearchFeedResult[] {
-    return feeds.map((item) => {
-      return new SearchFeedResult(
-        item.id,
-        item.blog.name,
-        item.title,
-        item.path,
-        item.createdAt,
-      );
-    });
+  static toResultDto(feed: Feed) {
+    return new SearchFeedResult(
+      feed.id,
+      feed.blog.name,
+      feed.title,
+      feed.path,
+      feed.createdAt,
+    );
+  }
+
+  static toResultDtoArray(feeds: Feed[]) {
+    return feeds.map(this.toResultDto);
   }
 }
 
 export class SearchFeedResponseDto {
-  constructor(
+  private constructor(
     private totalCount: number,
     private result: SearchFeedResult[],
     private totalPages: number,
     private limit: number,
   ) {}
+
+  static toResponseDto(
+    totalCount: number,
+    feeds: SearchFeedResult[],
+    totalPages: number,
+    limit: number,
+  ) {
+    return new SearchFeedResponseDto(totalCount, feeds, totalPages, limit);
+  }
 }
