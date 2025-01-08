@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../common/redis/redis.service';
 import { ChatService } from './chat.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
