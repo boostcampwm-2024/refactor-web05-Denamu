@@ -7,7 +7,7 @@ import { RedisModule } from './common/redis/redis.module';
 import { RssModule } from './rss/module/rss.module';
 import { FeedModule } from './feed/module/feed.module';
 import { WinstonLoggerModule } from './common/logger/logger.module';
-import { ChatModule } from './chat/chat.module';
+import { ChatModule } from './chat/module/chat.module';
 import { StatisticModule } from './statistic/module/statistic.module';
 @Module({
   imports: [

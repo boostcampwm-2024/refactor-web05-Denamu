@@ -3,6 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { FeedRepository } from '../../feed/repository/feed.repository';
 import { RssParserService } from '../service/rss-parser.service';
 import { Feed } from '../../feed/entity/feed.entity';
+import { RssAccept } from '../entity/rss.entity';
 
 @Injectable()
 export class FeedCrawlerService {
@@ -15,7 +16,8 @@ export class FeedCrawlerService {
     return await this.fetchRss(rssUrl);
   }
 
-  async saveRssFeeds(feeds: Partial<Feed>[]) {
+  async saveRssFeeds(feeds: Partial<Feed>[], newRssAccept: RssAccept) {
+    feeds.forEach((feed) => (feed.blog = newRssAccept));
     return await this.feedRepository.insert(feeds);
   }
 
