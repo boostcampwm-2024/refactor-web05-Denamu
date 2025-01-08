@@ -33,11 +33,15 @@ export class FeedResult {
 }
 
 export class FeedPaginationResponseDto {
-  constructor(
+  private constructor(
     private result: FeedResult[],
     private lastId: number,
     private hasMore: boolean,
   ) {}
+
+  static toResponseDto(result: FeedResult[], lastId: number, hasMore: boolean) {
+    return new FeedPaginationResponseDto(result, lastId, hasMore);
+  }
 }
 
 export type FeedPaginationResult = FeedView & { isNew: boolean };

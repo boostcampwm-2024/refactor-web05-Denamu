@@ -1,5 +1,5 @@
 export class FeedRecentResponseDto {
-  constructor(
+  private constructor(
     private id: number,
     private author: string,
     private blogPlatform: string,

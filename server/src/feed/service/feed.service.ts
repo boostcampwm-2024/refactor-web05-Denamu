@@ -49,7 +49,7 @@ export class FeedService {
     const lastId = this.getLastIdFromFeedList(feedList);
     const newCheckFeedList = await this.checkNewFeeds(feedList);
     const result = FeedResult.toResultDtoArray(newCheckFeedList);
-    return new FeedPaginationResponseDto(result, lastId, hasMore);
+    return FeedPaginationResponseDto.toResponseDto(result, lastId, hasMore);
   }
 
   private existNextFeed(feedList: FeedView[], limit: number) {
