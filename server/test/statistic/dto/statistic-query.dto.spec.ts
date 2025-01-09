@@ -1,10 +1,10 @@
 import { validate } from 'class-validator';
-import { StatisticQueryDto } from '../../../src/statistic/dto/statistic-query.dto';
+import { StatisticRequestDto } from '../../../src/statistic/dto/request/statistic-query.dto';
 
 describe('StatisticQueryDto', () => {
   it('실수를 입력한다.', async () => {
     // given
-    const dto = new StatisticQueryDto();
+    const dto = new StatisticRequestDto();
     dto.limit = 1.1;
 
     // when
@@ -19,7 +19,7 @@ describe('StatisticQueryDto', () => {
   });
   it('문자열을 입력한다.', async () => {
     // given
-    const dto = new StatisticQueryDto();
+    const dto = new StatisticRequestDto();
     dto.limit = 'test' as unknown as number;
 
     // when
@@ -34,7 +34,7 @@ describe('StatisticQueryDto', () => {
   });
   it('음수를 입력한다.', async () => {
     // given
-    const dto = new StatisticQueryDto();
+    const dto = new StatisticRequestDto();
     dto.limit = -1;
 
     // when

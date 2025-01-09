@@ -1,6 +1,6 @@
-import { FeedView } from '../../feed/entity/feed.entity';
+import { FeedView } from '../../entity/feed.entity';
 
-export class FeedPaginationResponseDto {
+export class FeedResult {
   private constructor(
     private id: number,
     private author: string,
@@ -13,8 +13,8 @@ export class FeedPaginationResponseDto {
     private isNew: boolean,
   ) {}
 
-  private static toFeedPaginationResponseDto(feed: FeedPaginationResult) {
-    return new FeedPaginationResponseDto(
+  private static toResultDto(feed: FeedPaginationResult) {
+    return new FeedResult(
       feed.feedId,
       feed.blogName,
       feed.blogPlatform,
@@ -27,10 +27,20 @@ export class FeedPaginationResponseDto {
     );
   }
 
-  public static mapToPaginationResponseDtoArray(
-    FeedList: FeedPaginationResult[],
-  ) {
-    return FeedList.map(this.toFeedPaginationResponseDto);
+  public static toResultDtoArray(feedList: FeedPaginationResult[]) {
+    return feedList.map(this.toResultDto);
+  }
+}
+
+export class FeedPaginationResponseDto {
+  private constructor(
+    private result: FeedResult[],
+    private lastId: number,
+    private hasMore: boolean,
+  ) {}
+
+  static toResponseDto(result: FeedResult[], lastId: number, hasMore: boolean) {
+    return new FeedPaginationResponseDto(result, lastId, hasMore);
   }
 }
 
@@ -48,7 +58,7 @@ export class FeedTrendResponseDto {
     private viewCount: number,
   ) {}
 
-  private static toFeedTrendResponseDto(feed: FeedView) {
+  private static toResponseDto(feed: FeedView) {
     return new FeedTrendResponseDto(
       feed.feedId,
       feed.blogName,
@@ -61,7 +71,7 @@ export class FeedTrendResponseDto {
     );
   }
 
-  public static toFeedTrendResponseDtoArray(FeedList: FeedView[]) {
-    return FeedList.map(this.toFeedTrendResponseDto);
+  public static toResponseDtoArray(FeedList: FeedView[]) {
+    return FeedList.map(this.toResponseDto);
   }
 }

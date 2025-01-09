@@ -1,12 +1,12 @@
 import { validate } from 'class-validator';
-import { QueryFeedDto } from '../../../src/feed/dto/query-feed.dto';
+import { FeedPaginationRequestDto } from '../../../src/feed/dto/request/feed-pagination.dto';
 
-describe('QueryFeedDto Test', () => {
+describe('FeedPaginationRequestDto Test', () => {
   //given
-  let queryFeedDto: QueryFeedDto;
+  let queryFeedDto: FeedPaginationRequestDto;
 
   beforeEach(() => {
-    queryFeedDto = new QueryFeedDto();
+    queryFeedDto = new FeedPaginationRequestDto();
   });
 
   it('limit에 1보다 작은 값을 입력하면 유효성 검사에 실패한다.', async () => {

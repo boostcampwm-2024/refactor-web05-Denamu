@@ -13,10 +13,10 @@ import {
 import { CookieAuthGuard } from '../../common/guard/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { RssService } from '../service/rss.service';
-import { RssRegisterDto } from '../dto/rss-register.dto';
+import { RssRegisterRequestDto } from '../dto/request/rss-register.dto';
 import { ApiResponse } from '../../common/response/common.response';
-import { RejectRssDto } from '../dto/rss-reject.dto';
-import { RssManagementDto } from '../dto/rss-management.dto';
+import { RejectRssRequestDto } from '../dto/request/rss-reject.dto';
+import { RssManagementRequestDto } from '../dto/request/rss-management.dto';
 import { ApiCreateRss } from '../api-docs/createRss.api-docs';
 import { ApiAcceptRss } from '../api-docs/acceptRss.api-docs';
 import { ApiReadAcceptHistory } from '../api-docs/readAcceptHistoryRss.api-docs';
@@ -32,7 +32,7 @@ export class RssController {
   @ApiCreateRss()
   @Post()
   @UsePipes(ValidationPipe)
-  async createRss(@Body() rssRegisterDto: RssRegisterDto) {
+  async createRss(@Body() rssRegisterDto: RssRegisterRequestDto) {
     await this.rssService.createRss(rssRegisterDto);
     return ApiResponse.responseWithNoContent('신청이 완료되었습니다.');
   }
@@ -52,7 +52,7 @@ export class RssController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('accept/:id')
   @HttpCode(201)
-  async acceptRss(@Param() params: RssManagementDto) {
+  async acceptRss(@Param() params: RssManagementRequestDto) {
     const { id } = params;
     await this.rssService.acceptRss(id);
     return ApiResponse.responseWithNoContent('승인이 완료되었습니다.');
@@ -64,8 +64,8 @@ export class RssController {
   @Post('reject/:id')
   @HttpCode(201)
   async rejectRss(
-    @Body() body: RejectRssDto,
-    @Param() params: RssManagementDto,
+    @Body() body: RejectRssRequestDto,
+    @Param() params: RssManagementRequestDto,
   ) {
     const { id } = params;
     await this.rssService.rejectRss(id, body.description);
@@ -76,10 +76,9 @@ export class RssController {
   @UseGuards(CookieAuthGuard)
   @Get('history/accept')
   async readAcceptHistory() {
-    const rssAcceptHistory = await this.rssService.readAcceptHistory();
     return ApiResponse.responseWithData(
       '승인 기록 조회가 완료되었습니다.',
-      rssAcceptHistory,
+      await this.rssService.readAcceptHistory(),
     );
   }
 
@@ -87,10 +86,9 @@ export class RssController {
   @UseGuards(CookieAuthGuard)
   @Get('history/reject')
   async readRejectHistory() {
-    const rssRejectHistory = await this.rssService.readRejectHistory();
     return ApiResponse.responseWithData(
       'RSS 거절 기록을 조회하였습니다.',
-      rssRejectHistory,
+      await this.rssService.readRejectHistory(),
     );
   }
 }

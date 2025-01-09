@@ -8,11 +8,14 @@ import {
   RssRepository,
   RssAcceptRepository,
 } from '../repository/rss.repository';
-import { RssRegisterDto } from '../dto/rss-register.dto';
+import { RssRegisterRequestDto } from '../dto/request/rss-register.dto';
 import { EmailService } from '../../common/email/email.service';
 import { DataSource } from 'typeorm';
 import { Rss, RssReject, RssAccept } from '../entity/rss.entity';
 import { FeedCrawlerService } from './feed-crawler.service';
+import { RssReadResponseDto } from '../dto/response/rss-all.dto';
+import { RssAcceptHistoryResponseDto } from '../dto/response/rss-accept-history.dto';
+import { RssRejectHistoryResponseDto } from '../dto/response/rss-reject-history.dto';
 
 @Injectable()
 export class RssService {
@@ -25,7 +28,7 @@ export class RssService {
     private readonly feedCrawlerService: FeedCrawlerService,
   ) {}
 
-  async createRss(rssRegisterDto: RssRegisterDto) {
+  async createRss(rssRegisterDto: RssRegisterRequestDto) {
     const [alreadyURLRss, alreadyURLBlog] = await Promise.all([
       this.rssRepository.findOne({
         where: {
@@ -51,7 +54,8 @@ export class RssService {
   }
 
   async readAllRss() {
-    return await this.rssRepository.find();
+    const rssList = await this.rssRepository.find();
+    return RssReadResponseDto.toResponseDtoArray(rssList);
   }
 
   async acceptRss(id: number) {
@@ -104,19 +108,21 @@ export class RssService {
   }
 
   async readAcceptHistory() {
-    return await this.rssAcceptRepository.find({
+    const acceptRssList = await this.rssAcceptRepository.find({
       order: {
         id: 'DESC',
       },
     });
+    return RssAcceptHistoryResponseDto.toResponseDtoArray(acceptRssList);
   }
 
   async readRejectHistory() {
-    return await this.rssRejectRepository.find({
+    const rejectRssList = await this.rssRejectRepository.find({
       order: {
         id: 'DESC',
       },
     });
+    return RssRejectHistoryResponseDto.toResponseDtoArray(rejectRssList);
   }
 
   private identifyPlatformFromRssUrl(rssUrl: string) {

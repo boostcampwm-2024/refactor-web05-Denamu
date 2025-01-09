@@ -1,9 +1,12 @@
+import { StatisticAllResponseDto } from './../dto/response/all-view-count.dto';
 import { RssAcceptRepository } from '../../rss/repository/rss.repository';
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../../common/redis/redis.service';
 import { FeedRepository } from '../../feed/repository/feed.repository';
 import { redisKeys } from '../../common/redis/redis.constant';
-import { PlatformResponseDto } from '../dto/platform-response.dto';
+import { StatisticPlatformResponseDto } from '../dto/response/platform.dto';
+import { StatisticTodayResponseDto } from '../dto/response/today.dto';
+import { Feed } from '../../feed/entity/feed.entity';
 
 @Injectable()
 export class StatisticService {
@@ -12,6 +15,7 @@ export class StatisticService {
     private readonly feedRepository: FeedRepository,
     private readonly rssAcceptRepository: RssAcceptRepository,
   ) {}
+
   async readTodayStatistic(limit: number) {
     const ranking = await this.redisService.zrevrange(
       redisKeys.FEED_TREND_KEY,
@@ -19,7 +23,7 @@ export class StatisticService {
       limit - 1,
       'WITHSCORES',
     );
-    const result = [];
+    const result: Partial<Feed>[] = [];
 
     for (let i = 0; i < ranking.length; i += 2) {
       const feedId = parseInt(ranking[i]);
@@ -37,18 +41,18 @@ export class StatisticService {
       });
     }
 
-    return result;
+    return StatisticTodayResponseDto.toResponseDtoArray(result);
   }
 
   async readAllStatistic(limit: number) {
     const ranking =
       await this.feedRepository.findAllStatisticsOrderByViewCount(limit);
-    return ranking;
+    return StatisticAllResponseDto.toResponseDtoArray(ranking);
   }
 
   async readPlatformStatistic() {
     const platformStatistics =
       await this.rssAcceptRepository.countByBlogPlatform();
-    return PlatformResponseDto.platformToResults(platformStatistics);
+    return StatisticPlatformResponseDto.toResponseDtoArray(platformStatistics);
   }
 }

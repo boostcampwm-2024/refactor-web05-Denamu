@@ -4,13 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { RegisterAdminDto } from '../dto/register-admin.dto';
+import { RegisterAdminRequestDto } from '../dto/request/register-admin.dto';
 import { AdminRepository } from '../repository/admin.repository';
 import * as bcrypt from 'bcrypt';
 import { cookieConfig } from '../../common/cookie/cookie.config';
 import * as uuid from 'uuid';
 import { RedisService } from '../../common/redis/redis.service';
-import { LoginAdminDto } from '../dto/login-admin.dto';
+import { LoginAdminRequestDto } from '../dto/request/login-admin.dto';
 
 @Injectable()
 export class AdminService {
@@ -23,7 +23,7 @@ export class AdminService {
   ) {}
 
   async loginAdmin(
-    loginAdminDto: LoginAdminDto,
+    loginAdminDto: LoginAdminRequestDto,
     response: Response,
     request: Request,
   ) {
@@ -90,7 +90,7 @@ export class AdminService {
     response.clearCookie('sessionId');
   }
 
-  async createAdmin(registerAdminDto: RegisterAdminDto) {
+  async createAdmin(registerAdminDto: RegisterAdminRequestDto) {
     let { loginId, password } = registerAdminDto;
 
     const existingAdmin = await this.adminRepository.findOne({

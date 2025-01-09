@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { RssRegisterDto } from '../../../src/rss/dto/rss-register.dto';
+import { RssRegisterRequestDto } from '../../../src/rss/dto/request/rss-register.dto';
 import * as request from 'supertest';
 import { Repository } from 'typeorm';
 import { Rss, RssAccept } from '../../../src/rss/entity/rss.entity';
@@ -28,7 +28,9 @@ describe('/api/rss E2E Test', () => {
   describe('POST /api/rss E2E Test', () => {
     it('정상적인 요청이 들어왔다면 올바른 응답을 한다.', async () => {
       // given
-      const requestDto = RssRegisterDto.from(RssFixture.createRssFixture());
+      const requestDto = RssRegisterRequestDto.from(
+        RssFixture.createRssFixture(),
+      );
 
       // when
       const response = await request(app.getHttpServer())
@@ -41,7 +43,9 @@ describe('/api/rss E2E Test', () => {
 
     it('이미 신청한 RSS를 또 신청한다면 거부를 한다.', async () => {
       // given
-      const requestDto = RssRegisterDto.from(RssFixture.createRssFixture());
+      const requestDto = RssRegisterRequestDto.from(
+        RssFixture.createRssFixture(),
+      );
       await request(app.getHttpServer()).post('/api/rss').send(requestDto);
 
       // when
@@ -58,7 +62,7 @@ describe('/api/rss E2E Test', () => {
       const acceptedRss = await rssAcceptRepository.save(
         RssAcceptFixture.createRssAcceptFixture(),
       );
-      const rssRegisterDto = RssRegisterDto.from(acceptedRss);
+      const rssRegisterDto = RssRegisterRequestDto.from(acceptedRss);
 
       // when
       const response = await request(app.getHttpServer())

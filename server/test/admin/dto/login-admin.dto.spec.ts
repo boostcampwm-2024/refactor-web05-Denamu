@@ -1,11 +1,11 @@
-import { LoginAdminDto } from '../../../src/admin/dto/login-admin.dto';
+import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
 import { validate } from 'class-validator';
 
 describe('LoginAdminDto Test', () => {
-  let loginAdminDto: LoginAdminDto;
+  let loginAdminDto: LoginAdminRequestDto;
 
   beforeEach(() => {
-    loginAdminDto = new LoginAdminDto();
+    loginAdminDto = new LoginAdminRequestDto();
   });
 
   it('ID에 null이 입력되면 유효성 검사에 실패한다.', async () => {

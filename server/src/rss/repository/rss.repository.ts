@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Rss, RssAccept, RssReject } from '../entity/rss.entity';
-import { RssRegisterDto } from '../dto/rss-register.dto';
+import { RssRegisterRequestDto } from '../dto/request/rss-register.dto';
 
 @Injectable()
 export class RssRepository extends Repository<Rss> {
@@ -9,7 +9,7 @@ export class RssRepository extends Repository<Rss> {
     super(Rss, dataSource.createEntityManager());
   }
 
-  async insertNewRss(rssRegisterDto: RssRegisterDto) {
+  async insertNewRss(rssRegisterDto: RssRegisterRequestDto) {
     const { blog, name, email, rssUrl } = rssRegisterDto;
     const rssObj = this.create({
       name: blog,
@@ -36,7 +36,7 @@ export class RssAcceptRepository extends Repository<RssAccept> {
 
   countByBlogPlatform() {
     return this.createQueryBuilder()
-      .select(['blog_platform as platform'])
+      .select('blog_platform', 'platform')
       .addSelect('COUNT(blog_platform)', 'count')
       .groupBy('blog_platform')
       .orderBy('count', 'DESC')

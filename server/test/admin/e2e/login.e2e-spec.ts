@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { AdminService } from '../../../src/admin/service/admin.service';
-import { LoginAdminDto } from '../../../src/admin/dto/login-admin.dto';
+import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
 import * as request from 'supertest';
-import { RegisterAdminDto } from '../../../src/admin/dto/register-admin.dto';
+import { RegisterAdminRequestDto } from '../../../src/admin/dto/request/register-admin.dto';
 describe('POST api/admin/login E2E Test', () => {
   let app: INestApplication;
   let adminService: AdminService;
-  const registerAdminDto: RegisterAdminDto = {
+  const registerAdminDto: RegisterAdminRequestDto = {
     loginId: 'testAdminId',
     password: 'testAdminPassword!',
   };
@@ -18,7 +18,7 @@ describe('POST api/admin/login E2E Test', () => {
   });
   it('등록된 계정이면 정상적으로 로그인할 수 있다.', async () => {
     //given
-    const loginAdminDto: LoginAdminDto = {
+    const loginAdminDto: LoginAdminRequestDto = {
       loginId: 'testAdminId',
       password: 'testAdminPassword!',
     };
@@ -35,7 +35,7 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('등록되지 않은 ID로 로그인을 시도하면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminIdDto: LoginAdminDto = {
+    const loginWrongAdminIdDto: LoginAdminRequestDto = {
       loginId: 'testWrongAdminId',
       password: 'testAdminPassword!',
     };
@@ -51,7 +51,7 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('비밀번호가 다르다면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminPasswordDto: LoginAdminDto = {
+    const loginWrongAdminPasswordDto: LoginAdminRequestDto = {
       loginId: 'testAdminId',
       password: 'testWrongAdminPassword!',
     };

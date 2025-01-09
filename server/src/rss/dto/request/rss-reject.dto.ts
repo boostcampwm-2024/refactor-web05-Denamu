@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class RejectRssDto {
+export class RejectRssRequestDto {
   @ApiProperty({
     example: '거부 사유',
     description: '거부 사유를 입력해주세요.',

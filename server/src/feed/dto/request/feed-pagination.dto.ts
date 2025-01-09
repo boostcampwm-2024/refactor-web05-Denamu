@@ -1,7 +1,7 @@
 import { IsInt, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class QueryFeedDto {
+export class FeedPaginationRequestDto {
   @IsOptional()
   @Min(0, { message: 'lastId 값은 0 이상이어야 합니다.' })
   @IsInt({
