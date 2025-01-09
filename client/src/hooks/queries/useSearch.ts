@@ -18,7 +18,7 @@ export const useSearch = ({ query, filter, page, pageSize }: SearchRequest) => {
     handler(query);
 
     return () => {
-      handler.cancel && handler.cancel();
+      if (handler.cancel) handler.cancel();
     };
   }, [query]);
 

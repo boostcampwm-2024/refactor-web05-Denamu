@@ -20,7 +20,7 @@ export default function BarChartItem({ data, title, description, color }: BarTyp
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         setComponentWidth(entry.contentRect.width);
       }
     });
