@@ -41,17 +41,15 @@ export class AdminService {
     const sessionId = uuid.v4();
 
     if (cookie) {
-      this.redisService.redisClient.del(`auth:${cookie}`);
+      this.redisService.del(`auth:${cookie}`);
     }
 
     let cursor = '0';
     let scanFlag = false;
     do {
-      const [newCursor, keys] = await this.redisService.redisClient.scan(
+      const [newCursor, keys] = await this.redisService.scan(
         cursor,
-        'MATCH',
         'auth:*',
-        'COUNT',
         100,
       );
 
@@ -61,12 +59,12 @@ export class AdminService {
         break;
       }
 
-      const values = await this.redisService.redisClient.mget(keys);
+      const values = await this.redisService.mget(...keys);
 
       for (let i = 0; i < keys.length; i++) {
         const sessionValue = values[i];
         if (sessionValue === loginId) {
-          await this.redisService.redisClient.del(keys[i]);
+          await this.redisService.del(keys[i]);
           scanFlag = true;
           break;
         }
@@ -76,7 +74,7 @@ export class AdminService {
       }
     } while (cursor !== '0');
 
-    this.redisService.redisClient.set(
+    this.redisService.set(
       `auth:${sessionId}`,
       admin.loginId,
       `EX`,
@@ -88,7 +86,7 @@ export class AdminService {
 
   async logoutAdmin(request: Request, response: Response) {
     const sid = request.cookies['sessionId'];
-    this.redisService.redisClient.del(`auth:${sid}`);
+    this.redisService.del(`auth:${sid}`);
     response.clearCookie('sessionId');
   }
 

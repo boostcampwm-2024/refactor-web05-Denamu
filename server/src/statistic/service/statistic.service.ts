@@ -17,7 +17,7 @@ export class StatisticService {
   ) {}
 
   async readTodayStatistic(limit: number) {
-    const ranking = await this.redisService.redisClient.zrevrange(
+    const ranking = await this.redisService.zrevrange(
       redisKeys.FEED_TREND_KEY,
       0,
       limit - 1,

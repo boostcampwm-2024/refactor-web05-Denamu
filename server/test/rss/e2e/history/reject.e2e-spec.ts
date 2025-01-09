@@ -17,7 +17,7 @@ describe('GET /api/rss/history/reject E2E Test', () => {
     }
     await Promise.all([
       rssRejectRepository.save(rssAccepts),
-      redisService.redisClient.sadd('auth:sid', 'test1234'),
+      redisService.sadd('auth:sid', 'test1234'),
     ]);
   });
 

@@ -26,7 +26,7 @@ describe('Rss Reject E2E Test', () => {
   beforeEach(async () => {
     await Promise.all([
       rssRepository.delete({}),
-      redisService.redisClient.set('auth:sid', 'test_admin'),
+      redisService.set('auth:sid', 'test_admin'),
     ]);
   });
 

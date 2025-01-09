@@ -18,7 +18,7 @@ describe('GET /api/statistic/today E2E Test', () => {
     const redisService = app.get(RedisService);
     const [blog] = await Promise.all([
       rssAcceptRepository.save(RssAcceptFixture.createRssAcceptFixture()),
-      redisService.redisClient.zadd(redisKeys.FEED_TREND_KEY, 5, '1', 4, '2'),
+      redisService.zadd(redisKeys.FEED_TREND_KEY, 5, '1', 4, '2'),
     ]);
     const feeds: Feed[] = [];
     for (let i = 1; i <= 2; i++) {

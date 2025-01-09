@@ -60,7 +60,7 @@ export class FeedService {
 
   private async checkNewFeeds(feedList: FeedView[]) {
     const newFeedIds = (
-      await this.redisService.redisClient.keys(redisKeys.FEED_RECENT_ALL_KEY)
+      await this.redisService.keys(redisKeys.FEED_RECENT_ALL_KEY)
     ).map((key) => {
       const id = key.match(/feed:recent:(\d+)/);
       return parseInt(id[1]);
@@ -75,7 +75,7 @@ export class FeedService {
   }
 
   async readTrendFeedList() {
-    const trendFeedIdList = await this.redisService.redisClient.lrange(
+    const trendFeedIdList = await this.redisService.lrange(
       redisKeys.FEED_ORIGIN_TREND_KEY,
       0,
       -1,
@@ -134,11 +134,10 @@ export class FeedService {
     const cookie = request.headers.cookie;
     const ip = this.getIp(request);
     if (ip && this.isString(ip)) {
-      const redis = this.redisService.redisClient;
       const [feed, hasCookie, hasIpFlag] = await Promise.all([
         this.feedRepository.findOne({ where: { id: feedId } }),
         Boolean(cookie?.includes(`View_count_${feedId}=${feedId}`)),
-        redis.sismember(`feed:${feedId}:ip`, ip),
+        this.redisService.sismember(`feed:${feedId}:ip`, ip),
       ]);
 
       if (!feed) {
@@ -154,11 +153,15 @@ export class FeedService {
       }
 
       await Promise.all([
-        redis.sadd(`feed:${feedId}:ip`, ip),
+        this.redisService.sadd(`feed:${feedId}:ip`, ip),
         this.feedRepository.update(feedId, {
           viewCount: () => 'view_count + 1',
         }),
-        redis.zincrby(redisKeys.FEED_TREND_KEY, 1, feedId.toString()),
+        this.redisService.zincrby(
+          redisKeys.FEED_TREND_KEY,
+          1,
+          feedId.toString(),
+        ),
       ]);
     }
   }
@@ -184,26 +187,23 @@ export class FeedService {
   }
 
   async readRecentFeedList() {
-    const redis = this.redisService.redisClient;
-    const recentKeys = await redis.keys(redisKeys.FEED_RECENT_ALL_KEY);
+    const recentKeys = await this.redisService.keys(
+      redisKeys.FEED_RECENT_ALL_KEY,
+    );
 
     if (!recentKeys.length) {
       return [];
     }
 
-    let recentFeedList: FeedRecentRedis[] = [];
-    const pipeLine = redis.pipeline();
-    for (const key of recentKeys) {
-      pipeLine.hgetall(key);
-    }
-    const result = await pipeLine.exec();
-
-    recentFeedList.push(
-      ...result.map(([, feed]: [any, FeedRecentRedis]) => {
-        feed.isNew = true;
-        return feed;
-      }),
-    );
+    const result = await this.redisService.executePipeline((pipeline) => {
+      for (const key of recentKeys) {
+        pipeline.hgetall(key);
+      }
+    });
+    
+    let recentFeedList: FeedPaginationResult[] = result.map(([, feed]:[any, FeedRecentRedis]) => {
+      return { ...feed, isNew: true };
+    });
 
     recentFeedList = recentFeedList.sort((currentFeed, nextFeed) => {
       const dateCurrent = new Date(currentFeed.createdAt);
