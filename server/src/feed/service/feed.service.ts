@@ -89,7 +89,7 @@ export class FeedService {
       trendFeeds.filter((feed) => feed !== null),
     );
   }
-  
+
   async searchFeedList(searchFeedReq: SearchFeedRequestDto) {
     const { find, page, limit, type } = searchFeedReq;
     const offset = (page - 1) * limit;
@@ -200,10 +200,12 @@ export class FeedService {
         pipeline.hgetall(key);
       }
     });
-    
-    let recentFeedList: FeedPaginationResult[] = result.map(([, feed]:[any, FeedRecentRedis]) => {
-      return { ...feed, isNew: true };
-    });
+
+    let recentFeedList: FeedRecentRedis[] = result.map(
+      ([, feed]: [any, FeedRecentRedis]) => {
+        return { ...feed, isNew: true };
+      },
+    );
 
     recentFeedList = recentFeedList.sort((currentFeed, nextFeed) => {
       const dateCurrent = new Date(currentFeed.createdAt);
