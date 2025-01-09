@@ -29,9 +29,8 @@ export default function AdminLogin({ setLogin }: { setLogin: () => void }) {
     setLogin();
   };
 
-  const onError = (error: any) => {
+  const onError = () => {
     setLoginError(true);
-    console.log(error);
   };
   const { mutate } = useAdminAuth(onSuccess, onError);
 
