@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 
-export const AdminNavigationMenu = ({ handleTap }: { handleTap: (tap: "RSS" | "MEMBER") => void }) => {
+export const TAB_TYPES = {
+  RSS: "RSS",
+  MEMBER: "MEMBER",
+} as const;
+
+type TabType = (typeof TAB_TYPES)[keyof typeof TAB_TYPES];
+
+export const AdminNavigationMenu = ({ handleTap }: { handleTap: (tabType: TabType) => void }) => {
   return (
     <NavigationMenu>
       <NavigationMenuList>

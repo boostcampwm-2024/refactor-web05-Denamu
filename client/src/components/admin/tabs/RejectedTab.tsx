@@ -7,7 +7,7 @@ interface RejectedTabProps {
   data: AdminRssData[];
 }
 
-export default function RejectedTab({ data }: Readonly<RejectedTabProps>) {
+export default function RejectedTab({ data }: RejectedTabProps) {
   return (
     <TabsContent value="rejected" className="space-y-4 mt-4">
       {data.map((request) => (

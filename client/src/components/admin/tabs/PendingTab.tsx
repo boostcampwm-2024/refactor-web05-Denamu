@@ -8,7 +8,7 @@ interface PendingTabProps {
   onApprove: (request: AdminRssData) => void;
   onReject: (request: AdminRssData) => void;
 }
-export default function PendingTab({ data, onApprove, onReject }: Readonly<PendingTabProps>) {
+export default function PendingTab({ data, onApprove, onReject }: PendingTabProps) {
   return (
     <TabsContent value="pending" className="space-y-4 mt-4">
       {data.map((request) => (

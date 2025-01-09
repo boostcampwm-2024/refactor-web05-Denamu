@@ -8,7 +8,7 @@ interface RssResponseCardProps {
 
 export const RssResponseCard = ({ request }: RssResponseCardProps) => {
   return (
-    <Card key={request.id}>
+    <Card>
       <CardContent className="flex justify-between p-6">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">{request.name}</h3>

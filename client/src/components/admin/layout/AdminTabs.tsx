@@ -4,9 +4,9 @@ import { AxiosError } from "axios";
 import { TriangleAlert } from "lucide-react";
 
 import { RejectModal } from "@/components/admin/rss/RejectModal";
-import AcceptedTab from "@/components/admin/taps/AcceptedTap";
-import PendingTab from "@/components/admin/taps/PendingTap";
-import RejectedTab from "@/components/admin/taps/RejectedTap";
+import AcceptedTab from "@/components/admin/tabs/AcceptedTab";
+import PendingTab from "@/components/admin/tabs/PendingTab";
+import RejectedTab from "@/components/admin/tabs/RejectedTab";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

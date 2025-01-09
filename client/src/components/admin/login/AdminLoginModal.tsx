@@ -16,7 +16,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useKeyboardShortcut } from "@/hooks/common/useKeyboardShortcut";
 import { useAdminAuth } from "@/hooks/queries/useAdminAuth";
 
-export default function AdminLogin({ setLogin }: Readonly<{ setLogin: () => void }>) {
+export default function AdminLogin({ setLogin }: { setLogin: () => void }) {
   const [loginData, setLoginData] = useState<{ loginId: string; password: string }>({ loginId: "", password: "" });
   const [loginError, setLoginError] = useState<boolean>(false);
   const handleChange = (field: "loginId" | "password", value: string) => {
@@ -29,9 +29,8 @@ export default function AdminLogin({ setLogin }: Readonly<{ setLogin: () => void
     setLogin();
   };
 
-  const onError = (error: Error) => {
+  const onError = () => {
     setLoginError(true);
-    console.log(error);
   };
   const { mutate } = useAdminAuth(onSuccess, onError);
 
