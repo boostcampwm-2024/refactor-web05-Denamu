@@ -8,7 +8,7 @@ interface ViewResponse {
 
 export const view = {
   increment: async (feedId: number): Promise<ViewResponse> => {
-    const response = await axiosInstance.post(`${BLOG.POST.VIEW}/${feedId}`);
+    const response = await axiosInstance.post(`${BLOG.POST}/${feedId}`);
     return response.data;
   },
 };

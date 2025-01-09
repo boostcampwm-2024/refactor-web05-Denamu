@@ -14,7 +14,7 @@ export const chart = {
     const response = await axiosInstance.get<ChartResponse>(CHART.ALL);
     return response.data;
   },
-  //금일 조회수
+  //등록된 플렛폼 개수
   getPlatform: async (): Promise<ChartPlatforms> => {
     const response = await axiosInstance.get<ChartPlatforms>(CHART.PLATFORM);
     return response.data;

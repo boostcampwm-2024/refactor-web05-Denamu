@@ -5,7 +5,7 @@ import { InfiniteScrollResponse, LatestPostsApiResponse, Post } from "@/types/po
 
 export const posts = {
   latest: async (params: { limit: number; lastId: number }): Promise<InfiniteScrollResponse<Post>> => {
-    const response = await axiosInstance.get<LatestPostsApiResponse>(BLOG.POST.GET_POST, {
+    const response = await axiosInstance.get<LatestPostsApiResponse>(BLOG.POST, {
       params: {
         limit: params.limit,
         lastId: params.lastId || 0,

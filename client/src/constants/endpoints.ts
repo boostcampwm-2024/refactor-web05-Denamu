@@ -16,10 +16,7 @@ export const ADMIN = {
   },
 };
 export const BLOG = {
-  POST: {
-    GET_POST: "/api/feed",
-    VIEW: "/api/feed",
-  },
+  POST: "/api/feed",
   RSS: {
     REGISTRER_RSS: "/api/rss",
   },
