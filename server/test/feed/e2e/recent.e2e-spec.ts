@@ -33,10 +33,10 @@ describe('GET /api/feed/recent E2E Test', () => {
     }
     const redisService = app.get(RedisService);
     const feeds = await feedRepository.save(feedList);
-    const pipeLine = redisService.redisClient.pipeline();
-    pipeLine.hset(`feed:recent:${feeds[0].id}`, feeds[0]);
-    pipeLine.hset(`feed:recent:${feeds[1].id}`, feeds[1]);
-    await pipeLine.exec();
+    await redisService.executePipeline((pipeline) => {
+      pipeline.hset(`feed:recent:${feeds[0].id}`, feeds[0]);
+      pipeline.hset(`feed:recent:${feeds[1].id}`, feeds[1]);
+    });
 
     //when
     const response = await request(app.getHttpServer()).get('/api/feed/recent');
@@ -49,7 +49,7 @@ describe('GET /api/feed/recent E2E Test', () => {
   it('최신 피드가 없다면 빈 배열을 반환한다.', async () => {
     //given
     const redisService = app.get(RedisService);
-    redisService.redisClient.flushdb();
+    redisService.flushdb();
 
     //when
     const response = await request(app.getHttpServer()).get('/api/feed/recent');

@@ -1,12 +1,14 @@
-import Redis from "ioredis";
+import Redis, { ChainableCommander } from "ioredis";
 import logger from "../common/logger";
 import * as dotenv from "dotenv";
+import { injectable } from "tsyringe";
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
 });
 
-class RedisConnection {
+@injectable()
+export class RedisConnection {
   private redis: Redis;
   private nameTag: string;
 
@@ -31,15 +33,43 @@ class RedisConnection {
         logger.error(
           `${this.nameTag} connection quit 중 오류 발생
           에러 메시지: ${error.message}
-          스택 트레이스: ${error.stack}`
+          스택 트레이스: ${error.stack}`,
         );
       }
     }
   }
 
-  get command() {
-    return this.redis;
+  async del(...keys: string[]): Promise<number> {
+    return this.redis.del(...keys);
+  }
+
+  async scan(
+    cursor: string | number,
+    match?: string,
+    count?: number,
+  ): Promise<[cursor: string, keys: string[]]> {
+    const result = await this.redis.scan(
+      cursor,
+      "MATCH",
+      match || "*",
+      "COUNT",
+      count || 10,
+    );
+    return [result[0], result[1]];
+  }
+
+  async executePipeline(commands: (pipeline: ChainableCommander) => void) {
+    const pipeline = this.redis.pipeline();
+    try {
+      commands(pipeline);
+      return pipeline.exec();
+    } catch (error) {
+      logger.error(
+        `${this.nameTag} 파이프라인 실행 중 오류 발생:
+        메시지: ${error.message}
+        스택 트레이스: ${error.stack}`,
+      );
+      throw error;
+    }
   }
 }
-
-export const redisConnection = new RedisConnection();
