@@ -88,8 +88,10 @@ export class FeedController {
     new ValidationPipe(),
   )
   async searchFeedList(@Query() searchFeedReq: SearchFeedRequestDto) {
-    const data = await this.feedService.searchFeedList(searchFeedReq);
-    return ApiResponse.responseWithData('검색 결과 조회 완료', data);
+    return ApiResponse.responseWithData(
+      '검색 결과 조회 완료',
+      await this.feedService.searchFeedList(searchFeedReq),
+    );
   }
 
   @ApiUpdateFeedViewCount()
