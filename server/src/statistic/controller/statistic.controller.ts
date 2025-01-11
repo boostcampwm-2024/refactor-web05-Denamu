@@ -19,11 +19,7 @@ export class StatisticController {
 
   @ApiStatistic('today')
   @Get('today')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  )
+  @UsePipes(new ValidationPipe({ transform: true }))
   async readTodayStatistic(@Query() queryObj: StatisticRequestDto) {
     return ApiResponse.responseWithData(
       '금일 조회수 통계 조회 완료',
@@ -33,11 +29,7 @@ export class StatisticController {
 
   @ApiStatistic('all')
   @Get('all')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  )
+  @UsePipes(new ValidationPipe({ transform: true }))
   async readAllStatistic(@Query() queryObj: StatisticRequestDto) {
     return ApiResponse.responseWithData(
       '전체 조회수 통계 조회 완료',

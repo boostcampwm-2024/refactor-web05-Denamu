@@ -72,7 +72,6 @@ export class AdminController {
   @Get('/sessionId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(CookieAuthGuard)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async readSessionIdAdmin() {
     return ApiResponse.responseWithNoContent('정상적인 sessionId 입니다.');
   }

@@ -39,11 +39,7 @@ export class FeedController {
   @ApiReadFeedPagination()
   @Get('')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  )
+  @UsePipes(new ValidationPipe({ transform: true }))
   async readFeedPagination(@Query() queryFeedDto: FeedPaginationRequestDto) {
     return ApiResponse.responseWithData(
       '피드 조회 완료',
@@ -82,12 +78,7 @@ export class FeedController {
   @ApiSearchFeedList()
   @Get('search')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-    new ValidationPipe(),
-  )
+  @UsePipes(new ValidationPipe({ transform: true }))
   async searchFeedList(@Query() searchFeedReq: SearchFeedRequestDto) {
     return ApiResponse.responseWithData(
       '검색 결과 조회 완료',
