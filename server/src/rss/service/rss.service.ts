@@ -69,20 +69,20 @@ export class RssService {
 
     const blogPlatform = this.identifyPlatformFromRssUrl(rss.rssUrl);
 
-    const [newRssAccept, feeds] = await this.dataSource.transaction(
+    const [rssAccept, feeds] = await this.dataSource.transaction(
       async (manager) => {
-        const [newRssAccept] = await Promise.all([
+        const [rssAccept] = await Promise.all([
           manager.save(RssAccept.fromRss(rss, blogPlatform)),
           manager.delete(Rss, id),
         ]);
         const feeds = await this.feedCrawlerService.loadRssFeeds(
-          newRssAccept.rssUrl,
+          rssAccept.rssUrl,
         );
-        return [newRssAccept, feeds];
+        return [rssAccept, feeds];
       },
     );
-    await this.feedCrawlerService.saveRssFeeds(feeds, newRssAccept);
-    this.emailService.sendMail(newRssAccept, true);
+    await this.feedCrawlerService.saveRssFeeds(feeds, rssAccept);
+    this.emailService.sendMail(rssAccept, true);
   }
 
   async rejectRss(id: number, description: string) {
@@ -94,17 +94,17 @@ export class RssService {
       throw new NotFoundException('존재하지 않는 rss 입니다.');
     }
 
-    const result = await this.dataSource.transaction(async (manager) => {
-      const [transactionResult] = await Promise.all([
+    const rejectRss = await this.dataSource.transaction(async (manager) => {
+      const [rejectRss] = await Promise.all([
         manager.remove(rss),
         manager.save(RssReject, {
           ...rss,
           description,
         }),
       ]);
-      return transactionResult;
+      return rejectRss;
     });
-    this.emailService.sendMail(result, false, description);
+    this.emailService.sendMail(rejectRss, false, description);
   }
 
   async readAcceptHistory() {

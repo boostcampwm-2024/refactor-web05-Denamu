@@ -46,8 +46,12 @@ export class FeedService {
     if (hasMore) feedList.pop();
     const lastId = this.getLastIdFromFeedList(feedList);
     const newCheckFeedList = await this.checkNewFeeds(feedList);
-    const result = FeedResult.toResultDtoArray(newCheckFeedList);
-    return FeedPaginationResponseDto.toResponseDto(result, lastId, hasMore);
+    const feedPagination = FeedResult.toResultDtoArray(newCheckFeedList);
+    return FeedPaginationResponseDto.toResponseDto(
+      feedPagination,
+      lastId,
+      hasMore,
+    );
   }
 
   private existNextFeed(feedList: FeedView[], limit: number) {
@@ -62,8 +66,8 @@ export class FeedService {
     const newFeedIds = (
       await this.redisService.keys(redisKeys.FEED_RECENT_ALL_KEY)
     ).map((key) => {
-      const id = key.match(/feed:recent:(\d+)/);
-      return parseInt(id[1]);
+      const feedId = key.match(/feed:recent:(\d+)/);
+      return parseInt(feedId[1]);
     });
 
     return feedList.map((feed): FeedPaginationResult => {
@@ -98,14 +102,14 @@ export class FeedService {
       throw new BadRequestException('검색 타입이 잘못되었습니다.');
     }
 
-    const [result, totalCount] = await this.feedRepository.searchFeedList(
+    const [searchResult, totalCount] = await this.feedRepository.searchFeedList(
       find,
       limit,
       type,
       offset,
     );
 
-    const feeds = SearchFeedResult.toResultDtoArray(result);
+    const feeds = SearchFeedResult.toResultDtoArray(searchResult);
     const totalPages = Math.ceil(totalCount / limit);
 
     return SearchFeedResponseDto.toResponseDto(
@@ -195,13 +199,13 @@ export class FeedService {
       return [];
     }
 
-    const result = await this.redisService.executePipeline((pipeline) => {
+    const recentFeeds = await this.redisService.executePipeline((pipeline) => {
       for (const key of recentKeys) {
         pipeline.hgetall(key);
       }
     });
 
-    let recentFeedList: FeedRecentRedis[] = result.map(
+    let recentFeedList: FeedRecentRedis[] = recentFeeds.map(
       ([, feed]: [any, FeedRecentRedis]) => {
         return { ...feed, isNew: true };
       },

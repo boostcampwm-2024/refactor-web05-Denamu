@@ -39,8 +39,12 @@ export class FeedPaginationResponseDto {
     private hasMore: boolean,
   ) {}
 
-  static toResponseDto(result: FeedResult[], lastId: number, hasMore: boolean) {
-    return new FeedPaginationResponseDto(result, lastId, hasMore);
+  static toResponseDto(
+    feedPagination: FeedResult[],
+    lastId: number,
+    hasMore: boolean,
+  ) {
+    return new FeedPaginationResponseDto(feedPagination, lastId, hasMore);
   }
 }
 
