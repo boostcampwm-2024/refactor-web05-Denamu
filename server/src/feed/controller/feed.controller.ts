@@ -26,6 +26,7 @@ import { ApiSearchFeedList } from '../api-docs/searchFeedList.api-docs';
 import { ApiUpdateFeedViewCount } from '../api-docs/updateFeedViewCount.api-docs';
 import { ApiReadRecentFeedList } from '../api-docs/readRecentFeedList.api-docs';
 import { FeedTrendResponseDto } from '../dto/response/feed-pagination.dto';
+import { FeedViewUpdateRequestDto } from '../dto/request/feed-update.dto';
 
 @ApiTags('Feed')
 @Controller('feed')
@@ -99,11 +100,15 @@ export class FeedController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateFeedViewCount(
-    @Param('feedId') feedId: number,
+    @Param() params: FeedViewUpdateRequestDto,
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    await this.feedService.updateFeedViewCount(feedId, request, response);
+    await this.feedService.updateFeedViewCount(
+      params.feedId,
+      request,
+      response,
+    );
     return ApiResponse.responseWithNoContent(
       '요청이 성공적으로 처리되었습니다.',
     );
