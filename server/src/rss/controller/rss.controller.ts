@@ -4,7 +4,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseIntPipe,
   Post,
   UsePipes,
   ValidationPipe,
@@ -53,8 +52,7 @@ export class RssController {
   @Post('accept/:id')
   @HttpCode(201)
   async acceptRss(@Param() params: RssManagementRequestDto) {
-    const { id } = params;
-    await this.rssService.acceptRss(id);
+    await this.rssService.acceptRss(params.id);
     return ApiResponse.responseWithNoContent('승인이 완료되었습니다.');
   }
 
@@ -67,8 +65,7 @@ export class RssController {
     @Body() body: RejectRssRequestDto,
     @Param() params: RssManagementRequestDto,
   ) {
-    const { id } = params;
-    await this.rssService.rejectRss(id, body.description);
+    await this.rssService.rejectRss(params.id, body.description);
     return ApiResponse.responseWithNoContent('거절이 완료되었습니다.');
   }
 
