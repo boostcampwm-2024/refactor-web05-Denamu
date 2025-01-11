@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginAdminRequestDto {
   @ApiProperty({
-    example: 'minseokjo',
+    example: 'test',
     description: '관리자 로그인 아이디를 입력해주세요.',
   })
   @IsNotEmpty({
@@ -15,7 +15,7 @@ export class LoginAdminRequestDto {
   loginId: string;
 
   @ApiProperty({
-    example: 'heisgoat123!',
+    example: 'test1234!',
     description: '패스워드를 입력해주세요.',
   })
   @IsNotEmpty({

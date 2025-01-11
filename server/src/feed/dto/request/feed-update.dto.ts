@@ -4,7 +4,7 @@ import { IsInt } from 'class-validator';
 
 export class FeedViewUpdateRequestDto {
   @ApiProperty({
-    example: 10,
+    example: 1,
     description: '조회할 ID 입력',
   })
   @IsInt({

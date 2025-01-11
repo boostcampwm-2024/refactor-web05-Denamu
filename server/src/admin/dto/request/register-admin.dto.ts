@@ -5,7 +5,7 @@ const PASSWORD_REG = /^(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]+$/;
 
 export class RegisterAdminRequestDto {
   @ApiProperty({
-    example: 'minseokjo',
+    example: 'test',
     description: '관리자 로그인 아이디를 입력해주세요.',
   })
   @IsString({
@@ -17,7 +17,7 @@ export class RegisterAdminRequestDto {
   loginId: string;
 
   @ApiProperty({
-    example: 'heisgoat123!',
+    example: 'test1234!',
     description:
       '패스워드를 입력해주세요. (최소 6자, 영문/숫자/특수문자로 이루어질 수 있으며 특수문자 1개 이상 포함)',
   })
