@@ -5,8 +5,6 @@ import {
   HttpCode,
   Param,
   Post,
-  UsePipes,
-  ValidationPipe,
   UseGuards,
 } from '@nestjs/common';
 import { CookieAuthGuard } from '../../common/guard/auth.guard';
@@ -30,7 +28,6 @@ export class RssController {
 
   @ApiCreateRss()
   @Post()
-  @UsePipes(ValidationPipe)
   async createRss(@Body() rssRegisterDto: RssRegisterRequestDto) {
     await this.rssService.createRss(rssRegisterDto);
     return ApiResponse.responseWithNoContent('신청이 완료되었습니다.');
@@ -48,7 +45,6 @@ export class RssController {
 
   @ApiAcceptRss()
   @UseGuards(CookieAuthGuard)
-  @UsePipes(new ValidationPipe({ transform: true }))
   @Post('accept/:id')
   @HttpCode(201)
   async acceptRss(@Param() params: RssManagementRequestDto) {
@@ -57,7 +53,6 @@ export class RssController {
   }
 
   @ApiRejectRss()
-  @UsePipes(ValidationPipe)
   @UseGuards(CookieAuthGuard)
   @Post('reject/:id')
   @HttpCode(201)

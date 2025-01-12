@@ -11,8 +11,6 @@ import {
   Req,
   Res,
   Sse,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { FeedService } from '../service/feed.service';
 import { FeedPaginationRequestDto } from '../dto/request/feed-pagination.dto';
@@ -39,7 +37,6 @@ export class FeedController {
   @ApiReadFeedPagination()
   @Get('')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async readFeedPagination(@Query() queryFeedDto: FeedPaginationRequestDto) {
     return ApiResponse.responseWithData(
       '피드 조회 완료',
@@ -78,7 +75,6 @@ export class FeedController {
   @ApiSearchFeedList()
   @Get('search')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async searchFeedList(@Query() searchFeedReq: SearchFeedRequestDto) {
     return ApiResponse.responseWithData(
       '검색 결과 조회 완료',
@@ -89,7 +85,6 @@ export class FeedController {
   @ApiUpdateFeedViewCount()
   @Post('/:feedId')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async updateFeedViewCount(
     @Param() params: FeedViewUpdateRequestDto,
     @Req() request: Request,

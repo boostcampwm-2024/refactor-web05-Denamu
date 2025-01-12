@@ -1,5 +1,5 @@
-import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { WinstonLoggerService } from '../src/common/logger/logger.service';
 import { InternalExceptionsFilter } from '../src/common/filters/internal-exceptions.filter';
@@ -20,6 +20,7 @@ beforeAll(async () => {
     new InternalExceptionsFilter(logger),
     new HttpExceptionsFilter(),
   );
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.init();
   global.testApp = app;
 });

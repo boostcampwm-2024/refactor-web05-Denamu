@@ -8,8 +8,6 @@ import {
   Req,
   Res,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AdminService } from '../service/admin.service';
@@ -31,7 +29,6 @@ export class AdminController {
   @ApiLoginAdmin()
   @Post('/login')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ValidationPipe)
   async loginAdmin(
     @Body() loginAdminDto: LoginAdminRequestDto,
     @Res({ passthrough: true }) response: Response,
@@ -60,7 +57,6 @@ export class AdminController {
   @ApiCreateAdmin()
   @UseGuards(CookieAuthGuard)
   @Post('/register')
-  @UsePipes(ValidationPipe)
   async createAdmin(@Body() registerAdminDto: RegisterAdminRequestDto) {
     await this.adminService.createAdmin(registerAdminDto);
     return ApiResponse.responseWithNoContent(
