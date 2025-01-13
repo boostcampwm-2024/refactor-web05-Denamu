@@ -67,8 +67,7 @@ export class FeedViewRepository extends Repository<FeedView> {
     super(FeedView, dataSource.createEntityManager());
   }
 
-  async findFeedPagination(queryFeedDto: FeedPaginationRequestDto) {
-    const { lastId, limit } = queryFeedDto;
+  async findFeedPagination(lastId: number, limit: number) {
     const query = this.createQueryBuilder()
       .where((qb) => {
         if (lastId) {
