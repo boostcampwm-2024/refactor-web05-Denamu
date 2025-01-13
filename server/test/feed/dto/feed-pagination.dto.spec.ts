@@ -2,19 +2,14 @@ import { validate } from 'class-validator';
 import { FeedPaginationRequestDto } from '../../../src/feed/dto/request/feed-pagination.dto';
 
 describe('FeedPaginationRequestDto Test', () => {
-  //given
-  let queryFeedDto: FeedPaginationRequestDto;
-
-  beforeEach(() => {
-    queryFeedDto = new FeedPaginationRequestDto();
-  });
-
   it('limit에 1보다 작은 값을 입력하면 유효성 검사에 실패한다.', async () => {
     //given
-    queryFeedDto.limit = -1;
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: -1,
+    });
 
     //when
-    const errors = await validate(queryFeedDto);
+    const errors = await validate(feedPaginationQueryDto);
 
     //then
     expect(errors).toHaveLength(1);
@@ -23,10 +18,12 @@ describe('FeedPaginationRequestDto Test', () => {
 
   it('limit에 자연수가 아닌 실수를 입력하면 유효성 검사에 실패한다.', async () => {
     //given
-    queryFeedDto.limit = 1.254;
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: 1.254,
+    });
 
     //when
-    const errors = await validate(queryFeedDto);
+    const errors = await validate(feedPaginationQueryDto);
 
     //then
     expect(errors).toHaveLength(1);
@@ -35,10 +32,12 @@ describe('FeedPaginationRequestDto Test', () => {
 
   it('limit에 문자열을 입력하면 유효성 검사에 실패한다.', async () => {
     //given
-    queryFeedDto.limit = 'abcdefg' as any;
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: 'abcdefg' as any,
+    });
 
     //when
-    const errors = await validate(queryFeedDto);
+    const errors = await validate(feedPaginationQueryDto);
 
     //then
     expect(errors).toHaveLength(1);
@@ -47,10 +46,12 @@ describe('FeedPaginationRequestDto Test', () => {
 
   it('lastId에 음수를 입력하면 유효성 검사에 실패한다.', async () => {
     //given
-    queryFeedDto.lastId = -1;
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      lastId: -1,
+    });
 
     //when
-    const errors = await validate(queryFeedDto);
+    const errors = await validate(feedPaginationQueryDto);
 
     //then
     expect(errors).toHaveLength(1);
@@ -59,10 +60,12 @@ describe('FeedPaginationRequestDto Test', () => {
 
   it('lastId에 자연수가 아닌 실수를 입력하면 유효성 검사에 실패한다.', async () => {
     //given
-    queryFeedDto.lastId = 1.254;
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      lastId: 1.254,
+    });
 
     //when
-    const errors = await validate(queryFeedDto);
+    const errors = await validate(feedPaginationQueryDto);
 
     //then
     expect(errors).toHaveLength(1);
@@ -71,10 +74,12 @@ describe('FeedPaginationRequestDto Test', () => {
 
   it('lastId에 문자열을 입력하면 유효성 검사에 실패한다.', async () => {
     //given
-    queryFeedDto.lastId = 'abcdefg' as any;
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      lastId: 'abcdefg' as any,
+    });
 
     //when
-    const errors = await validate(queryFeedDto);
+    const errors = await validate(feedPaginationQueryDto);
 
     //then
     expect(errors).toHaveLength(1);
