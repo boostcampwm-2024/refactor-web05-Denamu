@@ -36,8 +36,7 @@ export class RegisterAdminRequestDto {
 
   toEntity() {
     const admin = new Admin();
-    admin.loginId = this.loginId;
-    admin.password = this.password;
+    Object.assign(admin, this);
     return admin;
   }
 }
