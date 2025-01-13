@@ -16,7 +16,7 @@ export class RssRegisterRequestDto {
   blog: string;
 
   @ApiProperty({
-    example: 'J235_조민석',
+    example: 'test',
     description: '실명을 입력해주세요.',
   })
   @Length(2, 50, { message: '이름 길이가 올바르지 않습니다.' })
@@ -29,7 +29,7 @@ export class RssRegisterRequestDto {
   name: string;
 
   @ApiProperty({
-    example: 'seok3765@naver.com',
+    example: 'test@test.com',
     description: '이메일을 입력해주세요.',
   })
   @IsEmail(
@@ -44,7 +44,7 @@ export class RssRegisterRequestDto {
   email: string;
 
   @ApiProperty({
-    example: 'https://v2.velog.io/rss/@seok3765',
+    example: 'https://test.com/rss',
     description: 'RSS 주소를 입력해주세요.',
   })
   @IsUrl(

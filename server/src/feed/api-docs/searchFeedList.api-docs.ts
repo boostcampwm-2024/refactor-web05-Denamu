@@ -17,7 +17,7 @@ export function ApiSearchFeedList() {
       required: true,
       type: String,
       description: '검색어',
-      example: '데나무',
+      example: 'test',
     }),
     ApiQuery({
       name: 'type',
@@ -96,7 +96,7 @@ export function ApiSearchFeedList() {
             {
               id: 1,
               blogName: '블로그 이름',
-              title: '데나무',
+              title: 'test',
               path: 'https://test.com/1',
               createdAt: '2024-10-27T02:08:55.000Z',
             },

@@ -31,7 +31,7 @@ describe('GET /api/statistic/all E2E Test', () => {
 
     // then
     expect(response.status).toBe(200);
-    expect(response.body.data.map((item) => item.id)).toStrictEqual([2, 1]);
+    expect(response.body.data.map((feed) => feed.id)).toStrictEqual([2, 1]);
   });
   it('양수를 입력하면 제한된 개수의 통계 결과를 응답한다.', async () => {
     // when
@@ -41,6 +41,6 @@ describe('GET /api/statistic/all E2E Test', () => {
 
     // then
     expect(response.status).toBe(200);
-    expect(response.body.data.map((item) => item.id)).toStrictEqual([2]);
+    expect(response.body.data.map((feed) => feed.id)).toStrictEqual([2]);
   });
 });

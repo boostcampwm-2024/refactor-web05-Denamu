@@ -34,16 +34,16 @@ export class FeedRepository {
     const promiseResults = await Promise.all(insertPromises);
 
     const insertedFeeds = promiseResults
-      .map((result: any, index) => {
-        if (result) {
-          const insertId = result.insertId;
+      .map((feed: any, index) => {
+        if (feed) {
+          const insertId = feed.insertId;
           return {
             ...resultData[index],
             id: insertId,
           };
         }
       })
-      .filter((result) => result);
+      .filter((feed) => feed);
 
     logger.info(
       `[MySQL] ${insertedFeeds.length}개의 피드 데이터가 성공적으로 데이터베이스에 삽입되었습니다.`,

@@ -23,7 +23,7 @@ export class StatisticService {
       limit - 1,
       'WITHSCORES',
     );
-    const result: Partial<Feed>[] = [];
+    const todayFeedViews: Partial<Feed>[] = [];
 
     for (let i = 0; i < ranking.length; i += 2) {
       const feedId = parseInt(ranking[i]);
@@ -34,14 +34,14 @@ export class StatisticService {
         relations: ['blog'],
       });
 
-      result.push({
+      todayFeedViews.push({
         id: feedData.id,
         title: feedData.title,
         viewCount: score,
       });
     }
 
-    return StatisticTodayResponseDto.toResponseDtoArray(result);
+    return StatisticTodayResponseDto.toResponseDtoArray(todayFeedViews);
   }
 
   async readAllStatistic(limit: number) {

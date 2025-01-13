@@ -41,8 +41,8 @@ describe('SSE /api/trend/sse E2E Test', () => {
       es.onmessage = (event) => {
         try {
           const response = JSON.parse(event.data);
-          const data = response.data;
-          const idList = data.map((item) => item.id);
+          const feedList = response.data;
+          const idList = feedList.map((feed) => feed.id);
           es.close();
           resolve(idList);
         } catch (error) {
@@ -77,8 +77,8 @@ describe('SSE /api/trend/sse E2E Test', () => {
       es.onmessage = (event) => {
         try {
           const response = JSON.parse(event.data);
-          const data = response.data;
-          const idList = data.map((item) => item.id);
+          const feedList = response.data;
+          const idList = feedList.map((feed) => feed.id);
           es.close();
           resolve(idList);
         } catch (error) {

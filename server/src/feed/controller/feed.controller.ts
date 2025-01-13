@@ -11,8 +11,6 @@ import {
   Req,
   Res,
   Sse,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { FeedService } from '../service/feed.service';
 import { FeedPaginationRequestDto } from '../dto/request/feed-pagination.dto';
@@ -26,6 +24,7 @@ import { ApiSearchFeedList } from '../api-docs/searchFeedList.api-docs';
 import { ApiUpdateFeedViewCount } from '../api-docs/updateFeedViewCount.api-docs';
 import { ApiReadRecentFeedList } from '../api-docs/readRecentFeedList.api-docs';
 import { FeedTrendResponseDto } from '../dto/response/feed-pagination.dto';
+import { FeedViewUpdateRequestDto } from '../dto/request/feed-update.dto';
 
 @ApiTags('Feed')
 @Controller('feed')
@@ -38,11 +37,6 @@ export class FeedController {
   @ApiReadFeedPagination()
   @Get('')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  )
   async readFeedPagination(@Query() queryFeedDto: FeedPaginationRequestDto) {
     return ApiResponse.responseWithData(
       '피드 조회 완료',
@@ -81,27 +75,26 @@ export class FeedController {
   @ApiSearchFeedList()
   @Get('search')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-    new ValidationPipe(),
-  )
   async searchFeedList(@Query() searchFeedReq: SearchFeedRequestDto) {
-    const data = await this.feedService.searchFeedList(searchFeedReq);
-    return ApiResponse.responseWithData('검색 결과 조회 완료', data);
+    return ApiResponse.responseWithData(
+      '검색 결과 조회 완료',
+      await this.feedService.searchFeedList(searchFeedReq),
+    );
   }
 
   @ApiUpdateFeedViewCount()
   @Post('/:feedId')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async updateFeedViewCount(
-    @Param('feedId') feedId: number,
+    @Param() params: FeedViewUpdateRequestDto,
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    await this.feedService.updateFeedViewCount(feedId, request, response);
+    await this.feedService.updateFeedViewCount(
+      params.feedId,
+      request,
+      response,
+    );
     return ApiResponse.responseWithNoContent(
       '요청이 성공적으로 처리되었습니다.',
     );

@@ -43,6 +43,8 @@ describe('GET /api/rss/history/reject E2E Test', () => {
 
     // then
     expect(response.status).toBe(200);
-    expect(response.body.data.map((item) => item.id)).toStrictEqual([2, 1]);
+    expect(response.body.data.map((rejectRss) => rejectRss.id)).toStrictEqual([
+      2, 1,
+    ]);
   });
 });

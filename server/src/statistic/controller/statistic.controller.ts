@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { StatisticService } from '../service/statistic.service';
 import { ApiResponse } from '../../common/response/common.response';
 import { ApiTags } from '@nestjs/swagger';
@@ -19,32 +13,28 @@ export class StatisticController {
 
   @ApiStatistic('today')
   @Get('today')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  )
   async readTodayStatistic(@Query() queryObj: StatisticRequestDto) {
-    const data = await this.statisticService.readTodayStatistic(queryObj.limit);
-    return ApiResponse.responseWithData('금일 조회수 통계 조회 완료', data);
+    return ApiResponse.responseWithData(
+      '금일 조회수 통계 조회 완료',
+      await this.statisticService.readTodayStatistic(queryObj.limit),
+    );
   }
 
   @ApiStatistic('all')
   @Get('all')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  )
   async readAllStatistic(@Query() queryObj: StatisticRequestDto) {
-    const data = await this.statisticService.readAllStatistic(queryObj.limit);
-    return ApiResponse.responseWithData('전체 조회수 통계 조회 완료', data);
+    return ApiResponse.responseWithData(
+      '전체 조회수 통계 조회 완료',
+      await this.statisticService.readAllStatistic(queryObj.limit),
+    );
   }
 
   @ApiReadPlatformStatistic()
   @Get('platform')
   async readPlatformStatistic() {
-    const data = await this.statisticService.readPlatformStatistic();
-    return ApiResponse.responseWithData('블로그 플랫폼 통계 조회 완료', data);
+    return ApiResponse.responseWithData(
+      '블로그 플랫폼 통계 조회 완료',
+      await this.statisticService.readPlatformStatistic(),
+    );
   }
 }
