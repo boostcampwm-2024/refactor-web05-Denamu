@@ -50,7 +50,7 @@ export class RssService {
       );
     }
 
-    await this.rssRepository.insertNewRss(rssRegisterDto);
+    await this.rssRepository.insert(rssRegisterDto.toEntity());
   }
 
   async readAllRss() {

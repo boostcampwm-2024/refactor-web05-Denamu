@@ -8,17 +8,6 @@ export class RssRepository extends Repository<Rss> {
   constructor(private dataSource: DataSource) {
     super(Rss, dataSource.createEntityManager());
   }
-
-  async insertNewRss(rssRegisterDto: RssRegisterRequestDto) {
-    const { blog, name, email, rssUrl } = rssRegisterDto;
-    const rssObj = this.create({
-      name: blog,
-      userName: name,
-      email,
-      rssUrl,
-    });
-    await this.save(rssObj);
-  }
 }
 
 @Injectable()
