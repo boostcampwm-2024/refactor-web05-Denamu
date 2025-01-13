@@ -34,6 +34,10 @@ export class RegisterAdminRequestDto {
   })
   password: string;
 
+  constructor(partial: Partial<RegisterAdminRequestDto>) {
+    Object.assign(this, partial);
+  }
+
   toEntity() {
     const admin = new Admin();
     Object.assign(admin, this);

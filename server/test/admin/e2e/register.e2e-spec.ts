@@ -8,19 +8,21 @@ import { AdminRepository } from '../../../src/admin/repository/admin.repository'
 describe('POST api/admin/register E2E Test', () => {
   let app: INestApplication;
 
-  const loginAdminDto: LoginAdminRequestDto = {
-    loginId: 'test1234',
-    password: 'test1234!',
-  };
+  const loginAdminDto = new LoginAdminRequestDto(
+    AdminFixture.createAdminFixture(),
+  );
 
-  const newAdminDto = new RegisterAdminRequestDto();
-  newAdminDto.loginId = 'testNewAdminId';
-  newAdminDto.password = 'testNewAdminPassword!';
+  const newAdminDto = new RegisterAdminRequestDto(
+    AdminFixture.createAdminFixture({
+      loginId: 'testNewAdminId',
+      password: 'testNewAdminPassword!',
+    }),
+  );
 
   beforeAll(async () => {
     app = global.testApp;
     const adminRepository = app.get(AdminRepository);
-    await adminRepository.insert(await AdminFixture.createAdminFixture());
+    await adminRepository.insert(await AdminFixture.createAdminCryptFixture());
   });
 
   it('관리자가 로그인되어 있으면 다른 관리자 계정 회원가입을 할 수 있다.', async () => {

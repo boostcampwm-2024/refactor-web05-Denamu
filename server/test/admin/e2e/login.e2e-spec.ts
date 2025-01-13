@@ -1,23 +1,22 @@
+import { AdminFixture } from './../../fixture/admin.fixture';
 import { INestApplication } from '@nestjs/common';
 import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
 import * as request from 'supertest';
 import { AdminRepository } from '../../../src/admin/repository/admin.repository';
-import { AdminFixture } from '../../fixture/admin.fixture';
 describe('POST api/admin/login E2E Test', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     app = global.testApp;
     const adminRepository = app.get(AdminRepository);
-    await adminRepository.insert(await AdminFixture.createAdminFixture());
+    await adminRepository.insert(await AdminFixture.createAdminCryptFixture());
   });
 
   it('등록된 계정이면 정상적으로 로그인할 수 있다.', async () => {
     //given
-    const loginAdminDto: LoginAdminRequestDto = {
-      loginId: 'test1234',
-      password: 'test1234!',
-    };
+    const loginAdminDto = new LoginAdminRequestDto(
+      AdminFixture.createAdminFixture(),
+    );
 
     //when
     const response = await request(app.getHttpServer())
@@ -31,10 +30,9 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('등록되지 않은 ID로 로그인을 시도하면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminIdDto: LoginAdminRequestDto = {
-      loginId: 'testWrongAdminId',
-      password: 'test1234!',
-    };
+    const loginWrongAdminIdDto = new LoginAdminRequestDto(
+      AdminFixture.createAdminFixture({ loginId: 'testWrongAdminId' }),
+    );
 
     //when
     const response = await request(app.getHttpServer())
@@ -47,10 +45,11 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('비밀번호가 다르다면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminPasswordDto: LoginAdminRequestDto = {
-      loginId: 'test1234',
-      password: 'testWrongAdminPassword!',
-    };
+    const loginWrongAdminPasswordDto = new LoginAdminRequestDto(
+      AdminFixture.createAdminFixture({
+        password: 'testWrongAdminPassword!',
+      }),
+    );
 
     //when
     const response = await request(app.getHttpServer())
