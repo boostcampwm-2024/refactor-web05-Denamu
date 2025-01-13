@@ -43,9 +43,9 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="h-20 items-center overflow-hidden flex justify-between relative z-50">
           {/* 로고 영역 */}
-          <div className="flex-shrink-0 relative z-50">
-            <img className="h-14 w-auto cursor-pointer" src={logo} alt="Logo" onClick={() => location.reload()} />
-          </div>
+          <button className="flex-shrink-0 relative z-50" onClick={() => location.reload()}>
+            <img className="h-14 w-auto cursor-pointer" src={logo} alt="Logo" />
+          </button>
 
           {/* 중앙 검색 버튼 */}
           <div className="absolute left-1/2 transform -translate-x-1/2 w-full flex justify-center z-40">

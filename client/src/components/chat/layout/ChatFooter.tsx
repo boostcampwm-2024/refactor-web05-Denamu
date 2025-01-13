@@ -6,8 +6,7 @@ import { SheetFooter } from "@/components/ui/sheet";
 
 import { useKeyboardShortcut } from "@/hooks/common/useKeyboardShortcut";
 
-import { useChatValueStroe } from "@/store/useChatStore";
-import { useChatStore } from "@/store/useChatStore";
+import { useChatValueStroe, useChatStore } from "@/store/useChatStore";
 
 export default function ChatFooter() {
   const { message, setMessage } = useChatValueStroe();

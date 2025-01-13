@@ -1,6 +1,4 @@
-import { Home } from "lucide-react";
-import { ArrowUp } from "lucide-react";
-import { ChartArea } from "lucide-react";
+import { Home, ArrowUp, ChartArea } from "lucide-react";
 
 import { Chat } from "@/components/chat/Chat";
 import { OpenChat } from "@/components/chat/ChatButton";
