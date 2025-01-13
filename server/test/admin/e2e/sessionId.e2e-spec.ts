@@ -1,24 +1,22 @@
 import { INestApplication } from '@nestjs/common';
-import { AdminService } from '../../../src/admin/service/admin.service';
-import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
 import * as request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
+import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
+import { AdminRepository } from '../../../src/admin/repository/admin.repository';
+import { AdminFixture } from '../../fixture/admin.fixture';
 
 describe('GET api/admin/sessionId E2E Test', () => {
   let app: INestApplication;
-  let adminService: AdminService;
 
-  //given
   const loginAdminDto: LoginAdminRequestDto = {
-    loginId: 'testAdminId',
-    password: 'testAdminPassword!',
+    loginId: 'test1234',
+    password: 'test1234!',
   };
 
   beforeAll(async () => {
     app = global.testApp;
-    adminService = app.get(AdminService);
-
-    await adminService.createAdmin(loginAdminDto);
+    const adminRepository = app.get(AdminRepository);
+    await adminRepository.insert(await AdminFixture.createAdminFixture());
   });
 
   it('쿠키의 session id가 유효하다면 관리자를 로그인 상태로 취급한다.', async () => {
