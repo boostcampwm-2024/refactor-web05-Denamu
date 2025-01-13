@@ -91,10 +91,8 @@ export class AdminService {
   }
 
   async createAdmin(registerAdminBodyDto: RegisterAdminRequestDto) {
-    let { loginId, password } = registerAdminBodyDto;
-
     const existingAdmin = await this.adminRepository.findOne({
-      where: { loginId },
+      where: { loginId: registerAdminBodyDto.loginId },
     });
 
     if (existingAdmin) {
@@ -102,8 +100,11 @@ export class AdminService {
     }
 
     const saltRounds = 10;
-    password = await bcrypt.hash(password, saltRounds);
+    registerAdminBodyDto.password = await bcrypt.hash(
+      registerAdminBodyDto.password,
+      saltRounds,
+    );
 
-    await this.adminRepository.createAdmin({ loginId, password });
+    await this.adminRepository.save(registerAdminBodyDto.toEntity());
   }
 }
