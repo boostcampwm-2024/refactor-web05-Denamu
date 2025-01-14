@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 
 export default function SearchButton({ handleSearchModal }: { handleSearchModal: () => void }) {
   return (
-    <div
+    <button
       className="w-full px-4 py-3 
                    bg-white 
                    border border-primary 
@@ -21,6 +21,6 @@ export default function SearchButton({ handleSearchModal }: { handleSearchModal:
     >
       <span className="text-sm font-medium">검색</span>
       <Search size={16} className="text-primary group-hover:text-secondary transition-colors" />
-    </div>
+    </button>
   );
 }

@@ -18,18 +18,16 @@ export default function ChatItem({ chatItem, isSameUser }: ChatItemProps) {
   return (
     <div className="flex flex-col ">
       {!isSameUser ? (
-        <>
-          <span className="flex gap-1 items-center text-left">
-            <Avatar>
-              <Avvvatars value={chatItem.username} style="shape" />
-            </Avatar>
-            {/* 이름, 시간 */}
-            <span className="flex gap-2 items-center inline-block">
-              <span className="text-sm">{chatItem.username}</span>
-              <span className="text-xs">{formatTime(chatItem.timestamp)}</span>
-            </span>
+        <span className="flex gap-1 items-center text-left">
+          <Avatar>
+            <Avvvatars value={chatItem.username} style="shape" />
+          </Avatar>
+          {/* 이름, 시간 */}
+          <span className="flex gap-2 items-center inline-block">
+            <span className="text-sm">{chatItem.username}</span>
+            <span className="text-xs">{formatTime(chatItem.timestamp)}</span>
           </span>
-        </>
+        </span>
       ) : (
         <></>
       )}
