@@ -10,7 +10,7 @@ export class AdminFixture {
     const admin = new Admin();
     Object.assign(admin, this.GENERAL_ADMIN);
     Object.assign(admin, overwrites);
-    admin.password = await bcrypt.hash(admin.password, 10);
+    admin.password = await bcrypt.hash(admin.password, 1);
     return admin;
   }
 
