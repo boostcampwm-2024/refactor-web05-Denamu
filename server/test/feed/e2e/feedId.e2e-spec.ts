@@ -29,7 +29,7 @@ describe('POST /api/feed/:feedId E2E Test', () => {
     });
 
     await Promise.all([
-      feedRepository.save(feeds),
+      feedRepository.insert(feeds),
       redisService.sadd(`feed:${testFeedId}:ip`, testIp),
     ]);
   });

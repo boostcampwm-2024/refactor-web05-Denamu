@@ -17,4 +17,8 @@ export class FeedPaginationRequestDto {
   })
   @Type(() => Number)
   limit?: number = 12;
+
+  constructor(partial: Partial<FeedPaginationRequestDto>) {
+    Object.assign(this, partial);
+  }
 }

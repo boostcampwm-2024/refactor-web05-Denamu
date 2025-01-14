@@ -25,7 +25,7 @@ describe('SSE /api/trend/sse E2E Test', () => {
     for (let i = 1; i <= 2; i++) {
       feeds.push(FeedFixture.createFeedFixture(blog, {}, i));
     }
-    await Promise.all([feedRepository.save(feeds), app.listen(7000)]);
+    await Promise.all([feedRepository.insert(feeds), app.listen(7000)]);
   });
 
   it('최초 연결이 되면 트랜드 데이터를 최대 4개 받을 수 있다.', async () => {
