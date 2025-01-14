@@ -7,6 +7,7 @@ import { HttpExceptionsFilter } from '../src/common/filters/http-exception.filte
 import * as cookieParser from 'cookie-parser';
 
 let app: INestApplication;
+
 beforeAll(async () => {
   const moduleFixture = await Test.createTestingModule({
     imports: [AppModule],
@@ -28,3 +29,5 @@ beforeAll(async () => {
 afterAll(async () => {
   await app.close();
 });
+
+export { app };
