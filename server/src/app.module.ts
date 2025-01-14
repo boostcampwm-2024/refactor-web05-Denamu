@@ -13,9 +13,7 @@ import { StatisticModule } from './statistic/module/statistic.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath:
-        process.env.ENV_PATH ||
-        `${process.cwd()}/configs/.env.db.${process.env.NODE_ENV === 'test' ? 'test' : 'production'}`,
+      envFilePath: `${process.cwd()}/configs/.env`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

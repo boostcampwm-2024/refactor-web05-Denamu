@@ -11,7 +11,7 @@ module.exports = {
       autorestart: true,
       env: {
         NODE_ENV: "production",
-        ENV_PATH: "server/configs/.env.db.production",
+        ENV_PATH: "server/configs/.env",
       },
     },
     {
