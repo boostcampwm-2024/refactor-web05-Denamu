@@ -4,6 +4,7 @@ import { FeedFixture } from '../../fixture/feed.fixture';
 import { FeedRepository } from '../../../src/feed/repository/feed.repository';
 import { RssAcceptRepository } from '../../../src/rss/repository/rss.repository';
 import { RssAcceptFixture } from '../../fixture/rssAccept.fixture';
+import { FeedPaginationRequestDto } from '../../../src/feed/dto/request/feed-pagination.dto';
 
 describe('GET api/feed E2E Test', () => {
   let app: INestApplication;
@@ -22,17 +23,19 @@ describe('GET api/feed E2E Test', () => {
       return FeedFixture.createFeedFixture(blog, _, i + 1);
     });
 
-    await Promise.all([feedRepository.save(feeds)]);
+    await feedRepository.insert(feeds);
   });
 
   it('lastId가 없으면 최신 피드부터 전송한다.', async () => {
     //given
-    const testQuery = { limit: 5 };
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: 5,
+    });
 
     //when
     const response = await request(app.getHttpServer())
       .get('/api/feed')
-      .query(testQuery);
+      .query(feedPaginationQueryDto);
 
     //then
     expect(response.status).toBe(200);
@@ -49,21 +52,24 @@ describe('GET api/feed E2E Test', () => {
 
   it('lastId가 있으면 해당 피드 다음 순서부터 전송한다.', async () => {
     //given
-    const testQuery = { limit: 5, lastId: 11 };
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: 5,
+      lastId: 11,
+    });
 
     //when
     const response = await request(app.getHttpServer())
       .get('/api/feed')
-      .query(testQuery);
+      .query(feedPaginationQueryDto);
 
     //then
     expect(response.status).toBe(200);
     expect(response.body.data.result.map((feed) => feed.id)).toStrictEqual([
-      testQuery.lastId - 1,
-      testQuery.lastId - 2,
-      testQuery.lastId - 3,
-      testQuery.lastId - 4,
-      testQuery.lastId - 5,
+      feedPaginationQueryDto.lastId - 1,
+      feedPaginationQueryDto.lastId - 2,
+      feedPaginationQueryDto.lastId - 3,
+      feedPaginationQueryDto.lastId - 4,
+      feedPaginationQueryDto.lastId - 5,
     ]);
     expect(response.body.data.hasMore).toBe(true);
     expect(response.body.data.lastId).toBe(6);
@@ -71,25 +77,28 @@ describe('GET api/feed E2E Test', () => {
 
   it('limit의 크기보다 남은 Feed의 개수가 적은 경우면 정상적으로 동작한다.', async () => {
     //given
-    const testQuery = { limit: 15, lastId: 10 };
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: 15,
+      lastId: 10,
+    });
 
     //when
     const response = await request(app.getHttpServer())
       .get('/api/feed')
-      .query(testQuery);
+      .query(feedPaginationQueryDto);
 
     //then
     expect(response.status).toBe(200);
     expect(response.body.data.result.map((feed) => feed.id)).toStrictEqual([
-      testQuery.lastId - 1,
-      testQuery.lastId - 2,
-      testQuery.lastId - 3,
-      testQuery.lastId - 4,
-      testQuery.lastId - 5,
-      testQuery.lastId - 6,
-      testQuery.lastId - 7,
-      testQuery.lastId - 8,
-      testQuery.lastId - 9,
+      feedPaginationQueryDto.lastId - 1,
+      feedPaginationQueryDto.lastId - 2,
+      feedPaginationQueryDto.lastId - 3,
+      feedPaginationQueryDto.lastId - 4,
+      feedPaginationQueryDto.lastId - 5,
+      feedPaginationQueryDto.lastId - 6,
+      feedPaginationQueryDto.lastId - 7,
+      feedPaginationQueryDto.lastId - 8,
+      feedPaginationQueryDto.lastId - 9,
     ]);
     expect(response.body.data.hasMore).toBe(false);
     expect(response.body.data.lastId).toBe(1);
@@ -97,12 +106,15 @@ describe('GET api/feed E2E Test', () => {
 
   it('남은 피드 개수가 0이면 lastId 0, 빈 배열로 응답한다.', async () => {
     //given
-    const testQuery = { limit: 15, lastId: 1 };
+    const feedPaginationQueryDto = new FeedPaginationRequestDto({
+      limit: 15,
+      lastId: 1,
+    });
 
     //when
     const response = await request(app.getHttpServer())
       .get('/api/feed')
-      .query(testQuery);
+      .query(feedPaginationQueryDto);
 
     //then
     expect(response.status).toBe(200);

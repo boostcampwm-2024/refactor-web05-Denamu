@@ -13,19 +13,19 @@ export class StatisticController {
 
   @ApiStatistic('today')
   @Get('today')
-  async readTodayStatistic(@Query() queryObj: StatisticRequestDto) {
+  async readTodayStatistic(@Query() statisticQueryDto: StatisticRequestDto) {
     return ApiResponse.responseWithData(
       '금일 조회수 통계 조회 완료',
-      await this.statisticService.readTodayStatistic(queryObj.limit),
+      await this.statisticService.readTodayStatistic(statisticQueryDto),
     );
   }
 
   @ApiStatistic('all')
   @Get('all')
-  async readAllStatistic(@Query() queryObj: StatisticRequestDto) {
+  async readAllStatistic(@Query() statisticQueryDto: StatisticRequestDto) {
     return ApiResponse.responseWithData(
       '전체 조회수 통계 조회 완료',
-      await this.statisticService.readAllStatistic(queryObj.limit),
+      await this.statisticService.readAllStatistic(statisticQueryDto),
     );
   }
 

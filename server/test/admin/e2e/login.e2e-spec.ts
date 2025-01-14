@@ -1,27 +1,23 @@
+import { AdminFixture } from './../../fixture/admin.fixture';
 import { INestApplication } from '@nestjs/common';
-import { AdminService } from '../../../src/admin/service/admin.service';
 import { LoginAdminRequestDto } from '../../../src/admin/dto/request/login-admin.dto';
 import * as request from 'supertest';
-import { RegisterAdminRequestDto } from '../../../src/admin/dto/request/register-admin.dto';
+import { AdminRepository } from '../../../src/admin/repository/admin.repository';
 describe('POST api/admin/login E2E Test', () => {
   let app: INestApplication;
-  let adminService: AdminService;
-  const registerAdminDto: RegisterAdminRequestDto = {
-    loginId: 'testAdminId',
-    password: 'testAdminPassword!',
-  };
 
   beforeAll(async () => {
     app = global.testApp;
-    adminService = app.get(AdminService);
-    await adminService.createAdmin(registerAdminDto);
+    const adminRepository = app.get(AdminRepository);
+    await adminRepository.insert(await AdminFixture.createAdminCryptFixture());
   });
+
   it('등록된 계정이면 정상적으로 로그인할 수 있다.', async () => {
     //given
-    const loginAdminDto: LoginAdminRequestDto = {
-      loginId: 'testAdminId',
-      password: 'testAdminPassword!',
-    };
+    const loginAdminDto = new LoginAdminRequestDto({
+      loginId: 'test1234',
+      password: 'test1234!',
+    });
 
     //when
     const response = await request(app.getHttpServer())
@@ -35,10 +31,10 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('등록되지 않은 ID로 로그인을 시도하면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminIdDto: LoginAdminRequestDto = {
+    const loginWrongAdminIdDto = new LoginAdminRequestDto({
       loginId: 'testWrongAdminId',
-      password: 'testAdminPassword!',
-    };
+      password: 'test1234!',
+    });
 
     //when
     const response = await request(app.getHttpServer())
@@ -51,10 +47,11 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('비밀번호가 다르다면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminPasswordDto: LoginAdminRequestDto = {
-      loginId: 'testAdminId',
+    const loginWrongAdminPasswordDto = new LoginAdminRequestDto({
+      loginId: 'test1234',
       password: 'testWrongAdminPassword!',
-    };
+    });
+
     //when
     const response = await request(app.getHttpServer())
       .post('/api/admin/login')
