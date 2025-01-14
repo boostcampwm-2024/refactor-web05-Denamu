@@ -35,8 +35,7 @@ describe('Rss Reject E2E Test', () => {
       it('정상적으로 RSS를 거절한다.', async () => {
         // given
         const REJECT_REASON = '거절 사유';
-        const rssFixture = RssFixture.createRssFixture();
-        const rss = await rssRepository.save(rssFixture);
+        const rss = await rssRepository.save(RssFixture.createRssFixture());
         const rejectRssDto = new RejectRssRequestDto({
           description: REJECT_REASON,
         });

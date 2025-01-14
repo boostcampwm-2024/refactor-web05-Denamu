@@ -96,8 +96,9 @@ describe('/api/rss E2E Test', () => {
 
       it('등록된 RSS가 존재할 경우 해당 데이터를 반환한다.', async () => {
         // given
-        const rss = RssFixture.createRssFixture();
-        const expectedResult = await rssRepository.save(rss);
+        const expectedResult = await rssRepository.save(
+          RssFixture.createRssFixture(),
+        );
 
         // when
         const response = await request(app.getHttpServer()).get('/api/rss');
