@@ -23,7 +23,7 @@ describe('GET api/feed E2E Test', () => {
       return FeedFixture.createFeedFixture(blog, _, i + 1);
     });
 
-    await Promise.all([feedRepository.save(feeds)]);
+    await feedRepository.insert(feeds);
   });
 
   it('lastId가 없으면 최신 피드부터 전송한다.', async () => {
