@@ -24,7 +24,7 @@ describe('GET /api/statistic/today E2E Test', () => {
     for (let i = 1; i <= 2; i++) {
       feeds.push(FeedFixture.createFeedFixture(blog, {}, i));
     }
-    await feedRepository.save(feeds);
+    await feedRepository.insert(feeds);
   });
   it('값을 입력 하지 않으면 10개의 데이터만 응답한다.', async () => {
     // when

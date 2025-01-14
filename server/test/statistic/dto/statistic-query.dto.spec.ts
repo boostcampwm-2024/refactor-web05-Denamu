@@ -4,8 +4,9 @@ import { StatisticRequestDto } from '../../../src/statistic/dto/request/statisti
 describe('StatisticQueryDto', () => {
   it('실수를 입력한다.', async () => {
     // given
-    const dto = new StatisticRequestDto();
-    dto.limit = 1.1;
+    const dto = new StatisticRequestDto({
+      limit: 1.1,
+    });
 
     // when
     const errors = await validate(dto);
@@ -19,8 +20,9 @@ describe('StatisticQueryDto', () => {
   });
   it('문자열을 입력한다.', async () => {
     // given
-    const dto = new StatisticRequestDto();
-    dto.limit = 'test' as unknown as number;
+    const dto = new StatisticRequestDto({
+      limit: 'test' as any,
+    });
 
     // when
     const errors = await validate(dto);
@@ -34,8 +36,9 @@ describe('StatisticQueryDto', () => {
   });
   it('음수를 입력한다.', async () => {
     // given
-    const dto = new StatisticRequestDto();
-    dto.limit = -1;
+    const dto = new StatisticRequestDto({
+      limit: -1,
+    });
 
     // when
     const errors = await validate(dto);
