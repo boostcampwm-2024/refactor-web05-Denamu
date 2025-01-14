@@ -25,4 +25,8 @@ export class LoginAdminRequestDto {
     message: '문자열을 입력해주세요',
   })
   password: string;
+
+  constructor(partial: Partial<LoginAdminRequestDto>) {
+    Object.assign(this, partial);
+  }
 }

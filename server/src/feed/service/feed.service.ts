@@ -16,7 +16,6 @@ import {
   FeedTrendResponseDto,
 } from '../dto/response/feed-pagination.dto';
 import { RedisService } from '../../common/redis/redis.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SearchFeedRequestDto } from '../dto/request/search-feed.dto';
 import { Response, Request } from 'express';
 import { cookieConfig } from '../../common/cookie/cookie.config';
@@ -29,6 +28,7 @@ import {
   FeedRecentRedis,
   FeedRecentResponseDto,
 } from '../dto/response/recent.dto';
+import { FeedViewUpdateRequestDto } from '../dto/request/feed-update.dto';
 
 @Injectable()
 export class FeedService {
@@ -36,15 +36,15 @@ export class FeedService {
     private readonly feedRepository: FeedRepository,
     private readonly feedViewRepository: FeedViewRepository,
     private readonly redisService: RedisService,
-    private readonly eventService: EventEmitter2,
   ) {}
 
-  async readFeedPagination(queryFeedDto: FeedPaginationRequestDto) {
+  async readFeedPagination(feedPaginationQueryDto: FeedPaginationRequestDto) {
     const feedList = await this.feedViewRepository.findFeedPagination(
-      queryFeedDto.lastId,
-      queryFeedDto.limit,
+      feedPaginationQueryDto.lastId,
+      feedPaginationQueryDto.limit,
     );
-    const hasMore = this.existNextFeed(feedList, queryFeedDto.limit);
+    const hasMore = this.existNextFeed(feedList, feedPaginationQueryDto.limit);
+    
     if (hasMore) feedList.pop();
     const lastId = this.getLastIdFromFeedList(feedList);
     const newCheckFeedList = await this.checkNewFeeds(feedList);
@@ -96,8 +96,8 @@ export class FeedService {
     );
   }
 
-  async searchFeedList(searchFeedReq: SearchFeedRequestDto) {
-    const { find, page, limit, type } = searchFeedReq;
+  async searchFeedList(searchFeedQueryDto: SearchFeedRequestDto) {
+    const { find, page, limit, type } = searchFeedQueryDto;
     const offset = (page - 1) * limit;
 
     if (!this.validateSearchType(type)) {
@@ -133,15 +133,18 @@ export class FeedService {
   }
 
   async updateFeedViewCount(
-    feedId: number,
+    viewUpdateParamDto: FeedViewUpdateRequestDto,
     request: Request,
     response: Response,
   ) {
     const cookie = request.headers.cookie;
     const ip = this.getIp(request);
+    const feedId = viewUpdateParamDto.feedId;
     if (ip && this.isString(ip)) {
       const [feed, hasCookie, hasIpFlag] = await Promise.all([
-        this.feedRepository.findOne({ where: { id: feedId } }),
+        this.feedRepository.findOne({
+          where: { id: feedId },
+        }),
         Boolean(cookie?.includes(`View_count_${feedId}=${feedId}`)),
         this.redisService.sismember(`feed:${feedId}:ip`, ip),
       ]);

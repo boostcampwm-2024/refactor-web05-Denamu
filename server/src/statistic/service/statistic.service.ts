@@ -7,6 +7,7 @@ import { redisKeys } from '../../common/redis/redis.constant';
 import { StatisticPlatformResponseDto } from '../dto/response/platform.dto';
 import { StatisticTodayResponseDto } from '../dto/response/today.dto';
 import { Feed } from '../../feed/entity/feed.entity';
+import { StatisticRequestDto } from '../dto/request/statistic-query.dto';
 
 @Injectable()
 export class StatisticService {
@@ -16,11 +17,11 @@ export class StatisticService {
     private readonly rssAcceptRepository: RssAcceptRepository,
   ) {}
 
-  async readTodayStatistic(limit: number) {
+  async readTodayStatistic(statisticQueryDto: StatisticRequestDto) {
     const ranking = await this.redisService.zrevrange(
       redisKeys.FEED_TREND_KEY,
       0,
-      limit - 1,
+      statisticQueryDto.limit - 1,
       'WITHSCORES',
     );
     const todayFeedViews: Partial<Feed>[] = [];
@@ -44,9 +45,10 @@ export class StatisticService {
     return StatisticTodayResponseDto.toResponseDtoArray(todayFeedViews);
   }
 
-  async readAllStatistic(limit: number) {
-    const ranking =
-      await this.feedRepository.findAllStatisticsOrderByViewCount(limit);
+  async readAllStatistic(statisticQueryDto: StatisticRequestDto) {
+    const ranking = await this.feedRepository.findAllStatisticsOrderByViewCount(
+      statisticQueryDto.limit,
+    );
     return StatisticAllResponseDto.toResponseDtoArray(ranking);
   }
 

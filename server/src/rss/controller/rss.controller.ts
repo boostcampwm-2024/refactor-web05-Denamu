@@ -28,8 +28,8 @@ export class RssController {
 
   @ApiCreateRss()
   @Post()
-  async createRss(@Body() rssRegisterDto: RssRegisterRequestDto) {
-    await this.rssService.createRss(rssRegisterDto);
+  async createRss(@Body() rssRegisterBodyDto: RssRegisterRequestDto) {
+    await this.rssService.createRss(rssRegisterBodyDto);
     return ApiResponse.responseWithNoContent('신청이 완료되었습니다.');
   }
 
@@ -47,8 +47,8 @@ export class RssController {
   @UseGuards(CookieAuthGuard)
   @Post('accept/:id')
   @HttpCode(201)
-  async acceptRss(@Param() params: RssManagementRequestDto) {
-    await this.rssService.acceptRss(params.id);
+  async acceptRss(@Param() rssAcceptParamDto: RssManagementRequestDto) {
+    await this.rssService.acceptRss(rssAcceptParamDto);
     return ApiResponse.responseWithNoContent('승인이 완료되었습니다.');
   }
 
@@ -57,10 +57,10 @@ export class RssController {
   @Post('reject/:id')
   @HttpCode(201)
   async rejectRss(
-    @Body() body: RejectRssRequestDto,
-    @Param() params: RssManagementRequestDto,
+    @Body() rssRejectBodyDto: RejectRssRequestDto,
+    @Param() rssRejectParamDto: RssManagementRequestDto,
   ) {
-    await this.rssService.rejectRss(params.id, body.description);
+    await this.rssService.rejectRss(rssRejectParamDto, rssRejectBodyDto);
     return ApiResponse.responseWithNoContent('거절이 완료되었습니다.');
   }
 
