@@ -65,15 +65,6 @@ export class RssRegisterRequestDto {
     Object.assign(this, partial);
   }
 
-  static from(rss: RssInformation) {
-    return new RssRegisterRequestDto({
-      blog: rss.name,
-      name: rss.userName,
-      email: rss.email,
-      rssUrl: rss.rssUrl,
-    });
-  }
-
   toEntity() {
     const rss = new Rss();
     rss.name = this.blog;

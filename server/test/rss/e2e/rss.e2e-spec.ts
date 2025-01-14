@@ -28,9 +28,12 @@ describe('/api/rss E2E Test', () => {
   describe('POST /api/rss E2E Test', () => {
     it('정상적인 요청이 들어왔다면 올바른 응답을 한다.', async () => {
       // given
-      const requestDto = RssRegisterRequestDto.from(
-        RssFixture.createRssFixture(),
-      );
+      const requestDto = new RssRegisterRequestDto({
+        blog: 'blog1',
+        name: 'name1',
+        email: 'test1@test.com',
+        rssUrl: 'https://example1.com/rss',
+      });
 
       // when
       const response = await request(app.getHttpServer())
@@ -43,9 +46,12 @@ describe('/api/rss E2E Test', () => {
 
     it('이미 신청한 RSS를 또 신청한다면 거부를 한다.', async () => {
       // given
-      const requestDto = RssRegisterRequestDto.from(
-        RssFixture.createRssFixture(),
-      );
+      const requestDto = new RssRegisterRequestDto({
+        blog: 'blog1',
+        name: 'name1',
+        email: 'test1@test.com',
+        rssUrl: 'https://example1.com/rss',
+      });
       await request(app.getHttpServer()).post('/api/rss').send(requestDto);
 
       // when
@@ -62,7 +68,12 @@ describe('/api/rss E2E Test', () => {
       const acceptedRss = await rssAcceptRepository.save(
         RssAcceptFixture.createRssAcceptFixture(),
       );
-      const rssRegisterDto = RssRegisterRequestDto.from(acceptedRss);
+      const rssRegisterDto = new RssRegisterRequestDto({
+        blog: acceptedRss.name,
+        name: acceptedRss.userName,
+        email: acceptedRss.email,
+        rssUrl: acceptedRss.rssUrl,
+      });
 
       // when
       const response = await request(app.getHttpServer())

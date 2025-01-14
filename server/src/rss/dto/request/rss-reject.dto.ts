@@ -10,7 +10,7 @@ export class RejectRssRequestDto {
   @IsString({ message: '거부 사유를 문자열로 작성해주세요.' })
   description: string;
 
-  constructor(description: string) {
-    this.description = description;
+  constructor(partial: Partial<RejectRssRequestDto>) {
+    Object.assign(this, partial);
   }
 }

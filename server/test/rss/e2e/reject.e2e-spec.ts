@@ -37,7 +37,9 @@ describe('Rss Reject E2E Test', () => {
         const REJECT_REASON = '거절 사유';
         const rssFixture = RssFixture.createRssFixture();
         const rss = await rssRepository.save(rssFixture);
-        const rejectRssDto = new RejectRssRequestDto(REJECT_REASON);
+        const rejectRssDto = new RejectRssRequestDto({
+          description: REJECT_REASON,
+        });
 
         // when
         const response = await request(app.getHttpServer())
@@ -59,7 +61,9 @@ describe('Rss Reject E2E Test', () => {
       it('존재하지 않는 rss를 거절할 때', async () => {
         // given
         const REJECT_REASON = '거절 사유';
-        const rejectRssDto = new RejectRssRequestDto(REJECT_REASON);
+        const rejectRssDto = new RejectRssRequestDto({
+          description: REJECT_REASON,
+        });
 
         // when
         const response = await request(app.getHttpServer())
