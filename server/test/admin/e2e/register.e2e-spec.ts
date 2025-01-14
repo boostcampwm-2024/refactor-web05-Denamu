@@ -8,16 +8,15 @@ import { AdminRepository } from '../../../src/admin/repository/admin.repository'
 describe('POST api/admin/register E2E Test', () => {
   let app: INestApplication;
 
-  const loginAdminDto = new LoginAdminRequestDto(
-    AdminFixture.createAdminFixture(),
-  );
+  const loginAdminDto = new LoginAdminRequestDto({
+    loginId: 'test1234',
+    password: 'test1234!',
+  });
 
-  const newAdminDto = new RegisterAdminRequestDto(
-    AdminFixture.createAdminFixture({
-      loginId: 'testNewAdminId',
-      password: 'testNewAdminPassword!',
-    }),
-  );
+  const newAdminDto = new RegisterAdminRequestDto({
+    loginId: 'testNewAdminId',
+    password: 'testNewAdminPassword!',
+  });
 
   beforeAll(async () => {
     app = global.testApp;

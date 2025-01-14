@@ -17,9 +17,10 @@ describe('GET api/admin/sessionId E2E Test', () => {
   it('쿠키의 session id가 유효하다면 관리자를 로그인 상태로 취급한다.', async () => {
     //given
     const agent = request.agent(app.getHttpServer());
-    const loginAdminDto = new LoginAdminRequestDto(
-      AdminFixture.createAdminFixture(),
-    );
+    const loginAdminDto = new LoginAdminRequestDto({
+      loginId: 'test1234',
+      password: 'test1234!',
+    });
 
     //when
     await agent.post('/api/admin/login').send(loginAdminDto);

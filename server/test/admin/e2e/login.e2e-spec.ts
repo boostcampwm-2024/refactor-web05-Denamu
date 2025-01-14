@@ -14,9 +14,10 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('등록된 계정이면 정상적으로 로그인할 수 있다.', async () => {
     //given
-    const loginAdminDto = new LoginAdminRequestDto(
-      AdminFixture.createAdminFixture(),
-    );
+    const loginAdminDto = new LoginAdminRequestDto({
+      loginId: 'test1234',
+      password: 'test1234!',
+    });
 
     //when
     const response = await request(app.getHttpServer())
@@ -30,9 +31,10 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('등록되지 않은 ID로 로그인을 시도하면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminIdDto = new LoginAdminRequestDto(
-      AdminFixture.createAdminFixture({ loginId: 'testWrongAdminId' }),
-    );
+    const loginWrongAdminIdDto = new LoginAdminRequestDto({
+      loginId: 'testWrongAdminId',
+      password: 'test1234!',
+    });
 
     //when
     const response = await request(app.getHttpServer())
@@ -45,11 +47,10 @@ describe('POST api/admin/login E2E Test', () => {
 
   it('비밀번호가 다르다면 401 UnAuthorized 예외가 발생한다.', async () => {
     //given
-    const loginWrongAdminPasswordDto = new LoginAdminRequestDto(
-      AdminFixture.createAdminFixture({
-        password: 'testWrongAdminPassword!',
-      }),
-    );
+    const loginWrongAdminPasswordDto = new LoginAdminRequestDto({
+      loginId: 'test1234',
+      password: 'testWrongAdminPassword!',
+    });
 
     //when
     const response = await request(app.getHttpServer())
