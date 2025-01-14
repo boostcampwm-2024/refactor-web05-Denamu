@@ -7,6 +7,7 @@ import ChatSkeleton from "@/components/chat/layout/ChatSkeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useChatStore } from "@/store/useChatStore";
+import { ChatType } from "@/types/chat";
 
 const FullChatWarning = () => (
   <div className="flex flex-col justify-center items-center h-full mt-[30vh]">
@@ -15,6 +16,20 @@ const FullChatWarning = () => (
     <p>잠시 기다렸다가 새로고침을 해주세요</p>
   </div>
 );
+
+const RenderHistory = ({ chatHistory, isFull }: { chatHistory: ChatType[]; isFull: boolean }) => {
+  if (chatHistory.length === 0) return <ChatSkeleton number={14} />;
+  return isFull ? (
+    <FullChatWarning />
+  ) : (
+    <span className="flex flex-col gap-3 px-3">
+      {chatHistory.map((item, index) => {
+        const isSameUser = index > 0 && chatHistory[index - 1]?.username === item.username;
+        return <ChatItem key={item.timestamp} chatItem={item} isSameUser={isSameUser} />;
+      })}
+    </span>
+  );
+};
 
 export default function ChatSection({ isFull }: { isFull: boolean }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -32,23 +47,9 @@ export default function ChatSection({ isFull }: { isFull: boolean }) {
     }
   }, [chatHistory.length]);
 
-  const RenderHistory = () => {
-    if (chatHistory.length === 0) return <ChatSkeleton number={14} />;
-    return isFull ? (
-      <FullChatWarning />
-    ) : (
-      <span className="flex flex-col gap-3 px-3">
-        {chatHistory.map((item) => {
-          const isSameUser = chatHistory[chatHistory.indexOf(item) - 1]?.username === item.username;
-          return <ChatItem key={item.timestamp} chatItem={item} isSameUser={isSameUser} />;
-        })}
-      </span>
-    );
-  };
-
   return (
     <ScrollArea ref={scrollRef} className="h-full">
-      {RenderHistory()}
+      <RenderHistory chatHistory={chatHistory} isFull={isFull} />
     </ScrollArea>
   );
 }
