@@ -1,7 +1,6 @@
 {
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
-    "@testcontainers/mysql": "^10.16.0",
     "artillery": "^2.0.21",
     "commitizen": "^4.3.1",
     "cz-cli": "^1.0.0",
