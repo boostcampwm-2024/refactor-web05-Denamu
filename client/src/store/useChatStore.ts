@@ -101,7 +101,7 @@ interface ChatValue {
   setMessage: (newMessage: string) => void;
 }
 
-export const useChatValueStroe = create<ChatValue>((set) => ({
+export const useChatValueStore = create<ChatValue>((set) => ({
   message: "",
   setMessage: (newMessage: string) => set({ message: newMessage }),
 }));
