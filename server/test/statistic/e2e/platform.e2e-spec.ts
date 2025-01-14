@@ -10,9 +10,11 @@ describe('GET /api/statistic/platform E2E Test', () => {
     app = global.testApp;
     rssAcceptRepository = app.get(RssAcceptRepository);
     await Promise.all([
-      rssAcceptRepository.save(RssAcceptFixture.createRssAcceptFixture({})),
-      rssAcceptRepository.save(RssAcceptFixture.createRssAcceptFixture({}, 2)),
-      rssAcceptRepository.save(
+      rssAcceptRepository.insert(RssAcceptFixture.createRssAcceptFixture({})),
+      rssAcceptRepository.insert(
+        RssAcceptFixture.createRssAcceptFixture({}, 2),
+      ),
+      rssAcceptRepository.insert(
         RssAcceptFixture.createRssAcceptFixture({ blogPlatform: 'velog' }, 3),
       ),
     ]);
