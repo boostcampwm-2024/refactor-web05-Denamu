@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { WinstonLoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class TestService {
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly logger: WinstonLoggerService,
-  ) {}
+  constructor(private readonly dataSource: DataSource) {}
 
   public async cleanDatabase(): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
