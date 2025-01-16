@@ -9,11 +9,13 @@ import { FeedModule } from './feed/module/feed.module';
 import { WinstonLoggerModule } from './common/logger/logger.module';
 import { ChatModule } from './chat/module/chat.module';
 import { StatisticModule } from './statistic/module/statistic.module';
+import { TestModule } from './common/test/test.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `${process.cwd()}/configs/.env`,
+      envFilePath: process.env.ENV_PATH || `${process.cwd()}/configs/.env}`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -27,6 +29,7 @@ import { StatisticModule } from './statistic/module/statistic.module';
     RssModule,
     FeedModule,
     ChatModule,
+    TestModule,
     StatisticModule,
   ],
   controllers: [],
