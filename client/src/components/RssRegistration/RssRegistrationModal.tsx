@@ -75,6 +75,7 @@ export default function RssRegistrationModal({ onClose, rssOpen }: { onClose: ()
           <div className="space-y-4">
             <FormInput
               id="blog"
+              type="text"
               label="블로그명"
               onChange={handlers.handleBloggerName}
               placeholder="블로그명을 입력하세요"
@@ -82,6 +83,7 @@ export default function RssRegistrationModal({ onClose, rssOpen }: { onClose: ()
             />
             <FormInput
               id="name"
+              type="text"
               label="신청자 이름"
               onChange={handlers.handleUserName}
               placeholder="이름을 입력하세요"
@@ -89,6 +91,7 @@ export default function RssRegistrationModal({ onClose, rssOpen }: { onClose: ()
             />
             <FormInput
               id="email"
+              type="email"
               label="이메일"
               onChange={handlers.handleEmail}
               placeholder="example@denamu.com"
