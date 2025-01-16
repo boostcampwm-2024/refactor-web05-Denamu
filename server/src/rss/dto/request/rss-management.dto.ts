@@ -7,4 +7,8 @@ export class RssManagementRequestDto {
   })
   @Type(() => Number)
   id: number;
+
+  constructor(partial: Partial<RssManagementRequestDto>) {
+    Object.assign(this, partial);
+  }
 }

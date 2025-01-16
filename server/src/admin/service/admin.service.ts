@@ -23,12 +23,12 @@ export class AdminService {
   ) {}
 
   async loginAdmin(
-    loginAdminDto: LoginAdminRequestDto,
+    loginAdminBodyDto: LoginAdminRequestDto,
     response: Response,
     request: Request,
   ) {
     const cookie = request.cookies['sessionId'];
-    const { loginId, password } = loginAdminDto;
+    const { loginId, password } = loginAdminBodyDto;
 
     const admin = await this.adminRepository.findOne({
       where: { loginId },
@@ -90,11 +90,9 @@ export class AdminService {
     response.clearCookie('sessionId');
   }
 
-  async createAdmin(registerAdminDto: RegisterAdminRequestDto) {
-    let { loginId, password } = registerAdminDto;
-
+  async createAdmin(registerAdminBodyDto: RegisterAdminRequestDto) {
     const existingAdmin = await this.adminRepository.findOne({
-      where: { loginId },
+      where: { loginId: registerAdminBodyDto.loginId },
     });
 
     if (existingAdmin) {
@@ -102,8 +100,11 @@ export class AdminService {
     }
 
     const saltRounds = 10;
-    password = await bcrypt.hash(password, saltRounds);
+    registerAdminBodyDto.password = await bcrypt.hash(
+      registerAdminBodyDto.password,
+      saltRounds,
+    );
 
-    await this.adminRepository.createAdmin({ loginId, password });
+    await this.adminRepository.save(registerAdminBodyDto.toEntity());
   }
 }

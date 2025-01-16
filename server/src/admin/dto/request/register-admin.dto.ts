@@ -1,5 +1,6 @@
 import { IsString, Length, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Admin } from '../../entity/admin.entity';
 
 const PASSWORD_REG = /^(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]+$/;
 
@@ -32,4 +33,14 @@ export class RegisterAdminRequestDto {
     message: '패스워드의 길이는 6자 이상, 60자 이하로 작성해주세요.',
   })
   password: string;
+
+  constructor(partial: Partial<RegisterAdminRequestDto>) {
+    Object.assign(this, partial);
+  }
+
+  toEntity() {
+    const admin = new Admin();
+    Object.assign(admin, this);
+    return admin;
+  }
 }

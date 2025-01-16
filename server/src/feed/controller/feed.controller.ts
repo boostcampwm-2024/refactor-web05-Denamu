@@ -37,10 +37,12 @@ export class FeedController {
   @ApiReadFeedPagination()
   @Get('')
   @HttpCode(HttpStatus.OK)
-  async readFeedPagination(@Query() queryFeedDto: FeedPaginationRequestDto) {
+  async readFeedPagination(
+    @Query() feedPaginationQueryDto: FeedPaginationRequestDto,
+  ) {
     return ApiResponse.responseWithData(
       '피드 조회 완료',
-      await this.feedService.readFeedPagination(queryFeedDto),
+      await this.feedService.readFeedPagination(feedPaginationQueryDto),
     );
   }
 
@@ -75,10 +77,10 @@ export class FeedController {
   @ApiSearchFeedList()
   @Get('search')
   @HttpCode(HttpStatus.OK)
-  async searchFeedList(@Query() searchFeedReq: SearchFeedRequestDto) {
+  async searchFeedList(@Query() searchFeedQueryDto: SearchFeedRequestDto) {
     return ApiResponse.responseWithData(
       '검색 결과 조회 완료',
-      await this.feedService.searchFeedList(searchFeedReq),
+      await this.feedService.searchFeedList(searchFeedQueryDto),
     );
   }
 
@@ -86,12 +88,12 @@ export class FeedController {
   @Post('/:feedId')
   @HttpCode(HttpStatus.OK)
   async updateFeedViewCount(
-    @Param() params: FeedViewUpdateRequestDto,
+    @Param() viewUpdateParamDto: FeedViewUpdateRequestDto,
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
     await this.feedService.updateFeedViewCount(
-      params.feedId,
+      viewUpdateParamDto,
       request,
       response,
     );

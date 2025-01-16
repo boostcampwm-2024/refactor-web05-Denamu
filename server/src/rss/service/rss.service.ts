@@ -16,6 +16,8 @@ import { FeedCrawlerService } from './feed-crawler.service';
 import { RssReadResponseDto } from '../dto/response/rss-all.dto';
 import { RssAcceptHistoryResponseDto } from '../dto/response/rss-accept-history.dto';
 import { RssRejectHistoryResponseDto } from '../dto/response/rss-reject-history.dto';
+import { RssManagementRequestDto } from '../dto/request/rss-management.dto';
+import { RejectRssRequestDto } from '../dto/request/rss-reject.dto';
 
 @Injectable()
 export class RssService {
@@ -28,16 +30,16 @@ export class RssService {
     private readonly feedCrawlerService: FeedCrawlerService,
   ) {}
 
-  async createRss(rssRegisterDto: RssRegisterRequestDto) {
+  async createRss(rssRegisterBodyDto: RssRegisterRequestDto) {
     const [alreadyURLRss, alreadyURLBlog] = await Promise.all([
       this.rssRepository.findOne({
         where: {
-          rssUrl: rssRegisterDto.rssUrl,
+          rssUrl: rssRegisterBodyDto.rssUrl,
         },
       }),
       this.rssAcceptRepository.findOne({
         where: {
-          rssUrl: rssRegisterDto.rssUrl,
+          rssUrl: rssRegisterBodyDto.rssUrl,
         },
       }),
     ]);
@@ -50,7 +52,7 @@ export class RssService {
       );
     }
 
-    await this.rssRepository.insertNewRss(rssRegisterDto);
+    await this.rssRepository.insert(rssRegisterBodyDto.toEntity());
   }
 
   async readAllRss() {
@@ -58,9 +60,10 @@ export class RssService {
     return RssReadResponseDto.toResponseDtoArray(rssList);
   }
 
-  async acceptRss(id: number) {
+  async acceptRss(rssAcceptParamDto: RssManagementRequestDto) {
+    const rssId = rssAcceptParamDto.id;
     const rss = await this.rssRepository.findOne({
-      where: { id },
+      where: { id: rssId },
     });
 
     if (!rss) {
@@ -73,7 +76,7 @@ export class RssService {
       async (manager) => {
         const [rssAccept] = await Promise.all([
           manager.save(RssAccept.fromRss(rss, blogPlatform)),
-          manager.delete(Rss, id),
+          manager.delete(Rss, rssId),
         ]);
         const feeds = await this.feedCrawlerService.loadRssFeeds(
           rssAccept.rssUrl,
@@ -85,9 +88,13 @@ export class RssService {
     this.emailService.sendMail(rssAccept, true);
   }
 
-  async rejectRss(id: number, description: string) {
+  async rejectRss(
+    rssRejectParamDto: RssManagementRequestDto,
+    rssRejectBodyDto: RejectRssRequestDto,
+  ) {
+    const rssId = rssRejectParamDto.id;
     const rss = await this.rssRepository.findOne({
-      where: { id },
+      where: { id: rssId },
     });
 
     if (!rss) {
@@ -99,12 +106,12 @@ export class RssService {
         manager.remove(rss),
         manager.save(RssReject, {
           ...rss,
-          description,
+          description: rssRejectBodyDto.description,
         }),
       ]);
       return rejectRss;
     });
-    this.emailService.sendMail(rejectRss, false, description);
+    this.emailService.sendMail(rejectRss, false, rssRejectBodyDto.description);
   }
 
   async readAcceptHistory() {

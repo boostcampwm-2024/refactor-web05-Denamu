@@ -30,11 +30,11 @@ export class AdminController {
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async loginAdmin(
-    @Body() loginAdminDto: LoginAdminRequestDto,
+    @Body() loginAdminBodyDto: LoginAdminRequestDto,
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request,
   ) {
-    await this.adminService.loginAdmin(loginAdminDto, response, request);
+    await this.adminService.loginAdmin(loginAdminBodyDto, response, request);
     return ApiResponse.responseWithNoContent(
       '로그인이 성공적으로 처리되었습니다.',
     );
@@ -57,8 +57,8 @@ export class AdminController {
   @ApiCreateAdmin()
   @UseGuards(CookieAuthGuard)
   @Post('/register')
-  async createAdmin(@Body() registerAdminDto: RegisterAdminRequestDto) {
-    await this.adminService.createAdmin(registerAdminDto);
+  async createAdmin(@Body() registerAdminBodyDto: RegisterAdminRequestDto) {
+    await this.adminService.createAdmin(registerAdminBodyDto);
     return ApiResponse.responseWithNoContent(
       '성공적으로 관리자 계정이 생성되었습니다.',
     );

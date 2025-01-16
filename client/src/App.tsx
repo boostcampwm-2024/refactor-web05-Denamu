@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import LoadingPage from "@/pages/Loading.tsx";
+import NotFound from "@/pages/NotFound";
 
 import { denamuAscii } from "@/constants/denamuAscii.ts";
 
@@ -43,6 +44,14 @@ export default function App() {
           element={
             <Suspense fallback={<LoadingPage />}>
               <AboutService />
+            </Suspense>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Suspense fallback={<LoadingPage />}>
+              <NotFound />
             </Suspense>
           }
         />

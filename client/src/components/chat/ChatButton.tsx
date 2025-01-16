@@ -1,5 +1,4 @@
-import { MessageCircleMore } from "lucide-react";
-import { X } from "lucide-react";
+import { MessageCircleMore, X } from "lucide-react";
 
 import { useSidebar } from "@/components/ui/sidebar";
 
