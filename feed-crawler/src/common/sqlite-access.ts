@@ -13,7 +13,8 @@ export class SQLiteConnection implements DatabaseConnection {
   }
 
   private createConnection() {
-    return new Database(":memory:", { verbose: console.log });
+    // return new Database(":memory:", { verbose: console.log });
+    return new Database(":memory:");
   }
 
   private initializeTables() {

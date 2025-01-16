@@ -26,7 +26,7 @@ export class RedisConnection {
         password: process.env.REDIS_PASSWORD,
       });
     } else if (process.env.NODE_ENV === "test") {
-      return new Redis_Mock();
+      this.redis = new Redis_Mock();
     }
   }
 
