@@ -6,10 +6,11 @@ import {
   mockUseRssRegistrationForm,
   createFormMock,
   createSuccessFormMock,
+  createFailureFormMock,
   createFormMockWithReset,
 } from "@/__tests__/__mocks__/helpers/rssRegistrationMocks.ts";
 import { mockUseRegisterRss } from "@/__tests__/__mocks__/hooks/useRegisterRss.ts";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 describe("RssRegistrationModal", () => {
   beforeEach(() => {
@@ -107,7 +108,7 @@ describe("RssRegistrationModal", () => {
 
   it("등록 실패시 실패 알림이 표시되어야 한다", async () => {
     createSuccessFormMock();
-    mockUseRegisterRss.useRegisterRss = (onError) => ({
+    mockUseRegisterRss.useRegisterRss = (_, onError) => ({
       mutate: vi.fn(() => {
         onError();
       }),
@@ -120,6 +121,14 @@ describe("RssRegistrationModal", () => {
 
     const alert = await screen.findByTestId("alert-dialog");
     expect(alert).toBeInTheDocument();
+
+    const alertTitle = within(alert).getByText("RSS 요청 실패!");
+    expect(alertTitle).toBeInTheDocument();
+
+    const alertContent = within(alert).getByText(
+      "입력한 정보를 확인하거나 다시 시도해주세요. 문제가 계속되면 관리자에게 문의하세요!"
+    );
+    expect(alertContent).toBeInTheDocument();
   });
 
   it("알림 닫기시 폼이 초기화되고 모달이 닫혀야 한다", async () => {
@@ -161,5 +170,14 @@ describe("RssRegistrationModal", () => {
   it("rssOpen이 false일 때 모달이 렌더링되지 않아야 한다", () => {
     render(<RssRegistrationModal rssOpen={false} onClose={() => {}} />);
     expect(screen.queryByText("RSS 등록")).not.toBeInTheDocument();
+  });
+
+  it("폼 유효성 검사에 실패하면 등록 버튼이 비활성화되어야 한다", () => {
+    createFailureFormMock();
+
+    render(<RssRegistrationModal rssOpen={true} onClose={() => {}} />);
+    const registerButton = screen.getByRole("button", { name: "등록" });
+
+    expect(registerButton).toBeDisabled();
   });
 });

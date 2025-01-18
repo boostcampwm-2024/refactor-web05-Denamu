@@ -54,6 +54,20 @@ export const createSuccessFormMock = (reset = vi.fn()) => {
   });
 };
 
+export const createFailureFormMock = () => {
+  return createFormMock({
+    values: {
+      ...DEFAULT_VALUES,
+      email: "invalid-email", // 잘못된 이메일 형식
+      userName: "asdf", // 빈 값
+      bloggerName: "asdf", // 빈 값
+      rssUrl: "invalid-url", // 잘못된 URL 형식
+      urlUsername: "asdf",
+    },
+    isValid: false,
+  });
+};
+
 export const createFormMockWithReset = () => {
   const resetMock = vi.fn();
   return {
