@@ -3,49 +3,31 @@ import { DatabaseConnection } from "../types/database-connection";
 import logger from "./logger";
 
 export class SQLiteConnection implements DatabaseConnection {
-  private db: Database;
+  private db: Database.Database;
   private nameTag: string;
 
   constructor() {
     this.nameTag = "[SQLite]";
     this.db = this.createConnection();
-    this.initializeTables();
   }
 
   private createConnection() {
     return new Database(":memory:");
   }
 
-  private initializeTables() {
-    const createTablesQuery = `
-      CREATE TABLE IF NOT EXISTS rss_accept
-      (
-        id            INTEGER PRIMARY KEY AUTOINCREMENT,
-        name          TEXT NOT NULL,
-        user_name     TEXT NOT NULL,
-        email         TEXT NOT NULL,
-        rss_url       TEXT NOT NULL,
-        blog_platform TEXT NOT NULL DEFAULT 'etc'
-      );
-
-      CREATE TABLE IF NOT EXISTS feed
-      (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        created_at DATETIME NOT NULL,
-        title      TEXT     NOT NULL,
-        view_count INTEGER  NOT NULL DEFAULT 0,
-        path       TEXT     NOT NULL UNIQUE,
-        thumbnail  TEXT,
-        blog_id    INTEGER  NOT NULL,
-        FOREIGN KEY (blog_id) REFERENCES rss_accept (id)
-      );
-    `;
-    this.db.exec(createTablesQuery);
-  }
-
   async executeQuery<T>(query: string, params: any[] = []): Promise<T[]> {
     try {
       const lowercaseQuery = query.toLowerCase().trim();
+
+      if (lowercaseQuery.startsWith("create")) {
+        this.db.exec(query);
+        return [] as T[];
+      }
+
+      if (lowercaseQuery.startsWith("delete")) {
+        const deleteResult = this.db.prepare(query).run(params);
+        return [{ affectedRows: deleteResult.changes }] as unknown as T[];
+      }
 
       if (lowercaseQuery.startsWith("insert")) {
         const result = this.db.prepare(query).run(params);
