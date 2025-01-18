@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import FormInput from "@/components/RssRegistration/FormInput";
+import { FormInput } from "@/components/RssRegistration/FormInput";
 import { PlatformSelector } from "@/components/RssRegistration/PlatformSelector.tsx";
 import { RssUrlInput } from "@/components/RssRegistration/RssUrlInput";
 import Alert from "@/components/common/Alert";

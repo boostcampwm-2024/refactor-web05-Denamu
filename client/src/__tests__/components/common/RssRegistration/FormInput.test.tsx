@@ -1,71 +1,63 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import FormInput from '@/components/RssRegistration/FormInput';
+import { describe, it, expect, vi } from "vitest";
 
-describe('FormInput', () => {
-    describe('접근성', () => {
-        it('label과 input이 htmlFor로 올바르게 연결되어야 한다', () => {
-            render(
-                <FormInput id="test" type="text" label="테스트" value="" placeholder="test" onChange={() => {}} />
-            );
+import { FormInput } from "@/components/RssRegistration/FormInput";
 
-            const label = screen.getByText('테스트');
-            const input = screen.getByRole('textbox');
+import { render, screen, fireEvent } from "@testing-library/react";
 
-            expect(label).toHaveAttribute('for', 'test');
-            expect(input).toHaveAttribute('id', 'test');
-        });
+describe("FormInput", () => {
+  describe("접근성", () => {
+    it("label과 input이 htmlFor로 올바르게 연결되어야 한다", () => {
+      render(<FormInput id="test" type="text" label="테스트" value="" placeholder="test" onChange={() => {}} />);
+
+      const label = screen.getByText("테스트");
+      const input = screen.getByRole("textbox");
+
+      expect(label).toHaveAttribute("for", "test");
+      expect(input).toHaveAttribute("id", "test");
+    });
+  });
+
+  describe("입력 처리", () => {
+    it("value prop이 입력 필드에 정확히 반영되어야 한다", () => {
+      render(<FormInput id="test" type="text" label="테스트" value="초기값" placeholder="test" onChange={() => {}} />);
+
+      expect(screen.getByRole("textbox")).toHaveValue("초기값");
     });
 
-    describe('입력 처리', () => {
-        it('value prop이 입력 필드에 정확히 반영되어야 한다', () => {
-            render(
-                <FormInput id="test" type="text" label="테스트" value="초기값" placeholder="test" onChange={() => {}} />
-            );
+    it("onChange 핸들러가 입력값 변경을 정확히 전달해야 한다", () => {
+      const handleChange = vi.fn();
+      render(<FormInput id="test" type="text" label="테스트" value="" placeholder="test" onChange={handleChange} />);
 
-            expect(screen.getByRole('textbox')).toHaveValue('초기값');
-        });
+      const input = screen.getByRole("textbox");
+      fireEvent.change(input, { target: { value: "테스트" } });
 
-        it('onChange 핸들러가 입력값 변경을 정확히 전달해야 한다', () => {
-            const handleChange = vi.fn();
-            render(
-                <FormInput id="test" type="text" label="테스트" value="" placeholder="test" onChange={handleChange} />
-            );
+      expect(handleChange).toHaveBeenCalledWith("테스트");
+    });
+  });
 
-            const input = screen.getByRole('textbox');
-            fireEvent.change(input, { target: { value: '테스트' } });
+  describe("타입별 동작", () => {
+    it("email 타입은 이메일 입력 필드로 렌더링되어야 한다", () => {
+      render(
+        <FormInput id="email" type="email" label="이메일" value="" placeholder="test@example.com" onChange={() => {}} />
+      );
 
-            expect(handleChange).toHaveBeenCalledWith('테스트');
-        });
+      const input = screen.getByRole("textbox");
+      expect(input).toHaveAttribute("type", "email");
     });
 
-    describe('타입별 동작', () => {
-        it('email 타입은 이메일 입력 필드로 렌더링되어야 한다', () => {
-            render(
-                <FormInput id="email" type="email" label="이메일" value="" placeholder="test@example.com" onChange={() => {}} />
-            );
+    it("일반 텍스트 입력은 text 타입으로 렌더링되어야 한다", () => {
+      render(<FormInput id="name" type="text" label="이름" value="" placeholder="이름 입력" onChange={() => {}} />);
 
-            const input = screen.getByRole('textbox');
-            expect(input).toHaveAttribute('type', 'email');
-        });
-
-        it('일반 텍스트 입력은 text 타입으로 렌더링되어야 한다', () => {
-            render(
-                <FormInput id="name" type="text" label="이름" value="" placeholder="이름 입력" onChange={() => {}} />
-            );
-
-            const input = screen.getByRole('textbox');
-            expect(input).toHaveAttribute('type', 'text');
-        });
+      const input = screen.getByRole("textbox");
+      expect(input).toHaveAttribute("type", "text");
     });
+  });
 
-    describe('시각적 피드백', () => {
-        it('빈 값일 때 placeholder가 보여야 한다', () => {
-            render(
-                <FormInput id="test" type="text" label="테스트" value="" placeholder="안내문구" onChange={() => {}} />
-            );
+  describe("시각적 피드백", () => {
+    it("빈 값일 때 placeholder가 보여야 한다", () => {
+      render(<FormInput id="test" type="text" label="테스트" value="" placeholder="안내문구" onChange={() => {}} />);
 
-            expect(screen.getByPlaceholderText('안내문구')).toBeInTheDocument();
-        });
+      expect(screen.getByPlaceholderText("안내문구")).toBeInTheDocument();
     });
+  });
 });
