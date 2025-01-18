@@ -21,24 +21,24 @@ export class SQLiteConnection implements DatabaseConnection {
       CREATE TABLE IF NOT EXISTS rss_accept
       (
         id            INTEGER PRIMARY KEY AUTOINCREMENT,
-        name          TEXT NOT NULL,
-        user_name     TEXT NOT NULL,
-        email         TEXT NOT NULL,
-        rss_url       TEXT NOT NULL,
-        blog_platform TEXT NOT NULL DEFAULT 'etc'
+        name          VARCHAR(255) NOT NULL,
+        user_name     VARCHAR(50) NOT NULL,
+        email         VARCHAR(255) NOT NULL,
+        rss_url       VARCHAR(255) NOT NULL,
+        blog_platform VARCHAR(255) NOT NULL DEFAULT 'etc'
       );
-
-      CREATE TABLE IF NOT EXISTS feed
-      (
+    
+    CREATE TABLE IF NOT EXISTS feed
+    (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
         created_at DATETIME NOT NULL,
-        title      TEXT     NOT NULL,
+        title      VARCHAR(255)     NOT NULL,
         view_count INTEGER  NOT NULL DEFAULT 0,
-        path       TEXT     NOT NULL UNIQUE,
-        thumbnail  TEXT,
+        path       VARCHAR(512)     NOT NULL UNIQUE,
+        thumbnail  VARCHAR(255),
         blog_id    INTEGER  NOT NULL,
         FOREIGN KEY (blog_id) REFERENCES rss_accept (id)
-      );
+  );
     `;
     this.db.exec(createTablesQuery);
   }
