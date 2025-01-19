@@ -11,15 +11,15 @@ const logger = winston.createLogger({
   format: combine(
     timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
     colorize(),
-    logFormat
+    logFormat,
   ),
   transports: [
     new winston.transports.Console(),
     new winston.transports.File({
       filename: `${
         process.env.NODE_ENV === "production"
-          ? "feed-crawler/logs/feed-crawler.log"
-          : "logs/feed-crawler.log"
+          ? "logs/production/feed-crawler.log"
+          : "logs/test/feed-crawler-test.log"
       }`,
     }),
   ],
