@@ -1,4 +1,4 @@
-import { setupTestContainer } from "./testContext.setup";
+import { setupTestContainer } from "./setup/testContext.setup";
 import { FeedCrawler } from "../src/feed-crawler";
 import { redisConstant } from "../src/common/constant";
 

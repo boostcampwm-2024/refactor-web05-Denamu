@@ -1,10 +1,10 @@
 import "reflect-metadata";
-import { DatabaseConnection } from "../src/types/database-connection";
-import { DEPENDENCY_SYMBOLS } from "../src/types/dependency-symbols";
-import { SQLiteConnection } from "../src/common/sqlite-access";
-import { RedisConnection } from "../src/common/redis-access";
-import { RssRepository } from "../src/repository/rss.repository";
-import { FeedRepository } from "../src/repository/feed.repository";
+import { DatabaseConnection } from "../../src/types/database-connection";
+import { DEPENDENCY_SYMBOLS } from "../../src/types/dependency-symbols";
+import { SQLiteConnection } from "../../src/common/sqlite-access";
+import { RedisConnection } from "../../src/common/redis-access";
+import { RssRepository } from "../../src/repository/rss.repository";
+import { FeedRepository } from "../../src/repository/feed.repository";
 import { container } from "tsyringe";
 import { DependencyContainer } from "tsyringe";
 
