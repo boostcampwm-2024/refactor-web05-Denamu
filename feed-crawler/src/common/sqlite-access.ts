@@ -15,27 +15,28 @@ export class SQLiteConnection implements DatabaseConnection {
     return new Database(":memory:");
   }
 
-  async executeQuery<T>(query: string, params: any[] = []): Promise<T[]> {
+  async executeQuery<T>(query: string, params: any[] = []): Promise<T> {
     try {
       const lowercaseQuery = query.toLowerCase().trim();
 
       if (lowercaseQuery.startsWith("create")) {
         this.db.exec(query);
-        return [] as T[];
+        return [] as T;
       }
 
       if (lowercaseQuery.startsWith("delete")) {
         const deleteResult = this.db.prepare(query).run(params);
-        return [{ affectedRows: deleteResult.changes }] as unknown as T[];
+        return { affectedRows: deleteResult.changes } as T;
       }
 
       if (lowercaseQuery.startsWith("insert")) {
         const result = this.db.prepare(query).run(params);
-        return [
-          { insertId: result.lastInsertRowid, affectedRows: result.changes },
-        ] as T[];
+        return {
+          insertId: result.lastInsertRowid,
+          affectedRows: result.changes,
+        } as T;
       } else if (lowercaseQuery.startsWith("select")) {
-        return this.db.prepare(query).all(params) as T[];
+        return this.db.prepare(query).all(params) as T;
       }
     } catch (error) {
       logger.error(
