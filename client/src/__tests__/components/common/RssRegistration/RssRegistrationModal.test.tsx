@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import RssRegistrationModal from "@/components/RssRegistration/RssRegistrationModal";
+import { RssRegistrationModal } from "@/components/RssRegistration/RssRegistrationModal";
 
 import {
   mockUseRssRegistrationForm,

@@ -20,7 +20,7 @@ import { useRegisterRss } from "@/hooks/queries/useRegisterRss.ts";
 import { AlertType } from "@/types/alert.ts";
 import { RegisterRss } from "@/types/rss.ts";
 
-export default function RssRegistrationModal({ onClose, rssOpen }: { onClose: () => void; rssOpen: boolean }) {
+export function RssRegistrationModal({ onClose, rssOpen }: { onClose: () => void; rssOpen: boolean }) {
   const [alertOpen, setAlertOpen] = useState<AlertType>({ title: "", content: "", isOpen: false });
 
   const { platform, values, handlers, formState } = useRssRegistrationForm();

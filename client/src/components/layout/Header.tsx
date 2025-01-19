@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Menu } from "lucide-react";
 
-import RssRegistrationModal from "@/components/RssRegistration/RssRegistrationModal";
+import { RssRegistrationModal } from "@/components/RssRegistration/RssRegistrationModal";
 import SideButton from "@/components/layout/SideButton";
 import SideBar from "@/components/layout/Sidebar";
 import SearchButton from "@/components/search/SearchButton";
