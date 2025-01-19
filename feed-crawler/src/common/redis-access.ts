@@ -4,14 +4,13 @@ import logger from "../common/logger";
 import * as dotenv from "dotenv";
 import { injectable } from "tsyringe";
 
-dotenv.config({
-  path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
-});
+dotenv.config();
 
 @injectable()
 export class RedisConnection {
   private redis: Redis;
   private nameTag: string;
+  private isConnected: boolean = false;
 
   constructor() {
     this.nameTag = "[Redis]";
@@ -25,13 +24,15 @@ export class RedisConnection {
         username: process.env.REDIS_USERNAME,
         password: process.env.REDIS_PASSWORD,
       });
-    } else if (process.env.NODE_ENV === "test") {
+    } else {
       this.redis = new Redis_Mock();
     }
+
+    this.isConnected = true;
   }
 
   async quit() {
-    if (this.redis) {
+    if (this.isConnected && this.redis) {
       try {
         await this.redis.quit();
       } catch (error) {
@@ -45,6 +46,9 @@ export class RedisConnection {
   }
 
   async del(...keys: string[]): Promise<number> {
+    if (!this.isConnected || !this.redis) {
+      this.connect();
+    }
     return this.redis.del(...keys);
   }
 
@@ -64,6 +68,9 @@ export class RedisConnection {
   }
 
   async executePipeline(commands: (pipeline: ChainableCommander) => void) {
+    if (!this.isConnected || !this.redis) {
+      this.connect();
+    }
     const pipeline = this.redis.pipeline();
     try {
       commands(pipeline);
