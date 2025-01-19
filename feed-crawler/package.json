@@ -27,7 +27,7 @@
   },
   "rootDir": "src",
   "scripts": {
-    "start": "tsc && node dist/main.js",
+    "start": "tsc && cross-env NODE_ENV=production node dist/src/main.js",
     "test": "cross-env NODE_ENV=test jest --config test/jest-integration.json",
     "test:cov": "cross-env NODE_ENV=test jest --coverage --config test/jest-integration.json",
     "test:unit": "cross-env NODE_ENV=test jest --config test/jest-unit.json",
