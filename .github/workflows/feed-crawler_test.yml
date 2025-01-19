@@ -33,5 +33,7 @@ jobs:
       - name: Run Integration Test
         working-directory: ./feed-crawler
         run: npm run test
+        env:
+          TEST_TIME_INTERVAL: 20160
 
       # TODO: 테스트 커버리지, 혹은 테스트 로그 커멘트 작성 로직 추가하기
