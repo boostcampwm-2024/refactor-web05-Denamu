@@ -6,5 +6,7 @@
   },
   "testEnvironment": "node",
   "rootDir": "..",
-  "coverageDirectory": "test/coverage"
+  "coverageDirectory": "test/coverage",
+  "globalSetup": "./test/jest.global-setup.ts",
+  "setupFilesAfterEnv": ["./test/truncate-tables.setup.ts"]
 }
