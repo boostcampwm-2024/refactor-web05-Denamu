@@ -12,7 +12,6 @@ dotenv.config({
 export class RedisConnection {
   private redis: Redis;
   private nameTag: string;
-  private isConnected: boolean = false;
 
   constructor() {
     this.nameTag = "[Redis]";
@@ -29,12 +28,10 @@ export class RedisConnection {
         password: process.env.REDIS_PASSWORD,
       });
     }
-
-    this.isConnected = true;
   }
 
   async quit() {
-    if (this.isConnected && this.redis) {
+    if (this.redis) {
       try {
         await this.redis.quit();
       } catch (error) {
@@ -48,9 +45,6 @@ export class RedisConnection {
   }
 
   async del(...keys: string[]): Promise<number> {
-    if (!this.isConnected || !this.redis) {
-      this.connect();
-    }
     return this.redis.del(...keys);
   }
 
@@ -70,9 +64,6 @@ export class RedisConnection {
   }
 
   async executePipeline(commands: (pipeline: ChainableCommander) => void) {
-    if (!this.isConnected || !this.redis) {
-      this.connect();
-    }
     const pipeline = this.redis.pipeline();
     try {
       commands(pipeline);

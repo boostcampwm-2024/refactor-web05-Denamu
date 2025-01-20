@@ -84,7 +84,6 @@ export class FeedRepository {
 
   async setRecentFeedList(feedLists: FeedDetail[]) {
     try {
-      this.redisConnection.connect();
       await this.redisConnection.executePipeline((pipeline) => {
         for (const feed of feedLists) {
           pipeline.hset(`feed:recent:${feed.id}`, {
