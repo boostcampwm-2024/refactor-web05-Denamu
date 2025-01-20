@@ -41,7 +41,7 @@ export class AdminService {
     const sessionId = uuid.v4();
 
     if (cookie) {
-      this.redisService.del(`auth:${cookie}`);
+      await this.redisService.del(`auth:${cookie}`);
     }
 
     let cursor = '0';
@@ -74,7 +74,7 @@ export class AdminService {
       }
     } while (cursor !== '0');
 
-    this.redisService.set(
+    await this.redisService.set(
       `auth:${sessionId}`,
       admin.loginId,
       `EX`,
@@ -86,7 +86,7 @@ export class AdminService {
 
   async logoutAdmin(request: Request, response: Response) {
     const sid = request.cookies['sessionId'];
-    this.redisService.del(`auth:${sid}`);
+    await this.redisService.del(`auth:${sid}`);
     response.clearCookie('sessionId');
   }
 
