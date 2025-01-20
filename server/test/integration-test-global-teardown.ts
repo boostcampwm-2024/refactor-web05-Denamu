@@ -13,5 +13,11 @@ export default async () => {
     delete globalAny.__MYSQL_CONTAINER__;
   }
 
+  console.log('Stopping Redis container...');
+  if (globalAny.__REDIS_CONTAINER__) {
+    await globalAny.__REDIS_CONTAINER__.stop();
+    delete globalAny.__REDIS_CONTAINER__;
+  }
+
   console.log('Global teardown completed.');
 };

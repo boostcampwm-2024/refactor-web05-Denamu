@@ -8,7 +8,8 @@
   },
   "coverageDirectory": "test/coverage",
   "setupFilesAfterEnv": ["./test/jest.setup.ts"],
-  "globalSetup": "./test/mysql-global-setup.ts",
-  "globalTeardown": "./test/mysql-global-teardown.ts",
-  "maxWorkers": 1
+  "globalSetup": "./test/integration-test-global-setup.ts",
+  "globalTeardown": "./test/integration-test-global-teardown.ts",
+  "maxWorkers": 1,
+  "detectOpenHandles": true
 }
