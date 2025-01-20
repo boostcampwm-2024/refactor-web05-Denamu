@@ -10,6 +10,5 @@
   "setupFilesAfterEnv": ["./test/jest.setup.ts"],
   "globalSetup": "./test/integration-test-global-setup.ts",
   "globalTeardown": "./test/integration-test-global-teardown.ts",
-  "maxWorkers": 1,
-  "detectOpenHandles": true
+  "maxWorkers": 1
 }
