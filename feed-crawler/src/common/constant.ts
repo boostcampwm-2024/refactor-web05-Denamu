@@ -7,6 +7,6 @@ export const redisConstant = {
 };
 export const ONE_MINUTE = 60 * 1000;
 export const INTERVAL =
-  process.env.NODE_ENV === "production"
-    ? parseInt(process.env.TIME_INTERVAL)
-    : parseInt(process.env.TEST_TIME_INTERVAL);
+  process.env.NODE_ENV === "test"
+    ? parseInt(process.env.TEST_TIME_INTERVAL)
+    : parseInt(process.env.TIME_INTERVAL);
