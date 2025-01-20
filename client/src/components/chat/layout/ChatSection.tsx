@@ -25,7 +25,7 @@ const RenderHistory = ({ chatHistory, isFull }: { chatHistory: ChatType[]; isFul
     <span className="flex flex-col gap-3 px-3">
       {chatHistory.map((item, index) => {
         const isSameUser = index > 0 && chatHistory[index - 1]?.username === item.username;
-        return <ChatItem key={item.timestamp} chatItem={item} isSameUser={isSameUser} />;
+        return <ChatItem key={index} chatItem={item} isSameUser={isSameUser} />;
       })}
     </span>
   );
