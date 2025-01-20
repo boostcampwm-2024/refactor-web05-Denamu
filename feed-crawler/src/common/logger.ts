@@ -18,8 +18,10 @@ const logger = winston.createLogger({
     new winston.transports.File({
       filename: `${
         process.env.NODE_ENV === "production"
-          ? "logs/production/feed-crawler.log"
-          : "logs/test/feed-crawler-test.log"
+          ? "feed-crawler/logs/production/feed-crawler.log"
+          : process.env.NODE_ENV === "test"
+            ? "logs/test/feed-crawler-test.log"
+            : "logs/production/feed-crawler.log"
       }`,
     }),
   ],

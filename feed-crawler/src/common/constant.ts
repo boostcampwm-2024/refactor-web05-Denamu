@@ -1,6 +1,8 @@
 import * as dotenv from "dotenv";
-dotenv.config();
 
+dotenv.config({
+  path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
+});
 export const CONNECTION_LIMIT = 50;
 export const redisConstant = {
   FEED_RECENT_ALL_KEY: "feed:recent:*",
