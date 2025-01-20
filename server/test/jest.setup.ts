@@ -6,6 +6,7 @@ import { InternalExceptionsFilter } from '../src/common/filters/internal-excepti
 import { HttpExceptionsFilter } from '../src/common/filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import { TestService } from '../src/common/test/test.service';
+import { RedisService } from '../src/common/redis/redis.service';
 
 const globalAny: any = global;
 
@@ -33,6 +34,9 @@ beforeAll(async () => {
 afterAll(async () => {
   const testService = globalAny.testApp.get(TestService);
   await testService.cleanDatabase();
+
+  const redisService = globalAny.testApp.get(RedisService);
+  await redisService.flushdb();
 
   console.log('Closing NestJS application...');
   if (globalAny.testApp) {
