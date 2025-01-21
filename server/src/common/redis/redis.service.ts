@@ -116,6 +116,10 @@ export class RedisService {
     return this.redisClient.flushdb();
   }
 
+  async flushall(): Promise<string> {
+    return this.redisClient.flushall();
+  }
+
   async sismember(key: string, member: string | number): Promise<number> {
     return this.redisClient.sismember(key, member);
   }
