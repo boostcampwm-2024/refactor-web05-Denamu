@@ -4,7 +4,12 @@ const globalAny: any = global;
 
 export default async () => {
   console.log('Starting global setup...');
+  await createMysqlContainer();
+  await createRedisContainer();
+  console.log('Global setup completed.');
+};
 
+const createMysqlContainer = async () => {
   console.log('Starting MySQL container...');
   const mysqlContainer: StartedMySqlContainer = await new MySqlContainer(
     'mysql:8',
@@ -19,7 +24,9 @@ export default async () => {
   process.env.DB_USERNAME = mysqlContainer.getUsername();
   process.env.DB_PASSWORD = mysqlContainer.getUserPassword();
   process.env.DB_DATABASE = mysqlContainer.getDatabase();
+};
 
+const createRedisContainer = async () => {
   console.log('Starting Redis container...');
   const redisContainer: StartedRedisContainer =
     await new RedisContainer().start();
@@ -27,12 +34,4 @@ export default async () => {
 
   process.env.REDIS_HOST = redisContainer.getHost();
   process.env.REDIS_PORT = redisContainer.getPort().toString();
-
-  // await createMysqlContainer();
-  // await createRedisContainer();
-  console.log('Global setup completed.');
 };
-
-const createMysqlContainer = async () => {};
-
-const createRedisContainer = async () => {};
