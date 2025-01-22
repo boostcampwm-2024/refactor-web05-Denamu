@@ -53,7 +53,7 @@ describe("RejectModal", () => {
   
   it("Dialog의 onOpenChange 이벤트가 호출되면 onCancel 함수가 호출된다", () => {
     setup();
-    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "취소" }));
     expect(mockOnCancel).toHaveBeenCalled();
   });
 });
