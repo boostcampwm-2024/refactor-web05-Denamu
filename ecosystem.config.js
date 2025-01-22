@@ -8,10 +8,10 @@ module.exports = {
       instances: "1",
       exec_mode: "fork",
       watch: false,
-      autorestart: true,
+      autorestart: false,
       env: {
         NODE_ENV: "production",
-        ENV_PATH: "server/configs/.env.db.production",
+        ENV_PATH: "server/configs/.env",
       },
     },
     {
