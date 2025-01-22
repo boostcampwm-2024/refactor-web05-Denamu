@@ -7,6 +7,7 @@ import { InternalExceptionsFilter } from './common/filters/internal-exceptions.f
 import { LoggingInterceptor } from './common/logger/logger.interceptor';
 import { WinstonLoggerService } from './common/logger/logger.service';
 import { ValidationPipe } from '@nestjs/common';
+import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +20,11 @@ async function bootstrap() {
     new HttpExceptionsFilter(),
   );
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
+
   app.enableCors({
     origin: [
       'http://localhost:5173',
