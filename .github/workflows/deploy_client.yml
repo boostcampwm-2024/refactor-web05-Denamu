@@ -16,10 +16,10 @@ jobs:
       - name: ssh connection
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          host: ${{ secrets.CLOUD_INSTANCE_HOST }}
+          username: ${{ secrets.CLOUD_INSTANCE_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.PORT }}
+          port: ${{ secrets.CLOUD_INSTANCE_SSH_PORT }}
           script: |
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
