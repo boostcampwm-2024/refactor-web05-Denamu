@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import RssRegistrationModal from "@/components/RssRegistration/RssRegistrationModal";
+import { RssRegistrationModal } from "@/components/RssRegistration/RssRegistrationModal";
 import DesktopNavigation from "@/components/layout/navigation/DesktopNavigation";
 import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
 import SearchModal from "@/components/search/SearchModal";
