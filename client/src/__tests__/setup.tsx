@@ -8,6 +8,7 @@ import { mockCommand } from "@/__tests__/__mocks__/components/ui/Command.tsx";
 import { mockDialog } from "@/__tests__/__mocks__/components/ui/Dialog.tsx";
 import { mockPagination } from "@/__tests__/__mocks__/components/ui/Pagination.tsx";
 import { mockLucideIcons } from "@/__tests__/__mocks__/external/lucide-react.tsx";
+import { mockRecharts } from "@/__tests__/__mocks__/external/recharts.tsx";
 import { mockUseRssRegistrationForm } from "@/__tests__/__mocks__/helpers/rssRegistrationMocks.ts";
 import { mockPostCardActions } from "@/__tests__/__mocks__/hooks/usePostCardActions.ts";
 import { mockUseRegisterRss } from "@/__tests__/__mocks__/hooks/useRegisterRss.ts";
@@ -32,3 +33,9 @@ vi.mock("@/hooks/common/usePostCardActions", () => mockPostCardActions);
 
 vi.mock("@/utils/date", () => mockDate);
 vi.mock("lucide-react", () => mockLucideIcons);
+vi.mock("recharts", () => mockRecharts);
+window.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
