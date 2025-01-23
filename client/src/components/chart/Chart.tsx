@@ -13,8 +13,8 @@ const PieChartItem = lazy(() => import("@/components/chart/PieChartItem"));
 export default function Chart() {
   const { data, isLoading, error } = useChart();
   const isMobile = useMediaStore((state) => state.isMobile);
-  if (!data || isLoading) return <ChartSkeleton />;
   if (error) return <p>Error loading data</p>;
+  if (isLoading || !data) return <ChartSkeleton />;
   const { chartAll, chartToday, chartPlatform } = data;
 
   return isMobile ? (
@@ -27,7 +27,7 @@ export default function Chart() {
 const DesktopChart = ({ chartAll, chartPlatform, chartToday }: ChartsType) => {
   return (
     <div className="p-8">
-      <div className="flex">
+      <div className="flex" data-testid="desktop-chart-container">
         <Suspense fallback={<ChartSkeleton />}>
           <BarChartItem title="전체 조회수" description="전체 조회수 TOP5" data={chartAll.data} color={true} />
         </Suspense>
