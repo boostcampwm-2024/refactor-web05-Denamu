@@ -4,8 +4,11 @@ import { Routes, Route } from "react-router-dom";
 import LoadingPage from "@/pages/Loading.tsx";
 import NotFound from "@/pages/NotFound";
 
+import { useMediaQuery } from "@/hooks/common/useMediaQuery";
+
 import { denamuAscii } from "@/constants/denamuAscii.ts";
 
+import { useMediaStore } from "@/store/useMediaStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -16,9 +19,16 @@ const AboutService = lazy(() => import("@/pages/AboutService"));
 const queryClient = new QueryClient();
 
 export default function App() {
+  const setIsMobile = useMediaStore((state) => state.setIsMobile);
+  const isMobile = useMediaQuery("(max-width: 767px)");
+
   useEffect(() => {
     console.log(denamuAscii);
   }, []);
+
+  useEffect(() => {
+    setIsMobile(isMobile);
+  }, [isMobile]);
 
   return (
     <QueryClientProvider client={queryClient}>

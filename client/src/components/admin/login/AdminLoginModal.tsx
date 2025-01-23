@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import FormInput from "@/components/RssRegistration/FormInput";
+import { FormInput } from "@/components/RssRegistration/FormInput";
 import {
   AlertDialog,
   AlertDialogAction,
