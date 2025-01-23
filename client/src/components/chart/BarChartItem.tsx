@@ -49,7 +49,7 @@ export default function BarChartItem({ data, title, description, color }: BarTyp
   } satisfies ChartConfig;
 
   return (
-    <Card ref={cardRef} className="w-full md:w-[50%]">
+    <Card ref={cardRef} className="w-full md:w-[50%]" data-testid="bar-chart-item">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
