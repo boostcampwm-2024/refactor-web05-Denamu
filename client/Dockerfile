@@ -1,7 +1,7 @@
 FROM node:22-alpine AS builder
 
 # 작업 디렉토리 생성 및 설정
-WORKDIR /var/client
+WORKDIR /var/web05-Denamu/client
 
 # 필요한 파일만 복사하여 캐시 활용
 COPY package*.json ./
@@ -14,13 +14,13 @@ RUN npm ci
 FROM node:22-alpine
 
 # 작업 디렉토리 설정
-WORKDIR /var/client
+WORKDIR /var/web05-Denamu/client
 
 # 최종 애플리케이션 코드만 복사
 COPY . .
 
 # 빌드된 node_modules만 복사
-COPY --from=builder /var/client/node_modules ./node_modules
+COPY --from=builder /var/web05-Denamu/client/node_modules ./node_modules
 
 EXPOSE 5173
 
