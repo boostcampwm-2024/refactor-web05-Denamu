@@ -45,8 +45,10 @@ export class Feed extends BaseEntity {
   })
   thumbnail: string;
 
-  @ManyToOne((type) => RssAccept, (rssAccept) => rssAccept.feeds, {
+  @ManyToOne(() => RssAccept, (rssAccept) => rssAccept.feeds, {
     nullable: false,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({
     name: 'blog_id',
