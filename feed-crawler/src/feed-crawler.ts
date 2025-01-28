@@ -5,11 +5,14 @@ import { RssObj, FeedDetail, RawFeed } from "./common/types";
 import { XMLParser } from "fast-xml-parser";
 import { parse } from "node-html-parser";
 import { unescape } from "html-escaper";
-import { ONE_MINUTE } from "./common/constant";
+import { ONE_MINUTE, INTERVAL } from "./common/constant";
 
 export class FeedCrawler {
   private rssParser: RssParser = new RssParser();
-  constructor(private readonly rssRepository: RssRepository, private readonly feedRepository: FeedRepository) {};
+  constructor(
+    private readonly rssRepository: RssRepository,
+    private readonly feedRepository: FeedRepository,
+  ) {}
 
   async start() {
     await this.feedRepository.deleteRecentFeed();
@@ -37,12 +40,10 @@ export class FeedCrawler {
 
   private async findNewFeeds(
     rssObj: RssObj,
-    now: number
+    now: number,
   ): Promise<FeedDetail[]> {
     try {
-      const TIME_INTERVAL = process.env.TIME_INTERVAL
-        ? parseInt(process.env.TIME_INTERVAL)
-        : 1;
+      const TIME_INTERVAL = INTERVAL;
       const feeds = await this.fetchRss(rssObj.rssUrl);
 
       const filteredFeeds = feeds.filter((item) => {
@@ -70,13 +71,13 @@ export class FeedCrawler {
             link: decodeURIComponent(feed.link),
             imageUrl: imageUrl,
           };
-        })
+        }),
       );
 
       return detailedFeeds;
     } catch (err) {
       logger.warn(
-        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`
+        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`,
       );
       return [];
     }
@@ -86,10 +87,10 @@ export class FeedCrawler {
     return Promise.all(
       rssObjects.map(async (rssObj: RssObj) => {
         logger.info(
-          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`
+          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`,
         );
         return await this.findNewFeeds(rssObj, currentTime.setSeconds(0, 0));
-      })
+      }),
     );
   }
 
@@ -134,7 +135,7 @@ class RssParser {
     const htmlData = await response.text();
     const htmlRootElement = parse(htmlData);
     const metaImage = htmlRootElement.querySelector(
-      'meta[property="og:image"]'
+      'meta[property="og:image"]',
     );
     let thumbnailUrl = metaImage?.getAttribute("content") ?? "";
 

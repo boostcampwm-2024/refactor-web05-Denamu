@@ -1,7 +1,7 @@
+import * as dotenv from "dotenv";
 import Redis, { ChainableCommander } from "ioredis";
 import Redis_Mock from "ioredis-mock";
 import logger from "../common/logger";
-import * as dotenv from "dotenv";
 import { injectable } from "tsyringe";
 
 dotenv.config({
@@ -18,15 +18,15 @@ export class RedisConnection {
   }
 
   connect() {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "test") {
+      this.redis = new Redis_Mock();
+    } else {
       this.redis = new Redis({
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT),
         username: process.env.REDIS_USERNAME,
         password: process.env.REDIS_PASSWORD,
       });
-    } else if (process.env.NODE_ENV === "test") {
-      this.redis = new Redis_Mock();
     }
   }
 

@@ -10,6 +10,7 @@ export const TRENDING_POSTS: Post[] = [
     path: "/",
     author: "김개발",
     thumbnail: "https://picsum.photos/640/480?random=101",
+    blogPlatform: "etc",
   },
   {
     id: 2,
@@ -19,6 +20,7 @@ export const TRENDING_POSTS: Post[] = [
     path: "/",
     author: "박프론트",
     thumbnail: "https://picsum.photos/640/480?random=102",
+    blogPlatform: "etc",
   },
   {
     id: 3,
@@ -28,7 +30,9 @@ export const TRENDING_POSTS: Post[] = [
     path: "/",
     author: "이타스",
     thumbnail: "https://picsum.photos/640/480?random=103",
+    blogPlatform: "etc",
   },
+
   {
     id: 7,
     createdAt: new Date().toISOString(),
@@ -37,6 +41,7 @@ export const TRENDING_POSTS: Post[] = [
     path: "/",
     author: "윤백엔드",
     thumbnail: "https://picsum.photos/640/480?random=104",
+    blogPlatform: "etc",
   },
 ];
 
