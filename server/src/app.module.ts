@@ -15,7 +15,8 @@ import { TestModule } from './common/test/test.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.ENV_PATH || `${process.cwd()}/configs/.env}`,
+      envFilePath:
+        process.env.ENV_PATH || `${process.cwd()}/configs/.env.db.production`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
