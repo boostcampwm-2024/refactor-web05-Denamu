@@ -46,7 +46,7 @@ export class FeedRepository {
       .filter((feed) => feed);
 
     logger.info(
-      `${process.env.NODE_ENV === "production" ? "[MySQL]" : "[SQLite]"} ${insertedFeeds.length}개의 피드 데이터가 성공적으로 데이터베이스에 삽입되었습니다.`,
+      `${process.env.NODE_ENV === "test" ? "[SQLite]" : "[MySQL]"} ${insertedFeeds.length}개의 피드 데이터가 성공적으로 데이터베이스에 삽입되었습니다.`,
     );
     return insertedFeeds;
   }
@@ -84,6 +84,7 @@ export class FeedRepository {
 
   async setRecentFeedList(feedLists: FeedDetail[]) {
     try {
+      this.redisConnection.connect();
       await this.redisConnection.executePipeline((pipeline) => {
         for (const feed of feedLists) {
           pipeline.hset(`feed:recent:${feed.id}`, {
