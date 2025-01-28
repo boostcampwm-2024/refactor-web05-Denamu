@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { WinstonLoggerService } from '../src/common/logger/logger.service';
@@ -35,8 +35,9 @@ afterAll(async () => {
   const testService = globalAny.testApp.get(TestService);
   await testService.cleanDatabase();
 
-  const redisService = globalAny.testApp.get(RedisService);
-  await redisService.flushdb();
+  const redisService: RedisService = globalAny.testApp.get(RedisService);
+  await redisService.flushall();
+  await redisService.disconnect();
 
   console.log('Closing NestJS application...');
   if (globalAny.testApp) {
