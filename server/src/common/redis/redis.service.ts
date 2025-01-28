@@ -6,6 +6,10 @@ import { RedisKey } from 'ioredis/built/utils/RedisCommander';
 export class RedisService {
   constructor(@Inject('REDIS_CLIENT') public readonly redisClient: Redis) {}
 
+  async disconnect(): Promise<void> {
+    await this.redisClient.disconnect();
+  }
+
   async get(key: RedisKey): Promise<string | null> {
     return this.redisClient.get(key);
   }
@@ -114,6 +118,10 @@ export class RedisService {
 
   async flushdb(): Promise<string> {
     return this.redisClient.flushdb();
+  }
+
+  async flushall(): Promise<void> {
+    this.redisClient.flushall();
   }
 
   async sismember(key: string, member: string | number): Promise<number> {
