@@ -7,7 +7,7 @@ export default async () => {
 
   console.log('Starting MySQL container...');
   const mysqlContainer: StartedMySqlContainer = await new MySqlContainer(
-    'mysql:8',
+    'mysql:8.0.39',
   )
     .withDatabase('denamu')
     .start();
@@ -21,8 +21,9 @@ export default async () => {
   process.env.DB_DATABASE = mysqlContainer.getDatabase();
 
   console.log('Starting Redis container...');
-  const redisContainer: StartedRedisContainer =
-    await new RedisContainer().start();
+  const redisContainer: StartedRedisContainer = await new RedisContainer(
+    'redis:6.0.16-alpine',
+  ).start();
   globalAny.__REDIS_CONTAINER__ = redisContainer;
 
   process.env.REDIS_HOST = redisContainer.getHost();
