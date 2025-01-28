@@ -6,15 +6,10 @@ const logFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} [${level}]: ${message}`;
 });
 
-const logger = winston.createLogger({
-  level: "info",
-  format: combine(
-    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    colorize(),
-    logFormat
-  ),
-  transports: [
-    new winston.transports.Console(),
+const transports = [];
+transports.push(new winston.transports.Console());
+if (process.env.NODE_ENV !== "test") {
+  transports.push(
     new winston.transports.File({
       filename: `${
         process.env.NODE_ENV === "production"
@@ -22,7 +17,17 @@ const logger = winston.createLogger({
           : "logs/feed-crawler.log"
       }`,
     }),
-  ],
+  );
+}
+
+const logger = winston.createLogger({
+  level: "info",
+  format: combine(
+    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    colorize(),
+    logFormat,
+  ),
+  transports: transports,
 });
 
 export default logger;

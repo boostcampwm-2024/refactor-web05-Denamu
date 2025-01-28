@@ -1,20 +1,21 @@
 import { useState } from "react";
 
-import RssRegistrationModal from "@/components/RssRegistration/RssRegistrationModal";
+import { RssRegistrationModal } from "@/components/RssRegistration/RssRegistrationModal";
 import DesktopNavigation from "@/components/layout/navigation/DesktopNavigation";
 import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
 import SearchModal from "@/components/search/SearchModal";
 
 import { useCustomToast } from "@/hooks/common/useCustomToast.ts";
 import { useKeyboardShortcut } from "@/hooks/common/useKeyboardShortcut";
-import { useMediaQuery } from "@/hooks/common/useMediaQuery";
 
 import { TOAST_MESSAGES } from "@/constants/messages";
+
+import { useMediaStore } from "@/store/useMediaStore";
 
 export default function Header() {
   const [modals, setModals] = useState({ search: false, rss: false, login: false, chat: false });
   const { toast } = useCustomToast();
-  const isMobile = useMediaQuery("(max-width: 767px)");
+  const isMobile = useMediaStore((state) => state.isMobile);
   const toggleModal = (modalType: "search" | "rss" | "login" | "chat") => {
     if (modalType === "login") {
       toast(TOAST_MESSAGES.SERVICE_NOT_PREPARED);
