@@ -17,7 +17,7 @@ describe('GET /api/rss/history/accept E2E Test', () => {
     }
     await Promise.all([
       rssAcceptRepository.insert(rssAccepts),
-      redisService.sadd('auth:sid', 'test1234'),
+      redisService.set('auth:sid', 'test1234'),
     ]);
   });
 
