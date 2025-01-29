@@ -15,4 +15,7 @@ WORKDIR /var/web05-Denamu/client
 COPY --from=builder /var/web05-Denamu/client/dist /var/web05-Denamu/client/dist
 COPY ../../static /var/web05-Denamu/static
 
-CMD ["nginx","-g","daemon off;"]
+COPY ../../nginx//scripts/generate_cert.sh /etc/nginx/scripts/generate_cert.sh
+COPY ../../nginx/nginx.conf /etc/nginx/nginx.conf
+
+CMD ["/bin/sh","-c","/etc/nginx/scripts/generate_cert.sh && nginx -g 'daemon off;'"];
