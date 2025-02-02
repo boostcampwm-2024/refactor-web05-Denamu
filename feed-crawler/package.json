@@ -23,13 +23,14 @@
     "jest": "^29.5.0",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
   "rootDir": "src",
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "start:dev": "tsc --watch",
+    "start:dev": "ts-node src/main.ts",
     "test": "cross-env NODE_ENV=test jest --config test/jest-integration.json",
     "test:cov": "cross-env NODE_ENV=test jest --coverage --config test/jest-integration.json",
     "test:unit": "cross-env NODE_ENV=test jest --config test/jest-unit.json",
