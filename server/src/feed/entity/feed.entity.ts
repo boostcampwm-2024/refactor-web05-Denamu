@@ -5,12 +5,15 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   ViewColumn,
   ViewEntity,
 } from 'typeorm';
 import { RssAccept } from '../../rss/entity/rss.entity';
+import { Tag } from './tag.entity';
 
 @Entity({ name: 'feed' })
 export class Feed extends BaseEntity {
@@ -54,6 +57,14 @@ export class Feed extends BaseEntity {
     name: 'blog_id',
   })
   blog: RssAccept;
+
+  @ManyToMany(() => Tag)
+  @JoinTable({
+    name: 'feed_tag',
+    joinColumn: { name: 'feed_id' },
+    inverseJoinColumn: { name: 'tag_id' },
+  })
+  tags: Tag[];
 }
 
 @ViewEntity({
