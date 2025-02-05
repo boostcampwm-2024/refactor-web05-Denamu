@@ -7,8 +7,8 @@ services:
   # NGINX 서비스
   nginx:
     build:
-      context: ../
-      dockerfile: client/docker/Dockerfile.nginx.dev
+      context: ../nginx
+      dockerfile: Dockerfile.dev
     ports:
       - "80:80"
       - "443:443"

@@ -1,8 +1,6 @@
 FROM nginx:1.18.0
 
-WORKDIR /var/web05-Denamu/client
-
-COPY ../../nginx/scripts /etc/nginx/scripts
+COPY ./scripts /etc/nginx/scripts
 
 RUN sh "/etc/nginx/scripts/generate_cert.sh"
 
