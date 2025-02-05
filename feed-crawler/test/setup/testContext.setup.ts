@@ -7,6 +7,7 @@ import { RssRepository } from "../../src/repository/rss.repository";
 import { FeedRepository } from "../../src/repository/feed.repository";
 import { container } from "tsyringe";
 import { DependencyContainer } from "tsyringe";
+import { RssParser } from "../../src/common/rss-parser";
 
 export interface TestContext {
   container: DependencyContainer;
@@ -14,6 +15,7 @@ export interface TestContext {
   feedRepository: FeedRepository;
   dbConnection: DatabaseConnection;
   redisConnection: RedisConnection;
+  rssParser: RssParser;
 }
 
 declare global {
@@ -26,48 +28,54 @@ export function setupTestContainer(): TestContext {
 
     testContainer.registerSingleton<DatabaseConnection>(
       DEPENDENCY_SYMBOLS.DatabaseConnection,
-      SQLiteConnection,
+      SQLiteConnection
     );
 
     testContainer.registerSingleton<RedisConnection>(
       DEPENDENCY_SYMBOLS.RedisConnection,
-      RedisConnection,
+      RedisConnection
     );
 
     testContainer.registerSingleton<RssRepository>(
       DEPENDENCY_SYMBOLS.RssRepository,
-      RssRepository,
+      RssRepository
     );
 
     testContainer.registerSingleton<FeedRepository>(
       DEPENDENCY_SYMBOLS.FeedRepository,
-      FeedRepository,
+      FeedRepository
     );
 
     testContainer.registerSingleton<RssRepository>(
       DEPENDENCY_SYMBOLS.RssRepository,
-      RssRepository,
+      RssRepository
     );
 
     testContainer.registerSingleton<FeedRepository>(
       DEPENDENCY_SYMBOLS.FeedRepository,
-      FeedRepository,
+      FeedRepository
+    );
+
+    testContainer.registerSingleton<RssParser>(
+      DEPENDENCY_SYMBOLS.RssParser,
+      RssParser
     );
 
     global.testContext = {
       container: testContainer,
       rssRepository: testContainer.resolve<RssRepository>(
-        DEPENDENCY_SYMBOLS.RssRepository,
+        DEPENDENCY_SYMBOLS.RssRepository
       ),
       feedRepository: testContainer.resolve<FeedRepository>(
-        DEPENDENCY_SYMBOLS.FeedRepository,
+        DEPENDENCY_SYMBOLS.FeedRepository
       ),
       dbConnection: testContainer.resolve<DatabaseConnection>(
-        DEPENDENCY_SYMBOLS.DatabaseConnection,
+        DEPENDENCY_SYMBOLS.DatabaseConnection
       ),
       redisConnection: testContainer.resolve<RedisConnection>(
-        DEPENDENCY_SYMBOLS.RedisConnection,
+        DEPENDENCY_SYMBOLS.RedisConnection
       ),
+      rssParser: testContainer.resolve<RssParser>(DEPENDENCY_SYMBOLS.RssParser),
     };
   }
 
