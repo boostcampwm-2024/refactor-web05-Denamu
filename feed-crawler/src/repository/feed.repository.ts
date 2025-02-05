@@ -70,6 +70,7 @@ export class FeedRepository {
       if (keysToDelete.length > 0) {
         await this.redisConnection.del(...keysToDelete);
       }
+      logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 삭제되었습니다.`);
     } catch (error) {
       logger.error(
         `[Redis] 최근 게시글 캐시를 삭제하는 도중 에러가 발생했습니다.
@@ -79,7 +80,6 @@ export class FeedRepository {
     } finally {
       await this.redisConnection.quit();
     }
-    logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 삭제되었습니다.`);
   }
 
   async setRecentFeedList(feedLists: FeedDetail[]) {
@@ -99,6 +99,7 @@ export class FeedRepository {
           });
         }
       });
+      logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
     } catch (error) {
       logger.error(
         `[Redis] 최근 게시글 캐시를 저장하는 도중 에러가 발생했습니다.
@@ -108,6 +109,5 @@ export class FeedRepository {
     } finally {
       await this.redisConnection.quit();
     }
-    logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
   }
 }
