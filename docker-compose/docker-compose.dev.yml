@@ -18,14 +18,14 @@ services:
       - app
     volumes:
       - ../nginx/logs:/var/log/nginx
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf
       - ../static:/var/web05-Denamu/static
     develop:
       watch:
-        - path: ../nginx
-          target: .
+        - path: ../nginx/nginx.conf
+          action: restart
+        - path: ../nginx/scripts/generate_cert.sh
           action: rebuild
-          ignore:
-            - logs
 
   # Client 서비스
   web:
@@ -38,6 +38,10 @@ services:
       - Denamu
     volumes:
       - ../client/src:/var/web05-Denamu/client/src
+    develop:
+      watch:
+        - path: ../client/package.json
+          action: rebuild
     # environment:
     #   NODE_ENV: "DEV"
 
@@ -59,6 +63,10 @@ services:
       - ../server/src:/var/web05-Denamu/server/src
     environment:
       NODE_ENV: "DEV"
+    develop:
+      watch:
+        - path: ../server/package.json
+          action: rebuild
 
   # Feed Crawler 서비스
   feed-crawler:
@@ -76,3 +84,7 @@ services:
       - ../feed-crawler/src:/var/web05-Denamu/feed-crawler/src
     environment:
       NODE_ENV: "DEV"
+    develop:
+      watch:
+        - path: ../feed-crawler/package.json
+          action: rebuild
