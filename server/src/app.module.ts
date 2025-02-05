@@ -19,6 +19,7 @@ import { TestModule } from './common/test/test.module';
         {
           PROD: `${process.cwd()}/env/.env.prod`,
           LOCAL: `${process.cwd()}/env/.env.local`,
+          DEV: `${process.cwd()}/env/.env.local`,
         }[process.env.NODE_ENV] || '',
     }),
     TypeOrmModule.forRootAsync({

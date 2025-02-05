@@ -5,5 +5,6 @@ dotenv.config({
     {
       PROD: `${process.cwd()}/env/.env.prod`,
       LOCAL: `${process.cwd()}/env/.env.local`,
+      DEV: `${process.cwd()}/env/.env.local`,
     }[process.env.NODE_ENV] || "",
 });
