@@ -131,3 +131,6 @@ export const CHAT_ITEM: ChatType[] = [
     message: "다들 화이팅입니다!",
   },
 ];
+
+export const FULL_KEYWORD_ITEM = ["JavaScript", "React", "Vue", "Node.js", "TypeScript"];
+export const ONE_KEYWORD_ITEM = ["MYSQL"];

@@ -25,7 +25,7 @@ const DesktopCard = ({ post, className }: PostCardProps) => {
     <Card
       onClick={handlePostClick}
       className={cn(
-        "h-[240px] group shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border-none rounded-xl cursor-pointer",
+        "h-full group shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border-none rounded-xl cursor-pointer",
         className
       )}
     >
