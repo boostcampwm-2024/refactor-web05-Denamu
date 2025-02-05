@@ -1,0 +1,78 @@
+name: denamu-dev
+
+include:
+  - docker-compose.infra.yml
+
+services:
+  # NGINX 서비스
+  nginx:
+    build:
+      context: ../
+      dockerfile: client/docker/Dockerfile.nginx.dev
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - Denamu
+    depends_on:
+      - app
+    volumes:
+      - ../nginx/logs:/var/log/nginx
+      - ../static:/var/web05-Denamu/static
+    develop:
+      watch:
+        - path: ../nginx
+          target: .
+          action: rebuild
+          ignore:
+            - logs
+
+  # Client 서비스
+  web:
+    build:
+      context: ../client
+      dockerfile: docker/Dockerfile.dev
+    ports:
+      - "5173:5173"
+    networks:
+      - Denamu
+    volumes:
+      - ../client/src:/var/web05-Denamu/client/src
+    # environment:
+    #   NODE_ENV: "DEV"
+
+  # WAS 서비스
+  app:
+    build:
+      context: ../server
+      dockerfile: docker/Dockerfile.dev
+    ports:
+      - "8080:8080"
+    networks:
+      - Denamu
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../server/src:/var/web05-Denamu/server/src
+    environment:
+      NODE_ENV: "DEV"
+
+  # Feed Crawler 서비스
+  feed-crawler:
+    build:
+      context: ../feed-crawler
+      dockerfile: docker/Dockerfile.dev
+    networks:
+      - Denamu
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../feed-crawler/src:/var/web05-Denamu/feed-crawler/src
+    environment:
+      NODE_ENV: "DEV"
