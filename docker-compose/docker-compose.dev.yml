@@ -42,8 +42,6 @@ services:
       watch:
         - path: ../client/package.json
           action: rebuild
-    # environment:
-    #   NODE_ENV: "DEV"
 
   # WAS 서비스
   app:
