@@ -9,6 +9,8 @@ describe("feed crawling e2e-test", () => {
     feedCrawler = new FeedCrawler(
       testContext.rssRepository,
       testContext.feedRepository,
+      testContext.clovaService,
+      testContext.feedTagRepository,
     );
   });
 

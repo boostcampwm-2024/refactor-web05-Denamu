@@ -7,6 +7,8 @@ import { RssRepository } from "../../src/repository/rss.repository";
 import { FeedRepository } from "../../src/repository/feed.repository";
 import { container } from "tsyringe";
 import { DependencyContainer } from "tsyringe";
+import { ClovaService } from "../../src/clova.service";
+import { FeedTagRepository } from "../../src/repository/feed-tag.repository";
 
 export interface TestContext {
   container: DependencyContainer;
@@ -14,6 +16,8 @@ export interface TestContext {
   feedRepository: FeedRepository;
   dbConnection: DatabaseConnection;
   redisConnection: RedisConnection;
+  clovaService: ClovaService;
+  feedTagRepository: FeedTagRepository;
 }
 
 declare global {
@@ -49,9 +53,19 @@ export function setupTestContainer(): TestContext {
       RssRepository,
     );
 
+    testContainer.registerSingleton<ClovaService>(
+      DEPENDENCY_SYMBOLS.ClovaService,
+      ClovaService,
+    );
+
     testContainer.registerSingleton<FeedRepository>(
       DEPENDENCY_SYMBOLS.FeedRepository,
       FeedRepository,
+    );
+
+    testContainer.registerSingleton<FeedTagRepository>(
+      DEPENDENCY_SYMBOLS.FeedTagRepository,
+      FeedTagRepository,
     );
 
     global.testContext = {
@@ -67,6 +81,12 @@ export function setupTestContainer(): TestContext {
       ),
       redisConnection: testContainer.resolve<RedisConnection>(
         DEPENDENCY_SYMBOLS.RedisConnection,
+      ),
+      clovaService: testContainer.resolve<ClovaService>(
+        DEPENDENCY_SYMBOLS.ClovaService,
+      ),
+      feedTagRepository: testContainer.resolve<FeedTagRepository>(
+        DEPENDENCY_SYMBOLS.FeedTagRepository,
       ),
     };
   }
