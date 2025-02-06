@@ -3,18 +3,18 @@ import { injectable } from "tsyringe";
 @injectable()
 export class ClovaService {
   private readonly apiKey: string;
-  private readonly baseUrl: string;
+  private readonly apiUrl: string;
   private readonly requestId: string;
 
   constructor() {
     this.apiKey = process.env.CLOVA_STUDIO_TEST_API_KEY;
-    this.baseUrl = process.env.CLOVA_STUDIO_TEST_API_URL;
+    this.apiUrl = process.env.CLOVA_STUDIO_TEST_API_URL;
     this.requestId = process.env.X_NCP_CLOVA_STUDIO_REQUEST_ID;
   }
 
   async postFeedContent(text: string): Promise<string> {
     try {
-      const response = await fetch(this.baseUrl, {
+      const response = await fetch(this.apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,46 +53,53 @@ export class ClovaService {
       }
 
       const reader = response.body.getReader();
-      let tagResult = "";
-      let buffer = "";
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = new TextDecoder().decode(value);
-
-        buffer += chunk;
-
-        const events = buffer.split("\n\n");
-        buffer = events.pop() || "";
-
-        for (const event of events) {
-          const lines = event.split("\n");
-          let eventData = "";
-
-          for (const line of lines) {
-            if (line.startsWith("data:")) {
-              eventData += line.slice(5).trim();
-            }
-          }
-
-          if (eventData) {
-            try {
-              const parsedData = JSON.parse(eventData);
-              if (parsedData.message.content) {
-                tagResult = parsedData.message.content;
-              }
-            } catch (e) {
-              continue;
-            }
-          }
-        }
-      }
-
-      return tagResult;
+      return await this.createTagResult(reader);
     } catch (error) {
       throw error;
     }
+  }
+
+  private async createTagResult(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+  ) {
+    let tagResult = "";
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = new TextDecoder().decode(value);
+
+      buffer += chunk;
+
+      const events = buffer.split("\n\n");
+      buffer = events.pop() || "";
+
+      for (const event of events) {
+        const lines = event.split("\n");
+        let eventData = "";
+
+        for (const line of lines) {
+          if (line.startsWith("data:")) {
+            eventData += line.slice(5).trim();
+          }
+        }
+
+        if (eventData) {
+          try {
+            const parsedData = JSON.parse(eventData);
+            if (parsedData.message.content) {
+              tagResult = parsedData.message.content;
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+      }
+    }
+
+    return tagResult;
   }
 }
