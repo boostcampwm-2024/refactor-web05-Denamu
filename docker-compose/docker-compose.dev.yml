@@ -37,7 +37,8 @@ services:
     networks:
       - Denamu
     volumes:
-      - ../client/src:/var/web05-Denamu/client/src
+      - ../client:/var/web05-Denamu/client
+      - /var/web05-Denamu/client/node_modules
     develop:
       watch:
         - path: ../client/package.json
@@ -58,7 +59,8 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ../server/src:/var/web05-Denamu/server/src
+      - ../server:/var/web05-Denamu/server
+      - /var/web05-Denamu/server/node_modules
     environment:
       NODE_ENV: "DEV"
     develop:
@@ -79,7 +81,8 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ../feed-crawler/src:/var/web05-Denamu/feed-crawler/src
+      - ../feed-crawler:/var/web05-Denamu/feed-crawler
+      - /var/web05-Denamu/feed-crawler/node_modules
     environment:
       NODE_ENV: "DEV"
     develop:
