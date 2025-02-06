@@ -2,6 +2,8 @@ export interface RawFeed {
   title: string;
   link: string;
   pubDate: string;
+  description?: string;
+  "content:encoded"?: string;
 }
 
 export interface RssObj {
@@ -20,4 +22,6 @@ export interface FeedDetail {
   title: string;
   link: string;
   imageUrl: string;
+  content: string;
+  tag?: string[];
 }
