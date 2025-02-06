@@ -15,14 +15,15 @@ export class FeedTagRepository {
     tagNames: string[]
   ): Promise<void> {
     try {
+      if (tagNames.length === 0) {
+        return;
+      }
+
       const tagIdsQuery = "SELECT id FROM tag WHERE name IN (?)";
       const tagIds = await this.dbConnection.executeQuery(tagIdsQuery, [
         tagNames,
       ]);
 
-      if (tagNames.length === 0) {
-        return;
-      }
       const insertPromises = tagIds.map(({ id: tagId }) => {
         const query = "INSERT INTO feed_tag (feed_id, tag_id) VALUES (?, ?)";
         return this.dbConnection.executeQuery(query, [feedId, tagId]);
