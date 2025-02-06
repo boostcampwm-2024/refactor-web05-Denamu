@@ -6,12 +6,16 @@ import { XMLParser } from "fast-xml-parser";
 import { parse } from "node-html-parser";
 import { unescape } from "html-escaper";
 import { ONE_MINUTE, INTERVAL } from "./common/constant";
+import { ClovaService } from "./clova.service";
+import { FeedTagRepository } from "./repository/feed-tag.repository";
 
 export class FeedCrawler {
   private rssParser: RssParser = new RssParser();
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
+    private readonly clovaService: ClovaService,
+    private readonly feedTagRepository: FeedTagRepository
   ) {}
 
   async start() {
@@ -25,22 +29,26 @@ export class FeedCrawler {
     }
 
     const newFeedsByRss = await this.feedGroupByRss(rssObjects);
+
     const newFeeds = newFeedsByRss.flat();
 
     if (!newFeeds.length) {
       logger.info("새로운 피드가 없습니다.");
       return;
     }
+
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
-    const insertedData = await this.feedRepository.insertFeeds(newFeeds);
+    const insertedFeeds = await this.feedRepository.insertFeeds(newFeeds);
 
-    await this.feedRepository.setRecentFeedList(insertedData);
+    const feedsWithTags = await this.createTagsByClovaStudio(insertedFeeds);
+
+    await this.feedRepository.setRecentFeedList(feedsWithTags);
   }
 
   private async findNewFeeds(
     rssObj: RssObj,
-    now: number,
+    now: number
   ): Promise<FeedDetail[]> {
     try {
       const TIME_INTERVAL = INTERVAL;
@@ -61,6 +69,12 @@ export class FeedCrawler {
             .slice(0, 19)
             .replace("T", " ");
 
+          const content = feed.description
+            ? feed.description
+            : feed["content:encoded"];
+
+          const cleanText = content.replace(/<[^>]*>/g, "").trim();
+
           return {
             id: null,
             blogId: rssObj.id,
@@ -70,14 +84,14 @@ export class FeedCrawler {
             title: feed.title,
             link: decodeURIComponent(feed.link),
             imageUrl: imageUrl,
+            content: cleanText,
           };
-        }),
+        })
       );
-
       return detailedFeeds;
     } catch (err) {
       logger.warn(
-        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`,
+        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`
       );
       return [];
     }
@@ -87,10 +101,10 @@ export class FeedCrawler {
     return Promise.all(
       rssObjects.map(async (rssObj: RssObj) => {
         logger.info(
-          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`,
+          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`
         );
         return await this.findNewFeeds(rssObj, currentTime.setSeconds(0, 0));
-      }),
+      })
     );
   }
 
@@ -107,7 +121,6 @@ export class FeedCrawler {
     }
     const xmlData = await response.text();
     const objFromXml = xmlParser.parse(xmlData);
-
     if (!Array.isArray(objFromXml.rss.channel.item)) {
       objFromXml.rss.channel.item = [objFromXml.rss.channel.item];
     }
@@ -116,7 +129,43 @@ export class FeedCrawler {
       title: this.rssParser.customUnescape(feed.title),
       link: feed.link,
       pubDate: feed.pubDate,
+      description: feed.description
+        ? feed.description
+        : feed["content:encoded"],
     }));
+  }
+
+  private async createTagsByClovaStudio(feeds: FeedDetail[]): Promise<any> {
+    const results = [];
+
+    for (const feed of feeds) {
+      try {
+        const tagString = await this.clovaService.postFeedContent(feed.title);
+
+        const tagNames = tagString
+          .split(",")
+          .map((tagInfo) => {
+            const name = tagInfo.split("/")[0].trim();
+            const confidence = parseInt(
+              tagInfo.split("/")[1].trim().split("%")[0].trim()
+            );
+            if (confidence >= 70) {
+              return name;
+            }
+          })
+          .filter((tagName) => tagName !== undefined);
+
+        feed.tag = tagNames;
+
+        results.push(feed);
+        this.feedTagRepository.insertFeedTags(feed.id, feed.tag);
+      } catch (error) {
+        logger.warn(`태그 처리 실패 (${feed.title}): ${error}`);
+        results.push(feed);
+      }
+    }
+
+    return results;
   }
 }
 
@@ -135,7 +184,7 @@ class RssParser {
     const htmlData = await response.text();
     const htmlRootElement = parse(htmlData);
     const metaImage = htmlRootElement.querySelector(
-      'meta[property="og:image"]',
+      'meta[property="og:image"]'
     );
     let thumbnailUrl = metaImage?.getAttribute("content") ?? "";
 
