@@ -9,7 +9,6 @@ import { DatabaseConnection } from "./types/database-connection";
 import { ClovaService } from "./clova.service";
 import { FeedTagRepository } from "./repository/feed-tag.repository";
 
-
 async function main() {
   logger.info("==========작업 시작==========");
   const startTime = Date.now();
@@ -28,12 +27,6 @@ async function main() {
   );
   const feedTagRepository = container.resolve<FeedTagRepository>(
     DEPENDENCY_SYMBOLS.FeedTagRepository,
-  );
-  const feedRepository = container.resolve<FeedRepository>(
-    DEPENDENCY_SYMBOLS.FeedRepository
-  );
-  const dbConnection = container.resolve<DatabaseConnection>(
-    DEPENDENCY_SYMBOLS.DatabaseConnection
   );
 
   const feedCrawler = new FeedCrawler(
