@@ -6,14 +6,17 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   ViewColumn,
   ViewEntity,
 } from 'typeorm';
 import { RssAccept } from '../../rss/entity/rss.entity';
+import { TagMap } from './tag_map.entity';
 
 @Entity({ name: 'feed' })
 export class Feed extends BaseEntity {
+  @OneToMany(() => TagMap, (tagMap) => tagMap.feedId)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -44,6 +47,12 @@ export class Feed extends BaseEntity {
     nullable: true,
   })
   thumbnail: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  summary: string;
 
   @ManyToOne(() => RssAccept, (rssAccept) => rssAccept.feeds, {
     nullable: false,
