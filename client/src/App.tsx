@@ -1,8 +1,10 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import LoadingPage from "@/pages/Loading.tsx";
+import Loading from "@/pages/Loading.tsx";
 import NotFound from "@/pages/NotFound";
+import SignIn from "@/pages/SignIn.tsx";
+import SignUp from "@/pages/SignUp.tsx";
 
 import { useMediaQuery } from "@/hooks/common/useMediaQuery";
 
@@ -36,7 +38,7 @@ export default function App() {
         <Route
           path="/"
           element={
-            <Suspense fallback={<LoadingPage />}>
+            <Suspense fallback={<Loading />}>
               <Home />
             </Suspense>
           }
@@ -44,7 +46,7 @@ export default function App() {
         <Route
           path="/admin"
           element={
-            <Suspense fallback={<LoadingPage />}>
+            <Suspense fallback={<Loading />}>
               <Admin />
             </Suspense>
           }
@@ -52,15 +54,31 @@ export default function App() {
         <Route
           path="/about"
           element={
-            <Suspense fallback={<LoadingPage />}>
+            <Suspense fallback={<Loading />}>
               <AboutService />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <Suspense fallback={<Loading />}>
+              <SignIn />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <Suspense fallback={<Loading />}>
+              <SignUp />
             </Suspense>
           }
         />
         <Route
           path="*"
           element={
-            <Suspense fallback={<LoadingPage />}>
+            <Suspense fallback={<Loading />}>
               <NotFound />
             </Suspense>
           }

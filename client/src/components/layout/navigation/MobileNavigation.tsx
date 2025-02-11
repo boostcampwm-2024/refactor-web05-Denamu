@@ -9,24 +9,18 @@ import logo from "@/assets/logo-denamu-title.svg";
 
 import { useSidebarStore } from "@/store/useSidebarStore";
 
-export default function MobileNavigation({
-  toggleModal,
-}: {
-  toggleModal: (modalType: "search" | "rss" | "login") => void;
-}) {
+export default function MobileNavigation({ toggleModal }: { toggleModal: (modalType: "search" | "rss") => void }) {
   const { isOpen, setIsOpen } = useSidebarStore();
   return (
     <div className="h-20 items-center flex justify-between relative px-[10px]">
-      {/* 로고 */}
       <button className="flex-shrink-0 relative z-50" onClick={() => location.reload()}>
         <img className="h-14 w-auto cursor-pointer" src={logo} alt="Logo" />
       </button>
 
-      {/* 검색 */}
       <div className="absolute left-1/2 transform -translate-x-1/2 w-[50%] flex justify-center z-40">
         <SearchButton handleSearchModal={() => toggleModal("search")} />
       </div>
-      {/* 햄버거 버튼 */}
+
       <Sheet open={isOpen}>
         <Button variant="outline" size="icon" className="hover:border-primary hover:text-primary" onClick={setIsOpen}>
           <Menu className="h-4 w-4" />
@@ -41,11 +35,7 @@ export default function MobileNavigation({
               <X />
             </Button>
           </SheetHeader>
-          <SideBar
-            handleRssModal={() => toggleModal("rss")}
-            handleLoginModal={() => toggleModal("login")}
-            handleSidebar={setIsOpen}
-          />
+          <SideBar handleRssModal={() => toggleModal("rss")} handleSidebar={setIsOpen} />
         </SheetContent>
       </Sheet>
     </div>

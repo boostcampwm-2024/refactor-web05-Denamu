@@ -9,23 +9,29 @@ import { useTapStore } from "@/store/useTapStore";
 
 type SideBarType = {
   handleRssModal: () => void;
-  handleLoginModal: () => void;
   handleSidebar: () => void;
 };
 
-export default function SideBar({ handleRssModal, handleLoginModal, handleSidebar }: SideBarType) {
+export default function SideBar({ handleRssModal, handleSidebar }: SideBarType) {
   const navigate = useNavigate();
   const { tap, setTap } = useTapStore();
+
   const actionAndClose = (fn: () => void) => {
     fn();
     handleSidebar();
   };
+
+  const handleSignIn = () => {
+    navigate("/signin");
+    handleSidebar();
+  };
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <Button onClick={() => navigate("/about")} variant="outline">
         서비스 소개
       </Button>
-      <Button variant="outline" className="w-full" onClick={() => actionAndClose(handleLoginModal)}>
+      <Button variant="outline" className="w-full" onClick={handleSignIn}>
         로그인
       </Button>
       {tap === "main" ? (
