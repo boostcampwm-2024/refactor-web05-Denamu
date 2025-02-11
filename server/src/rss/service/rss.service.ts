@@ -18,7 +18,6 @@ import { RssAcceptHistoryResponseDto } from '../dto/response/rss-accept-history.
 import { RssRejectHistoryResponseDto } from '../dto/response/rss-reject-history.dto';
 import { RssManagementRequestDto } from '../dto/request/rss-management.dto';
 import { RejectRssRequestDto } from '../dto/request/rss-reject.dto';
-
 @Injectable()
 export class RssService {
   constructor(
@@ -84,7 +83,12 @@ export class RssService {
         return [rssAccept, feeds];
       },
     );
-    await this.feedCrawlerService.saveRssFeeds(feeds, rssAccept);
+
+    const feedsWithId = await this.feedCrawlerService.saveRssFeeds(
+      feeds,
+      rssAccept,
+    );
+    await this.feedCrawlerService.saveFeedsTags(feedsWithId);
     this.emailService.sendMail(rssAccept, true);
   }
 
