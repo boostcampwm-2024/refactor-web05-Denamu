@@ -61,7 +61,7 @@ export class Feed extends BaseEntity {
   tag: string[];
 
   @Column({
-    type: 'mediumtext',
+    type: 'text',
     nullable: true,
   })
   summary: string;
