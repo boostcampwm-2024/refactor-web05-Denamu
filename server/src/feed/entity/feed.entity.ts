@@ -12,7 +12,6 @@ import {
   ViewEntity,
 } from 'typeorm';
 import { RssAccept } from '../../rss/entity/rss.entity';
-import { TagMap } from './tag_map.entity';
 
 @Entity({ name: 'feed' })
 export class Feed extends BaseEntity {
@@ -63,6 +62,15 @@ export class Feed extends BaseEntity {
     name: 'blog_id',
   })
   blog: RssAccept;
+
+  @OneToMany(() => TagMap, (tag) => tag.feed)
+  tag: string[];
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  summary: string;
 }
 
 @ViewEntity({
