@@ -12,10 +12,10 @@ import {
   ViewEntity,
 } from 'typeorm';
 import { RssAccept } from '../../rss/entity/rss.entity';
+import { TagMap } from './tag-map.entity';
 
 @Entity({ name: 'feed' })
 export class Feed extends BaseEntity {
-  @OneToMany(() => TagMap, (tagMap) => tagMap.feedId)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -65,12 +65,6 @@ export class Feed extends BaseEntity {
 
   @OneToMany(() => TagMap, (tag) => tag.feed)
   tag: string[];
-
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  summary: string;
 }
 
 @ViewEntity({
