@@ -12,6 +12,7 @@ export class TagMap extends BaseEntity {
   @PrimaryColumn({ name: 'feed_id', type: 'number' })
   @ManyToOne(() => Feed, (feed) => feed.tag, {
     nullable: false,
+    onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'feed_id' })

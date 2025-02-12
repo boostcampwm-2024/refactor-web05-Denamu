@@ -47,6 +47,12 @@ export class Feed extends BaseEntity {
   })
   thumbnail: string;
 
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  summary: string;
+
   @ManyToOne(() => RssAccept, (rssAccept) => rssAccept.feeds, {
     nullable: false,
     onUpdate: 'CASCADE',
@@ -58,13 +64,7 @@ export class Feed extends BaseEntity {
   blog: RssAccept;
 
   @OneToMany(() => TagMap, (tag) => tag.feed)
-  tag: string[];
-
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  summary: string;
+  tag: TagMap[];
 }
 
 @ViewEntity({
