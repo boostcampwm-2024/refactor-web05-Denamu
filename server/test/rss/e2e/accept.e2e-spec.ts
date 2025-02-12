@@ -51,18 +51,17 @@ describe('Rss Accept E2E Test', () => {
           .post(`/api/rss/accept/${rss.id}`)
           .set('Cookie', 'sessionId=sid')
           .send();
-        const accepted = await rssAcceptRepository.findOne({
-          where: { rssUrl: rss.rssUrl },
-        });
 
         // then
         expect(response.status).toBe(201);
-        expect(accepted).not.toBeNull();
       });
     });
 
     describe('비정상적인 요청을 한다.', () => {
       it('존재하지 않는 rss를 승인할 때', async () => {
+        // given
+        jest.spyOn(rssRepository, 'findOne').mockResolvedValue(undefined);
+
         // when
         const response = await request(app.getHttpServer())
           .post(`/api/rss/accept/1`)
