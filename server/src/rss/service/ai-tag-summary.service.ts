@@ -2,6 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { WinstonLoggerService } from '../../common/logger/logger.service';
 
+const ALLOWED_TAGS = [
+  '회고',
+  'Frontend',
+  'Backend',
+  'DB',
+  'Network',
+  'OS',
+  'Algorithm',
+  'Infra',
+  'Engineering',
+  'TypeScript',
+  'JavaScript',
+  'Java',
+  'React',
+  'Vue.JS',
+  'Nest.JS',
+  'Express.JS',
+  'Spring',
+  'MySQL',
+  'SQLite',
+  'PostgreSQL',
+  'MongoDB',
+  'Redis',
+  'Docker',
+];
+
 const PROMPT_CONTENT = `[System]
 You need to assign tags and provide a summary of the content.
 The input format is XML.
@@ -41,29 +67,8 @@ The response should look exactly like this, without any surrounding characters:
 Strictly follow this rule.
 
 Tag List:
-- 회고
-- Frontend
-- Backend
-- DB
-- Network
-- OS
-- Algorithm
-- Infra
-- Engineering
-- TypeScript
-- JavaScript
-- Java
-- React
-- Vue.JS
-- Nest.JS
-- Express.JS
-- Spring
-- MySQL
-- SQLite
-- PostgreSQL
-- MongoDB
-- Redis
-- Docker`;
+${ALLOWED_TAGS.map((tag) => `- ${tag}`).join('\n')}
+`;
 
 type AIResult = {
   tags: Record<string, number>;
