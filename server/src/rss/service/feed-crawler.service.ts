@@ -5,7 +5,6 @@ import { FeedRepository } from '../../feed/repository/feed.repository';
 import { RssParserService } from '../service/rss-parser.service';
 import { Feed } from '../../feed/entity/feed.entity';
 import { RssAccept } from '../entity/rss.entity';
-import * as sanitize from 'sanitize-html';
 import { TagMap } from '../../feed/entity/tag-map.entity';
 import { AITagSummaryService } from './ai-tag-summary.service';
 
@@ -34,11 +33,9 @@ export class FeedCrawlerService {
         const date = new Date(feed.pubDate);
         const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
         const thumbnail = await this.rssParser.getThumbnailUrl(feed.link);
-
-        const content = sanitize(feed.description ?? feed['content:encoded'], {
-          allowedTags: [],
-        }).replace(/[\n\r\t\s]+/g, ' ');
-        const [tags, summary] = await this.aiTagSummaryService.request(content);
+        const [tags, summary] = await this.aiTagSummaryService.request(
+          feed.description ?? feed['content:encoded'],
+        );
         return {
           title: this.rssParser.customUnescape(feed.title),
           path: decodeURIComponent(feed.link),

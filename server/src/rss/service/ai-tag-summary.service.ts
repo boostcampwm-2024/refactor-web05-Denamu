@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { WinstonLoggerService } from '../../common/logger/logger.service';
+import * as sanitize from 'sanitize-html';
 
 const ALLOWED_TAGS = [
   '회고',
@@ -84,8 +85,12 @@ export class AITagSummaryService {
     });
   }
 
-  async request(feedContent: string) {
+  async request(feedContentXML: string) {
     try {
+      const feedContent = sanitize(feedContentXML, {
+        allowedTags: [],
+      }).replace(/[\n\r\t\s]+/g, ' ');
+
       const aiResult = await this.anthropic.messages.create({
         model: 'claude-3-5-haiku-latest',
         max_tokens: 8192,
@@ -97,9 +102,11 @@ export class AITagSummaryService {
           },
         ],
       });
+
       const resultJson: AIResult = JSON.parse(
         aiResult.content[0]['text'] as string,
       );
+
       return [Object.keys(resultJson.tags), resultJson.summary];
     } catch (error) {
       this.winstonLogger.error(error);
