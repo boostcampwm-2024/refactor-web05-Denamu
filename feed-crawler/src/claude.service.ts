@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import Anthropic from "@anthropic-ai/sdk";
-import { claudeResponse, FeedDetail } from "./common/types";
+import { ClaudeResponse, FeedDetail } from "./common/types";
 import { TagMapRepository } from "./repository/tag-map.repository";
 import { FeedRepository } from "./repository/feed.repository";
 import logger from "./common/logger";
@@ -32,7 +32,7 @@ export class ClaudeService {
           const message = await this.client.messages.create(params);
           let responseText: string = message["content"][0]["text"];
           responseText = responseText.replace(/\n/g, "");
-          const result: claudeResponse = JSON.parse(responseText);
+          const result: ClaudeResponse = JSON.parse(responseText);
           await this.generateTag(feed, result["tags"]);
           await this.summarize(feed, result["summary"]);
           return {
