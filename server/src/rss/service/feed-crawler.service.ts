@@ -17,9 +17,38 @@ export class FeedCrawlerService {
     private readonly rssParser: RssParserService,
     private readonly aiTagSummaryService: AITagSummaryService,
   ) {}
+  async parseRssFeeds(
+    rssXmlResponse: Response,
+  ): Promise<Partial<Feed & { tags: string[] }>[]> {
+    const xmlParser = new XMLParser();
 
-  async loadRssFeeds(rssUrl: string) {
-    return await this.fetchRss(rssUrl);
+    const xmlData = await rssXmlResponse.text();
+    const objFromXml = xmlParser.parse(xmlData);
+
+    if (!Array.isArray(objFromXml.rss.channel.item)) {
+      objFromXml.rss.channel.item = [objFromXml.rss.channel.item];
+    }
+
+    return await Promise.all(
+      objFromXml.rss.channel.item.map(async (feed) => {
+        const date = new Date(feed.pubDate);
+        const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
+        const thumbnail = await this.rssParser.getThumbnailUrl(feed.link);
+
+        const content = sanitize(feed.description, {
+          allowedTags: [],
+        }).replace(/[\n\r\t\s]+/g, ' ');
+        const [tags, summary] = await this.aiTagSummaryService.request(content);
+        return {
+          title: this.rssParser.customUnescape(feed.title),
+          path: decodeURIComponent(feed.link),
+          thumbnail,
+          createdAt: formattedDate,
+          summary,
+          tags,
+        };
+      }),
+    );
   }
 
   async saveRssFeeds(
@@ -48,48 +77,5 @@ export class FeedCrawlerService {
     if (tagsToInsert.length > 0) {
       await this.tagMapRepository.insert(tagsToInsert);
     }
-  }
-
-  private async fetchRss(
-    rssUrl: string,
-  ): Promise<Partial<Feed & { tags: string[] }>[]> {
-    const xmlParser = new XMLParser();
-    const response = await fetch(rssUrl, {
-      headers: {
-        Accept: 'application/rss+xml, application/xml, text/xml',
-      },
-    });
-
-    if (!response.ok) {
-      throw new BadRequestException(`${rssUrl}에서 xml 추출 실패`);
-    }
-
-    const xmlData = await response.text();
-    const objFromXml = xmlParser.parse(xmlData);
-
-    if (!Array.isArray(objFromXml.rss.channel.item)) {
-      objFromXml.rss.channel.item = [objFromXml.rss.channel.item];
-    }
-
-    return await Promise.all(
-      objFromXml.rss.channel.item.map(async (feed) => {
-        const date = new Date(feed.pubDate);
-        const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
-        const thumbnail = await this.rssParser.getThumbnailUrl(feed.link);
-
-        const content = sanitize(feed.description, {
-          allowedTags: [],
-        }).replace(/[\n\r\t\s]+/g, ' ');
-        const [tags, summary] = await this.aiTagSummaryService.request(content);
-        return {
-          title: this.rssParser.customUnescape(feed.title),
-          path: decodeURIComponent(feed.link),
-          thumbnail,
-          createdAt: formattedDate,
-          summary,
-          tags,
-        };
-      }),
-    );
   }
 }
