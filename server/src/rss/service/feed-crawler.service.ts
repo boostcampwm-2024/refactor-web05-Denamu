@@ -68,10 +68,12 @@ export class FeedCrawlerService {
   async saveFeedsTags(feeds: Partial<Feed & { tags: string[] }>[]) {
     const tagsToInsert: Partial<TagMap>[] = feeds.flatMap(
       (feed) =>
-        feed.tags.map((tag) => ({
-          feedId: feed.id,
-          tag,
-        })) ?? [],
+        feed.tags.map((tag) => {
+          return {
+            feed: feed as Feed,
+            tag,
+          };
+        }) ?? [],
     );
 
     if (tagsToInsert.length > 0) {

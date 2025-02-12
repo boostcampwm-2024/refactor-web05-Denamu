@@ -64,7 +64,7 @@ export class Feed extends BaseEntity {
   blog: RssAccept;
 
   @OneToMany(() => TagMap, (tag) => tag.feed)
-  tag: string[];
+  tag: TagMap[];
 }
 
 @ViewEntity({

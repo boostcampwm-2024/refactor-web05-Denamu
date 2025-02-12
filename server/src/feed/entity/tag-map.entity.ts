@@ -9,16 +9,7 @@ import { Feed } from './feed.entity';
 
 @Entity({ name: 'tag_map' })
 export class TagMap extends BaseEntity {
-  @PrimaryColumn({ name: 'feed_id' })
-  feedId: number;
-
-  @PrimaryColumn({
-    name: 'tag',
-    length: 50,
-    nullable: false,
-  })
-  tag: string;
-
+  @PrimaryColumn({ name: 'feed_id', type: 'number' })
   @ManyToOne(() => Feed, (feed) => feed.tag, {
     nullable: false,
     onUpdate: 'CASCADE',
@@ -26,4 +17,11 @@ export class TagMap extends BaseEntity {
   })
   @JoinColumn({ name: 'feed_id' })
   feed: Feed;
+
+  @PrimaryColumn({
+    name: 'tag',
+    length: 50,
+    nullable: false,
+  })
+  tag: string;
 }
