@@ -35,7 +35,7 @@ export class FeedCrawlerService {
         const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
         const thumbnail = await this.rssParser.getThumbnailUrl(feed.link);
 
-        const content = sanitize(feed.description, {
+        const content = sanitize(feed.description ?? feed['content:encoded'], {
           allowedTags: [],
         }).replace(/[\n\r\t\s]+/g, ' ');
         const [tags, summary] = await this.aiTagSummaryService.request(content);
