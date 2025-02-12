@@ -96,6 +96,8 @@ export class FeedRepository {
             thumbnail: feed.imageUrl,
             path: feed.link,
             title: feed.title,
+            summary: feed.summary || "",
+            tag: Array.isArray(feed.tag) ? feed.tag : [],
           });
         }
       });
@@ -109,5 +111,18 @@ export class FeedRepository {
       await this.redisConnection.quit();
     }
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
+  }
+
+  public async insertSummary(feedId: number, summary: string) {
+    const query = `
+            UPDATE feed 
+            SET summary=?
+            WHERE id=?
+        `;
+
+    await this.dbConnection.executeQuery(query, [summary, feedId]);
+  }
+  catch(error) {
+    throw error;
   }
 }
