@@ -84,11 +84,8 @@ export class AITagSummaryService {
       const aiResult = await this.anthropic.messages.create({
         model: 'claude-3-5-haiku-latest',
         max_tokens: 8192,
+        system: PROMPT_CONTENT,
         messages: [
-          {
-            role: 'user',
-            content: PROMPT_CONTENT,
-          },
           {
             role: 'user',
             content: feedContent,
