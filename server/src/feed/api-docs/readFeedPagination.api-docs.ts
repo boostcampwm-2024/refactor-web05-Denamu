@@ -46,7 +46,7 @@ export function ApiReadFeedPagination() {
                     blogPlatform: { type: 'string' },
                     title: { type: 'string' },
                     path: { type: 'string', format: 'url' },
-                    createdAtcreatedAt: { type: 'string', format: 'date-time' },
+                    createdAt: { type: 'string', format: 'date-time' },
                     thumbnail: { type: 'string', format: 'url' },
                     viewCount: { type: 'number' },
                     isNew: { type: 'boolean' },
