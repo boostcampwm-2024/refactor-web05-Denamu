@@ -16,11 +16,15 @@ import { POST_MODAL_DATA } from "@/constants/dummyData";
 
 import { detailFormatDate } from "@/utils/date";
 
+import { useMediaStore } from "@/store/useMediaStore";
+
 export default function PostDetailPage() {
   const { id } = useParams();
   if (id && !/^\d+$/.test(id)) {
     return <NotFound />;
   }
+  const isMobile = useMediaStore((state) => state.isMobile);
+
   const { data, isLoading, error } = usePostDetail(Number(id));
   const modalRef = useRef<HTMLDivElement>(null);
   const { handlePostClick } = usePostCardActions(data?.data || POST_MODAL_DATA.data);
@@ -52,22 +56,32 @@ export default function PostDetailPage() {
         </span>
         <div className="flex flex-col gap-5 mb-10">
           <div
-            className="grid grid-cols-5 gap-4 items-center border rounded-md shadow-sm transition-transform duration-300 hover:scale-[1.02]"
+            className="md:grid md:grid-cols-5 md:gap-4 items-center border rounded-md shadow-sm transition-transform duration-300 hover:scale-[1.02]  "
             role="button"
             onClick={handlePostClick}
           >
-            <div className="col-span-3 flex flex-col h-full justify-between p-4 bg-white">
+            <div className="md:col-span-3 flex flex-col h-full justify-between p-4 bg-white ">
               <span className="text-lg font-semibold">{data.data.title}</span>
-              <span className="text-sm text-gray-400 hover:underline">{data.data.path}</span>
+              <span className="text-sm text-gray-400 hover:underline flex gap-2 truncate">
+                <img
+                  src={`https://denamu.site/files/${data.data.blogPlatform}-icon.svg`}
+                  alt={data.data.author}
+                  className="h-5 w-5 rounded-none"
+                />
+                {data.data.path}
+              </span>
             </div>
-            <img
-              src={data.data.thumbnail}
-              alt={`Thumbnail for ${data.data.title}`}
-              className="col-span-2 h-full w-full bg-gray-100"
-            />
+            {!isMobile && (
+              <img
+                src={data.data.thumbnail}
+                alt={`Thumbnail for ${data.data.title}`}
+                className="w-full max-h-[200px] object-cover col-span-2 "
+              />
+            )}
           </div>
           <div className="prose">
             <Markdown>{data.data.summary.replace(/\\n/g, "\n")}</Markdown>
+            <p className="text-gray-400">💡 인공지능이 요약한 내용입니다. 오류가 포함될 수 있으니 참고 바랍니다.</p>
           </div>
         </div>
       </div>

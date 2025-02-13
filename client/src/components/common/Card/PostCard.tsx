@@ -2,8 +2,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { Card, MCard } from "@/components/ui/card";
 
-import { usePostCardActions } from "@/hooks/common/usePostCardActions";
-
 import { PostCardContent } from "./PostCardContent";
 import { PostCardImage } from "./PostCardImage";
 import { cn } from "@/lib/utils";
@@ -41,10 +39,11 @@ const DesktopCard = ({ post, className }: PostCardProps) => {
   );
 };
 const MobileCard = ({ post, className }: PostCardProps) => {
-  const { handlePostClick } = usePostCardActions(post);
+  const navigate = useNavigate();
+
   return (
     <MCard
-      onClick={handlePostClick}
+      onClick={() => navigate(`/${post.id}`)}
       className={cn("aspect-[5/3] transition-all duration-300 flex flex-col gap-2", className)}
     >
       <PostCardImage thumbnail={post.thumbnail} alt={post.title} />
