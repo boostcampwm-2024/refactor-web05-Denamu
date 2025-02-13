@@ -34,7 +34,7 @@ export class ClaudeService {
             message.content[0]["text"] as string,
           );
 
-          Promise.all([
+          await Promise.all([
             this.generateTag(feed, result["tags"]),
             this.summarize(feed, result["summary"]),
           ]);
