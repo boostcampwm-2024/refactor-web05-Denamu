@@ -1,3 +1,5 @@
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { Card, MCard } from "@/components/ui/card";
 
 import { usePostCardActions } from "@/hooks/common/usePostCardActions";
@@ -19,13 +21,17 @@ export const PostCard = ({ post, className }: PostCardProps) => {
 };
 
 const DesktopCard = ({ post, className }: PostCardProps) => {
-  const { handlePostClick } = usePostCardActions(post);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const openPostDetail = (modalUrl: string) => {
+    navigate(modalUrl, { state: { backgroundLocation: location } });
+  };
   return (
     <Card
-      onClick={handlePostClick}
+      onClick={() => openPostDetail(`/${post.id}`)}
       className={cn(
-        "h-full group shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border-none rounded-xl cursor-pointer",
+        "h-[270px] group shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border-none rounded-xl cursor-pointer",
         className
       )}
     >
@@ -36,7 +42,6 @@ const DesktopCard = ({ post, className }: PostCardProps) => {
 };
 const MobileCard = ({ post, className }: PostCardProps) => {
   const { handlePostClick } = usePostCardActions(post);
-
   return (
     <MCard
       onClick={handlePostClick}
