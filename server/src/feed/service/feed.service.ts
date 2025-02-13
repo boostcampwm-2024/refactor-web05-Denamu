@@ -242,7 +242,11 @@ export class FeedService {
     const feed = await this.feedViewRepository.findFeedById(
       feedDetailRequestDto.feedId,
     );
-
+    if (!feed) {
+      throw new BadRequestException(
+        `${feedDetailRequestDto.feedId}번 피드는 존재하지 않습니다.`,
+      );
+    }
     return FeedDetailResponseDto.toResponseDto(feed);
   }
 }
