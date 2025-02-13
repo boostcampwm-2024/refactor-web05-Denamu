@@ -73,4 +73,19 @@ describe('GET api/feed/detail E2E Test', () => {
     expect(response.body.data.id).toBe(11);
     expect(response.body.data.tag).toStrictEqual([]);
   });
+
+  it('없는 피드를 조회한다면 400번 에러를 반환한다.', async () => {
+    //given
+    const feedDetailRequestDto = new FeedDetailRequestDto({
+      feedId: 100,
+    });
+
+    //when
+    const response = await request(app.getHttpServer()).get(
+      `/api/feed/detail/${feedDetailRequestDto.feedId}`,
+    );
+
+    //then
+    expect(response.status).toBe(400);
+  });
 });
