@@ -86,12 +86,8 @@ export class ClaudeService {
 
   private async generateTag(feed: FeedDetail, tags: Record<string, number>) {
     try {
-      const tagsArray = Object.entries(tags);
-      if (tagsArray.length === 0) return;
-
-      const tag = tagsArray.map(([key, value]) => {
-        return key;
-      });
+      const tag = Object.keys(tags);
+      if (tag.length === 0) return;
       await this.tagMapRepository.insertTags(feed.id, tag);
       feed.tag = tag;
     } catch (error) {
