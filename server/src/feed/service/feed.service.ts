@@ -29,6 +29,8 @@ import {
   FeedRecentResponseDto,
 } from '../dto/response/recent.dto';
 import { FeedViewUpdateRequestDto } from '../dto/request/feed-update.dto';
+import { FeedDetailRequestDto } from '../dto/request/feed-detail.dto';
+import { FeedDetailResponseDto } from '../dto/response/feed-detail.dto';
 
 @Injectable()
 export class FeedService {
@@ -44,7 +46,7 @@ export class FeedService {
       feedPaginationQueryDto.limit,
     );
     const hasMore = this.existNextFeed(feedList, feedPaginationQueryDto.limit);
-    
+
     if (hasMore) feedList.pop();
     const lastId = this.getLastIdFromFeedList(feedList);
     const newCheckFeedList = await this.checkNewFeeds(feedList);
@@ -234,5 +236,13 @@ export class FeedService {
     }
 
     return request.socket.remoteAddress;
+  }
+
+  async readFeedDetail(feedDetailRequestDto: FeedDetailRequestDto) {
+    const feed = await this.feedViewRepository.findFeedById(
+      feedDetailRequestDto.feedId,
+    );
+
+    return FeedDetailResponseDto.toResponseDto(feed);
   }
 }
