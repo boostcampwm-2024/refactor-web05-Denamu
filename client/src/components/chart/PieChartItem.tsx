@@ -30,7 +30,7 @@ const chartConfig: ChartConfig = {
 
 export default function PieChartItem({ data, title }: BarType) {
   return (
-    <Card className="flex flex-col">
+    <Card className="w-full md:w-[50%]" data-testid="pie-chart-item">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
       </CardHeader>

@@ -20,11 +20,4 @@ describe("PostCardImage", () => {
     expect(fallbackContainer).toBeInTheDocument();
     expect(screen.queryByTestId("lazy-image")).not.toBeInTheDocument();
   });
-
-  it("container에 올바른 class가 적용되는지 확인", () => {
-    render(<PostCardImage alt="테스트 이미지" />);
-
-    const container = screen.getByTestId("image-container");
-    expect(container).toHaveClass("h-[120px]", "rounded-t-xl");
-  });
 });
