@@ -88,10 +88,10 @@ export class ClaudeService {
 
   private async generateTag(feed: FeedDetail, tags: Record<string, number>) {
     try {
-      const tag = Object.keys(tags);
-      if (tag.length === 0) return;
-      await this.tagMapRepository.insertTags(feed.id, tag);
-      feed.tag = tag;
+      const tagList = Object.keys(tags);
+      if (tagList.length === 0) return;
+      await this.tagMapRepository.insertTags(feed.id, tagList);
+      feed.tag = tagList;
     } catch (error) {
       logger.error(
         `[DB] 태그 데이터를 저장하는 도중 에러가 발생했습니다.
