@@ -54,7 +54,7 @@ const DesktopCardContent = ({ post }: PostCardContentProps) => {
         <p className="h-[40px] font-bold text-sm group-hover:text-primary transition-colors line-clamp-2">
           {post.title}
         </p>
-        <p className="text-[10px] text-gray-400 pt-2">{formatDate(post.createdAt)}</p>
+        <p className="text-[10px] text-gray-400 pt-2 pb-1">{formatDate(post.createdAt)}</p>
         {post.tag && <PostTag tags={post.tag} />}
       </div>
     </CardContent>
