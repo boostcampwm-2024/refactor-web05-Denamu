@@ -14,7 +14,7 @@ export class ClaudeService {
     private readonly feedRepository: FeedRepository,
   ) {
     this.client = new Anthropic({
-      apiKey: process.env["AI_API_KEY"],
+      apiKey: process.env.AI_API_KEY,
     });
   }
 
