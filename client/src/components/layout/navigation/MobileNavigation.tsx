@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import { Menu, X } from "lucide-react";
 
 import SideBar from "@/components/layout/Sidebar";
@@ -8,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import logo from "@/assets/logo-denamu-title.svg";
 
 import { useSidebarStore } from "@/store/useSidebarStore";
+import { useTapStore } from "@/store/useTapStore";
 
 export default function MobileNavigation({
   toggleModal,
@@ -15,10 +18,19 @@ export default function MobileNavigation({
   toggleModal: (modalType: "search" | "rss" | "login") => void;
 }) {
   const { isOpen, setIsOpen } = useSidebarStore();
+  const navigate = useNavigate();
+  const { setTap } = useTapStore();
+
   return (
     <div className="h-20 items-center flex justify-between relative px-[10px]">
       {/* 로고 */}
-      <button className="flex-shrink-0 relative z-50" onClick={() => location.reload()}>
+      <button
+        className="flex-shrink-0 relative z-50"
+        onClick={() => {
+          setTap("main");
+          navigate("/");
+        }}
+      >
         <img className="h-14 w-auto cursor-pointer" src={logo} alt="Logo" />
       </button>
 

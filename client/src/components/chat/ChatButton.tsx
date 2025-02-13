@@ -27,7 +27,7 @@ export function OpenChat() {
   return (
     <button
       onClick={toggleSidebar}
-      className="fixed text-white bottom-[14.5rem] right-7 bg-[#3498DB] hover:bg-[#2980B9] !rounded-full p-3"
+      className="fixed text-white bottom-[14.5rem] right-7 bg-[#3498DB] hover:bg-[#2980B9] !rounded-full p-3 side-btn"
     >
       <MessageCircleMore size={25} />
     </button>
