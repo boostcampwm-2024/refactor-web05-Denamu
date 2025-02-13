@@ -50,7 +50,6 @@ export class ClaudeService {
           return {
             succeeded: false,
             feed,
-            error,
           };
         }
       }),
