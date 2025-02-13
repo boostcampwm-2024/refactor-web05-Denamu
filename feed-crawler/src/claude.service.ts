@@ -34,7 +34,7 @@ export class ClaudeService {
           responseText = responseText.replace(/\n/g, "");
           const result: ClaudeResponse = JSON.parse(responseText);
 
-          Promise.all([
+          await Promise.all([
             this.generateTag(feed, result["tags"]),
             this.summarize(feed, result["summary"]),
           ]);
