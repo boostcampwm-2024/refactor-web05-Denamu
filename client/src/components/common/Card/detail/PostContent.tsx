@@ -9,7 +9,9 @@ interface PostContentProps {
 }
 
 export const PostContent = React.memo(({ data, onPostClick }: PostContentProps) => {
-  const markdownString = data.summary ? data.summary.replace(/\\n/g, "\n").replace(/\\r/g, "\r") : "";
+  const summary = data.summary;
+  const markdownString = (summary ?? "").replace(/\\n/g, "\n").replace(/\\r/g, "\r");
+
   return (
     <div className="flex flex-col gap-5 mb-10">
       <div
@@ -34,7 +36,9 @@ export const PostContent = React.memo(({ data, onPostClick }: PostContentProps) 
       </div>
       <div className="prose">
         <Markdown>{markdownString}</Markdown>
-        <p className="text-gray-400">💡 인공지능이 요약한 내용입니다. 오류가 포함될 수 있으니 참고 바랍니다.</p>
+        {summary && (
+          <p className="text-gray-400">💡 인공지능이 요약한 내용입니다. 오류가 포함될 수 있으니 참고 바랍니다.</p>
+        )}
       </div>
     </div>
   );
