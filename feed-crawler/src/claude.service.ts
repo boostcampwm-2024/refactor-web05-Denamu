@@ -30,9 +30,9 @@ export class ClaudeService {
             model: "claude-3-5-haiku-latest",
           };
           const message = await this.client.messages.create(params);
-          let responseText: string = message.content[0]["text"];
-          responseText = responseText.replace(/\n/g, "");
-          const result: ClaudeResponse = JSON.parse(responseText);
+          const result: ClaudeResponse = JSON.parse(
+            message.content[0]["text"] as string,
+          );
 
           Promise.all([
             this.generateTag(feed, result["tags"]),
