@@ -4,6 +4,7 @@ import { ClaudeResponse, FeedDetail } from "./common/types";
 import { TagMapRepository } from "./repository/tag-map.repository";
 import { FeedRepository } from "./repository/feed.repository";
 import logger from "./common/logger";
+import { PROMPT_CONTENT } from "./common/constant";
 
 @injectable()
 export class ClaudeService {
@@ -24,8 +25,7 @@ export class ClaudeService {
         try {
           const params: Anthropic.MessageCreateParams = {
             max_tokens: 8192,
-            system:
-              'You need to assign tags and provide a summary of the content.\nThe input format is XML.\nRemove the XML tags and analyze the content.\n\nThe language of the content is Korean.\nAnalyze the content and assign 0 to 5 relevant tags.\nOnly assign tags that have at least 90% relevance to the content.\n\nIf no tag has 90% relevance or more, return:\ntags: { }\n\nThe summary of the content should be returned in the summary field.\nThe summary must be in Korean.\nWhen summarizing, make it engaging and intriguing so that a first-time reader would want to click on the original post.\n\nIf possible, organize the summary using Markdown format.\n\nOutput Format:\nYou must respond with raw JSON only, without any code blocks or backticks. \nThe output should be in JSON format only, containing tags, relevance, and summary.\nDo not wrap the response in code blocks.\nDo not provide any additional explanations.\nDo not use any markdown formatting for the JSON output itself.\n\nThe response should look exactly like this, without any surrounding characters:\n{\n  "tags": {\n      "javascript": confidence<float>,\n      "typescript": confidence<float>,\n      "network": confidence<float>\n  },\n  "summary": summary<string>\n}\n\n## Do not assign any tags that are not in the predefined tag list.\nStrictly follow this rule.\n\nTag List:\n회고\nFrontend\nBackend\nDB\nNetwork\nOS\nAlgorithm\nInfra\nSoftware Engineer\nTypeScript\nJavaScript\nJava\nReact\nVue.JS\nNest.JS\nExpress.JS\nSpring\nMySQL\nSQLite\nPostgreSQL\nMongoDB\nRedis\nDocker',
+            system: PROMPT_CONTENT,
             messages: [{ role: "user", content: feed.content }],
             model: "claude-3-5-haiku-latest",
           };
