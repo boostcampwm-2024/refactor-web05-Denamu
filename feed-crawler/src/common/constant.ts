@@ -22,7 +22,6 @@ export const ALLOWED_TAGS = [
   "OS",
   "Algorithm",
   "Infra",
-  "Engineering",
   "TypeScript",
   "JavaScript",
   "Java",
