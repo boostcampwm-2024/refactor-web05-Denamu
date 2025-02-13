@@ -55,6 +55,7 @@ export class ClaudeService {
       }),
     );
 
+    // TODO: Refactor
     const successFeeds = processedFeeds
       .map((result) =>
         result.status === "fulfilled" && result.value.succeeded === true
@@ -63,6 +64,7 @@ export class ClaudeService {
       )
       .filter((result) => result !== null);
 
+    // TODO: Refactor
     const failedFeeds = processedFeeds
       .map((result, index) => {
         if (result.status === "rejected") {

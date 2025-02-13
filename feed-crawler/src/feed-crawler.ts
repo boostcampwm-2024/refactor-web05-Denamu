@@ -35,6 +35,7 @@ export class FeedCrawler {
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
+    // TODO: Refactor
     const insertedData: FeedDetail[] =
       await this.feedRepository.insertFeeds(newFeeds);
     const createdData = await this.claudeService.useCaludeService(insertedData);
