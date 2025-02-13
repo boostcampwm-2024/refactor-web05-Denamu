@@ -16,7 +16,7 @@ describe('GET api/feed/detail E2E Test', () => {
     app = global.testApp;
     const feedRepository = app.get(FeedRepository);
     const rssAcceptRepository = app.get(RssAcceptRepository);
-    const tagMapRepository = await app.get(TagMapRepository);
+    const tagMapRepository = app.get(TagMapRepository);
 
     const blog = await rssAcceptRepository.save(
       RssAcceptFixture.createRssAcceptFixture(),
@@ -26,7 +26,7 @@ describe('GET api/feed/detail E2E Test', () => {
       return FeedFixture.createFeedFixture(blog, _, i + 1);
     });
 
-    const tagMap = Array.from(feeds).flatMap((feed, i) => {
+    const tagMap = feeds.flatMap((feed, i) => {
       if (i < 10) {
         return TagMapFixture.createTagMapFixture(['Frontend', 'React'], feed);
       } else {
@@ -34,10 +34,8 @@ describe('GET api/feed/detail E2E Test', () => {
       }
     });
 
-    await Promise.all([
-      await feedRepository.insert(feeds),
-      await tagMapRepository.insert(tagMap),
-    ]);
+    await feedRepository.insert(feeds);
+    await tagMapRepository.insert(tagMap);
   });
 
   it('feedId를 요청 받으면 해당 Feed의 정보로 응답한다.', async () => {
