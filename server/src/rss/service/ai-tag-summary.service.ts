@@ -46,6 +46,7 @@ The summary must be in Korean.
 When summarizing, make it engaging and intriguing so that a first-time reader would want to click on the original post.
 
 If possible, organize the summary using Markdown format.
+The first line of the summary must be the title and should be displayed in **bold**.
 
 Output Format:
 You must respond with raw JSON only, without any code blocks or backticks. 
