@@ -38,8 +38,6 @@ describe('GET api/feed/detail E2E Test', () => {
       await feedRepository.insert(feeds),
       await tagMapRepository.insert(tagMap),
     ]);
-    // await feedRepository.insert(feeds);
-    // await tagMapRepository.insert(tagMap);
   });
 
   it('feedId를 요청 받으면 해당 Feed의 정보로 응답한다.', async () => {
