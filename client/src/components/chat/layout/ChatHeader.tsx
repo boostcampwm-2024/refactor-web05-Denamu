@@ -1,6 +1,6 @@
 import { Users } from "lucide-react";
 
-import { CloseChat } from "@/components/chat/ChatButton";
+import { CloseChatButton } from "@/components/chat/CloseChatButton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SidebarHeader } from "@/components/ui/sidebar";
@@ -19,7 +19,7 @@ export default function ChatHeader() {
           </span>
           <Badge color="bg-secondary/70">{userCount}명 참여중</Badge>
         </div>
-        <CloseChat />
+        <CloseChatButton />
       </div>
       <Separator />
     </SidebarHeader>

@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 
+import { Chat } from "@/components/chat/Chat";
+import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { Button } from "@/components/ui/button";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
-import { Chat } from "../chat/Chat";
-import { OpenChat } from "../chat/ChatButton";
-import { SidebarProvider } from "../ui/sidebar";
 import { useTapStore } from "@/store/useTapStore";
 
 type SideBarType = {
@@ -20,6 +20,7 @@ export default function SideBar({ handleRssModal, handleLoginModal, handleSideba
     fn();
     handleSidebar();
   };
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <Button onClick={() => navigate("/about")} variant="outline">
@@ -40,7 +41,7 @@ export default function SideBar({ handleRssModal, handleLoginModal, handleSideba
       <div className="border border-input bg-background hover:bg-accent hover:text-accent-foreground h-[40px] overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
         <SidebarProvider>
           <Chat />
-          <OpenChat />
+          <OpenChatButton />
         </SidebarProvider>
       </div>
       <Button variant="default" className="w-full bg-primary" onClick={() => actionAndClose(handleRssModal)}>

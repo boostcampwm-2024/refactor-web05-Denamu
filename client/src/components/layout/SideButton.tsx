@@ -1,7 +1,7 @@
 import { Home, ArrowUp, ChartArea } from "lucide-react";
 
 import { Chat } from "@/components/chat/Chat";
-import { OpenChat } from "@/components/chat/ChatButton";
+import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { useTapStore } from "@/store/useTapStore";
@@ -18,7 +18,7 @@ export default function SideButton() {
     <div className="flex h-full items-center ">
       <SidebarProvider defaultOpen={false}>
         <Chat />
-        <OpenChat />
+        <OpenChatButton />
       </SidebarProvider>
       <button
         className="fixed text-white bottom-[6.5rem] right-7 bg-primary hover:bg-secondary !rounded-full p-3"
