@@ -122,7 +122,4 @@ export class FeedRepository {
 
     await this.dbConnection.executeQuery(query, [summary, feedId]);
   }
-  catch(error) {
-    throw error;
-  }
 }

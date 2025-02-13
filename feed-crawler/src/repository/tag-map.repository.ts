@@ -10,15 +10,11 @@ export class TagMapRepository {
   ) {}
 
   public async insertTags(feedId: number, tags: string[]) {
-    try {
-      const insertPromises = tags.map((tagName) => {
-        const query = "INSERT INTO tag_map (feed_id, tag) VALUES (?, ?)";
-        return this.dbConnection.executeQuery(query, [feedId, tagName]);
-      });
+    const insertPromises = tags.map((tagName) => {
+      const query = "INSERT INTO tag_map (feed_id, tag) VALUES (?, ?)";
+      return this.dbConnection.executeQuery(query, [feedId, tagName]);
+    });
 
-      await Promise.all(insertPromises);
-    } catch (error) {
-      throw error;
-    }
+    await Promise.all(insertPromises);
   }
 }
