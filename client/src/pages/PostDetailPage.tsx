@@ -34,6 +34,8 @@ export default function PostDetailPage() {
   if (error || !data) {
     return <NotFound />;
   }
+  const summary = data.data.summary;
+  const markdownString = (summary ?? "").replace(/\\n/g, "\n").replace(/\\r/g, "\r");
 
   return (
     <div ref={modalRef} className="bg-white  overflow-y-auto relative">
@@ -80,8 +82,10 @@ export default function PostDetailPage() {
             )}
           </div>
           <div className="prose">
-            <Markdown>{data.data.summary.replace(/\\n/g, "\n")}</Markdown>
-            <p className="text-gray-400">💡 인공지능이 요약한 내용입니다. 오류가 포함될 수 있으니 참고 바랍니다.</p>
+            <Markdown>{markdownString}</Markdown>
+            {summary && (
+              <p className="text-gray-400">💡 인공지능이 요약한 내용입니다. 오류가 포함될 수 있으니 참고 바랍니다.</p>
+            )}
           </div>
         </div>
       </div>
