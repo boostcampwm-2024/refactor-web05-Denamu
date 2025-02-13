@@ -34,4 +34,17 @@ export default async function globalSetup() {
       `,
     [],
   );
+
+  await testContext.dbConnection.executeQuery(
+    `
+        CREATE TABLE IF NOT EXISTS tag_map
+        (
+          feed_id INTEGER NOT NULL,
+          tag VARCHAR(50) NOT NULL,
+          PRIMARY KEY (feed_id, tag),
+          FOREIGN KEY (feed_id) REFERENCES feed (id) ON DELETE CASCADE ON UPDATE CASCADE
+        );
+      `,
+    [],
+  );
 }

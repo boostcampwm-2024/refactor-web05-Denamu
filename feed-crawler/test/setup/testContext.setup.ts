@@ -7,6 +7,8 @@ import { RssRepository } from "../../src/repository/rss.repository";
 import { FeedRepository } from "../../src/repository/feed.repository";
 import { container } from "tsyringe";
 import { DependencyContainer } from "tsyringe";
+import { ClaudeService } from "../../src/claude.service";
+import { TagMapRepository } from "../../src/repository/tag-map.repository";
 
 export interface TestContext {
   container: DependencyContainer;
@@ -14,6 +16,8 @@ export interface TestContext {
   feedRepository: FeedRepository;
   dbConnection: DatabaseConnection;
   redisConnection: RedisConnection;
+  claudeService: ClaudeService;
+  tagMapRepository: TagMapRepository;
 }
 
 declare global {
@@ -44,18 +48,24 @@ export function setupTestContainer(): TestContext {
       FeedRepository,
     );
 
-    testContainer.registerSingleton<RssRepository>(
-      DEPENDENCY_SYMBOLS.RssRepository,
-      RssRepository,
+    testContainer.registerSingleton<ClaudeService>(
+      DEPENDENCY_SYMBOLS.ClaudeService,
+      ClaudeService,
     );
 
-    testContainer.registerSingleton<FeedRepository>(
-      DEPENDENCY_SYMBOLS.FeedRepository,
-      FeedRepository,
+    testContainer.registerSingleton<TagMapRepository>(
+      DEPENDENCY_SYMBOLS.TagMapRepository,
+      TagMapRepository,
     );
 
     global.testContext = {
       container: testContainer,
+      tagMapRepository: testContainer.resolve<TagMapRepository>(
+        DEPENDENCY_SYMBOLS.TagMapRepository,
+      ),
+      claudeService: testContainer.resolve<ClaudeService>(
+        DEPENDENCY_SYMBOLS.ClaudeService,
+      ),
       rssRepository: testContainer.resolve<RssRepository>(
         DEPENDENCY_SYMBOLS.RssRepository,
       ),
