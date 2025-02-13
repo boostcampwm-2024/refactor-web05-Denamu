@@ -35,4 +35,6 @@ const createRedisContainer = async () => {
 
   process.env.REDIS_HOST = redisContainer.getHost();
   process.env.REDIS_PORT = redisContainer.getPort().toString();
+  process.env.REDIS_USERNAME = '';
+  process.env.REDIS_PASSWORD = '';
 };
