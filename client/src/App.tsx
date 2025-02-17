@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
+import { Toaster } from "@/components/ui/toaster.tsx";
+
 import Loading from "@/pages/Loading.tsx";
 import NotFound from "@/pages/NotFound";
 import SignIn from "@/pages/SignIn.tsx";
@@ -84,6 +86,7 @@ export default function App() {
           }
         />
       </Routes>
+      <Toaster />
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
