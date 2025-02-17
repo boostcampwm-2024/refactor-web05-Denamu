@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
+import PostDetail from "@/components/common/Card/PostDetail";
 import { Toaster } from "@/components/ui/toaster.tsx";
 
 import Loading from "@/pages/Loading.tsx";
-import NotFound from "@/pages/NotFound";
+import PostDetailPage from "@/pages/PostDetailPage";
 import SignIn from "@/pages/SignIn.tsx";
 import SignUp from "@/pages/SignUp.tsx";
 
@@ -25,10 +26,21 @@ const queryClient = new QueryClient();
 export default function App() {
   const setIsMobile = useMediaStore((state) => state.setIsMobile);
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const location = useLocation();
+  const state =
+    location.state && location.state.backgroundLocation
+      ? { backgroundLocation: location.state.backgroundLocation }
+      : null;
 
   useEffect(() => {
     console.log(denamuAscii);
   }, []);
+
+  useEffect(() => {
+    if (location.state?.backgroundLocation) {
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+    }
+  }, [location]);
 
   useEffect(() => {
     setIsMobile(isMobile);
@@ -36,7 +48,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Routes>
+      <Routes location={state?.backgroundLocation || location}>
         <Route
           path="/"
           element={
@@ -78,14 +90,19 @@ export default function App() {
           }
         />
         <Route
-          path="*"
+          path="/:id"
           element={
             <Suspense fallback={<Loading />}>
-              <NotFound />
+              <PostDetailPage />
             </Suspense>
           }
         />
       </Routes>
+      {state?.backgroundLocation && (
+        <Routes>
+          <Route path="/:id" element={<PostDetail />} />
+        </Routes>
+      )}
       <Toaster />
       <ReactQueryDevtools />
     </QueryClientProvider>

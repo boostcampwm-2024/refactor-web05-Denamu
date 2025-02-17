@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^4.5.0",
@@ -29,7 +30,7 @@
   "rootDir": "src",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/main.js",
+    "start": "node dist/src/main.js",
     "start:dev": "ts-node src/main.ts",
     "test": "cross-env NODE_ENV=test jest --config test/jest-integration.json",
     "test:cov": "cross-env NODE_ENV=test jest --coverage --config test/jest-integration.json",

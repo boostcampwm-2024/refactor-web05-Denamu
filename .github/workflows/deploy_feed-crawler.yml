@@ -40,6 +40,7 @@ jobs:
             echo "REDIS_PORT=${{secrets.REDIS_PORT}}" >> .env
             echo "REDIS_USERNAME=${{secrets.REDIS_USERNAME}}" >> .env
             echo "REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}" >> .env
+            echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> .env
 
             npm ci
             npm run build

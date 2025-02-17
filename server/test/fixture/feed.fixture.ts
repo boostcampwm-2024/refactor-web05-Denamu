@@ -17,6 +17,7 @@ export class FeedFixture {
         viewCount: 1,
         path: `https://test.com/test${index}`,
         thumbnail: `https://test.com/test${index}.png`,
+        summary: `test summary ${index}`,
       },
       blog: rssAccept,
     });

@@ -47,6 +47,12 @@ export class Feed extends BaseEntity {
   })
   thumbnail: string;
 
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  summary: string;
+
   @ManyToOne(() => RssAccept, (rssAccept) => rssAccept.feeds, {
     nullable: false,
     onUpdate: 'CASCADE',
@@ -58,13 +64,7 @@ export class Feed extends BaseEntity {
   blog: RssAccept;
 
   @OneToMany(() => TagMap, (tag) => tag.feed)
-  tag: string[];
-
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  summary: string;
+  tag: TagMap[];
 }
 
 @ViewEntity({
@@ -79,10 +79,14 @@ export class Feed extends BaseEntity {
       .addSelect('feed.created_at', 'feed_created_at')
       .addSelect('feed.thumbnail', 'feed_thumbnail')
       .addSelect('feed.view_count', 'feed_view_count')
+      .addSelect('feed.summary', 'feed_summary')
       .addSelect('rss_accept.name', 'blog_name')
       .addSelect('rss_accept.blog_platform', 'blog_platform')
+      .addSelect('GROUP_CONCAT(DISTINCT tag_map.tag)', 'feed_tag')
       .from(Feed, 'feed')
       .innerJoin(RssAccept, 'rss_accept', 'rss_accept.id = feed.blog_id')
+      .leftJoin(TagMap, 'tag_map', 'tag_map.feed_id = feed.id')
+      .groupBy('feed.id')
       .orderBy('feed_created_at'),
   name: 'feed_view',
 })
@@ -131,4 +135,14 @@ export class FeedView {
     name: 'blog_platform',
   })
   blogPlatform: string;
+
+  @ViewColumn({
+    name: 'feed_summary',
+  })
+  summary: string;
+
+  @ViewColumn({
+    name: 'feed_tag',
+  })
+  tag: string;
 }

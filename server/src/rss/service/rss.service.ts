@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -18,7 +19,6 @@ import { RssAcceptHistoryResponseDto } from '../dto/response/rss-accept-history.
 import { RssRejectHistoryResponseDto } from '../dto/response/rss-reject-history.dto';
 import { RssManagementRequestDto } from '../dto/request/rss-management.dto';
 import { RejectRssRequestDto } from '../dto/request/rss-reject.dto';
-
 @Injectable()
 export class RssService {
   constructor(
@@ -67,25 +67,20 @@ export class RssService {
     });
 
     if (!rss) {
-      throw new NotFoundException('존재하지 않는 rss 입니다.');
+      throw new NotFoundException('신청 목록에서 사라진 등록 요청입니다.');
     }
 
-    const blogPlatform = this.identifyPlatformFromRssUrl(rss.rssUrl);
-
-    const [rssAccept, feeds] = await this.dataSource.transaction(
-      async (manager) => {
-        const [rssAccept] = await Promise.all([
-          manager.save(RssAccept.fromRss(rss, blogPlatform)),
-          manager.delete(Rss, rssId),
-        ]);
-        const feeds = await this.feedCrawlerService.loadRssFeeds(
-          rssAccept.rssUrl,
-        );
-        return [rssAccept, feeds];
+    const rssXmlResponse = await fetch(rss.rssUrl, {
+      headers: {
+        Accept: 'application/rss+xml, application/xml, text/xml',
       },
-    );
-    await this.feedCrawlerService.saveRssFeeds(feeds, rssAccept);
-    this.emailService.sendMail(rssAccept, true);
+    });
+
+    if (!rssXmlResponse.ok) {
+      throw new BadRequestException(`${rss.rssUrl}이 올바른 RSS가 아닙니다.`);
+    }
+
+    this.acceptRssBackProcess(rss, rssXmlResponse);
   }
 
   async rejectRss(
@@ -98,7 +93,7 @@ export class RssService {
     });
 
     if (!rss) {
-      throw new NotFoundException('존재하지 않는 rss 입니다.');
+      throw new NotFoundException('신청 목록에서 사라진 등록 요청입니다.');
     }
 
     const rejectRss = await this.dataSource.transaction(async (manager) => {
@@ -149,5 +144,28 @@ export class RssService {
       }
     }
     return 'etc';
+  }
+
+  private async acceptRssBackProcess(rss: Rss, rssXmlResponse: Response) {
+    const blogPlatform = this.identifyPlatformFromRssUrl(rss.rssUrl);
+
+    const [rssAccept, feeds] = await this.dataSource.transaction(
+      async (manager) => {
+        const [rssAccept] = await Promise.all([
+          manager.save(RssAccept.fromRss(rss, blogPlatform)),
+          manager.delete(Rss, rss.id),
+        ]);
+        const feeds =
+          await this.feedCrawlerService.parseRssFeeds(rssXmlResponse);
+        return [rssAccept, feeds];
+      },
+    );
+
+    const feedsWithId = await this.feedCrawlerService.saveRssFeeds(
+      feeds,
+      rssAccept,
+    );
+    this.feedCrawlerService.saveFeedsTags(feedsWithId);
+    this.emailService.sendMail(rssAccept, true);
   }
 }

@@ -13,12 +13,21 @@ import {
 
 import logo from "@/assets/logo-denamu-main.svg";
 
+import { useTapStore } from "@/store/useTapStore";
+
 export default function DesktopNavigation({ toggleModal }: { toggleModal: (modalType: "search" | "rss") => void }) {
   const navigate = useNavigate();
+  const { setTap } = useTapStore();
 
   return (
     <div className="h-20 items-center flex justify-between relative px-[20px]">
-      <button className="flex-shrink-0 relative z-50" onClick={() => location.reload()}>
+      <button
+        className="flex-shrink-0 relative z-50"
+        onClick={() => {
+          setTap("main");
+          navigate("/");
+        }}
+      >
         <img className="h-14 w-auto cursor-pointer" src={logo} alt="Logo" />
       </button>
 

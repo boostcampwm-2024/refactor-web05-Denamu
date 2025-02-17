@@ -60,7 +60,10 @@ describe("PostCard", () => {
       viewCount: 100,
       path: "/test-post",
       author: "작성자",
+      thumbnail: "",
       blogPlatform: "etc",
+      tag: ["JavaScript", "React"],
+      summary: "# test",
     };
 
     render(<PostCard post={minimalPost} />);
