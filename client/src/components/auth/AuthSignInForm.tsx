@@ -5,9 +5,14 @@ import { AuthSocialLoginButtons } from "@/components/auth/AuthSocialLoginButtons
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { useCustomToast } from "@/hooks/common/useCustomToast.ts";
+
+import { TOAST_MESSAGES } from "@/constants/messages.ts";
+
 export const AuthSignInForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useCustomToast();
 
   return (
     <>
@@ -17,7 +22,14 @@ export const AuthSignInForm = () => {
             <Input type="email" placeholder="이메일을 입력하세요" required />
             <Input type="password" placeholder="비밀번호를 입력하세요" required />
           </div>
-          <Button className="w-full" type="submit">
+          <Button
+            className="w-full"
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              toast(TOAST_MESSAGES.SERVICE_NOT_PREPARED);
+            }}
+          >
             로그인
           </Button>
         </form>

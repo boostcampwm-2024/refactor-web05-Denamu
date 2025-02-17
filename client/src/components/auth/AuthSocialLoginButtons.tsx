@@ -6,15 +6,12 @@ import { Button } from "@/components/ui/button.tsx";
 
 import { useCustomToast } from "@/hooks/common/useCustomToast.ts";
 
+import { TOAST_MESSAGES } from "@/constants/messages.ts";
+
 export const AuthSocialLoginButtons = () => {
   const { toast } = useCustomToast();
-
   const handleSocialLogin = () => {
-    toast({
-      title: "서비스 준비 중",
-      description: "서비스가 현재 개발 중입니다. 곧 만나요!",
-      duration: 3000,
-    });
+    toast(TOAST_MESSAGES.SERVICE_NOT_PREPARED);
   };
 
   return (

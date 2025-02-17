@@ -4,9 +4,14 @@ import { AuthCard } from "@/components/auth/AuthCard.tsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { useCustomToast } from "@/hooks/common/useCustomToast.ts";
+
+import { TOAST_MESSAGES } from "@/constants/messages.ts";
+
 export const AuthSignUpForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useCustomToast();
 
   return (
     <>
@@ -18,7 +23,14 @@ export const AuthSignUpForm = () => {
             <Input type="text" placeholder="이름을 입력해주세요" required />
             <Input type="text" placeholder="닉네임을 입력해주세요" required />
           </div>
-          <Button className="w-full" type="submit">
+          <Button
+            className="w-full"
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              toast(TOAST_MESSAGES.SERVICE_NOT_PREPARED);
+            }}
+          >
             회원가입
           </Button>
         </form>
