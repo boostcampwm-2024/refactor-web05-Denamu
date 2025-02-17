@@ -6,7 +6,6 @@ import { RssParserService } from '../service/rss-parser.service';
 import { Feed } from '../../feed/entity/feed.entity';
 import { RssAccept } from '../entity/rss.entity';
 import { TagMap } from '../../feed/entity/tag-map.entity';
-import { AITagSummaryService } from './ai-tag-summary.service';
 
 @Injectable()
 export class FeedCrawlerService {
@@ -14,7 +13,6 @@ export class FeedCrawlerService {
     private readonly feedRepository: FeedRepository,
     private readonly tagMapRepository: TagMapRepository,
     private readonly rssParser: RssParserService,
-    private readonly aiTagSummaryService: AITagSummaryService,
   ) {}
   async parseRssFeeds(
     rssXmlResponse: Response,
