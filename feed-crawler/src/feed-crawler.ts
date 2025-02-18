@@ -16,7 +16,7 @@ export class FeedCrawler {
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly rssParser: RssParser
+    private readonly rssParser: RssParser,
   ) {}
 
   async start() {
@@ -38,16 +38,15 @@ export class FeedCrawler {
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
-    const insertedData: FeedDetail[] = await this.feedRepository.insertFeeds(
-      newFeeds
-    );
+    const insertedData: FeedDetail[] =
+      await this.feedRepository.insertFeeds(newFeeds);
     await this.feedRepository.saveAiQueue(insertedData);
     await this.feedRepository.setRecentFeedList(insertedData);
   }
 
   private async findNewFeeds(
     rssObj: RssObj,
-    now: number
+    now: number,
   ): Promise<FeedDetail[]> {
     try {
       const TIME_INTERVAL = INTERVAL;
@@ -86,13 +85,14 @@ export class FeedCrawler {
             imageUrl: imageUrl,
             content: content,
             summary: FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
+            deathCount: 0,
           };
-        })
+        }),
       );
       return detailedFeeds;
     } catch (err) {
       logger.warn(
-        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`
+        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`,
       );
       return [];
     }
@@ -102,10 +102,10 @@ export class FeedCrawler {
     return Promise.all(
       rssObjects.map(async (rssObj: RssObj) => {
         logger.info(
-          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`
+          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`,
         );
         return await this.findNewFeeds(rssObj, currentTime.setSeconds(0, 0));
-      })
+      }),
     );
   }
 
@@ -153,7 +153,7 @@ export class RssParser {
     const htmlData = await response.text();
     const htmlRootElement = parse(htmlData);
     const metaImage = htmlRootElement.querySelector(
-      'meta[property="og:image"]'
+      'meta[property="og:image"]',
     );
     let thumbnailUrl = metaImage?.getAttribute("content") ?? "";
 
