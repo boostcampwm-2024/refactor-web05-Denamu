@@ -1,21 +1,17 @@
 import { setupTestContainer } from "./setup/testContext.setup";
 import { FeedCrawler } from "../src/feed-crawler";
 import { redisConstant } from "../src/common/constant";
-import { ClaudeService } from "../src/claude.service";
-import { pipeline } from "stream";
 
 describe("feed crawling e2e-test", () => {
   const testContext = setupTestContainer();
   let feedCrawler: FeedCrawler;
-  let claudeService: ClaudeService;
+
   beforeAll(async () => {
     feedCrawler = new FeedCrawler(
       testContext.rssRepository,
       testContext.feedRepository,
-      testContext.claudeService,
       testContext.rssParser
     );
-    claudeService = testContext.claudeService;
   });
 
   beforeEach(() => {
