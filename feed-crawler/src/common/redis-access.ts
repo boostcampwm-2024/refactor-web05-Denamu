@@ -69,8 +69,8 @@ export class RedisConnection {
         await this.redis.quit();
       } catch (error) {
         logger.error(
-          `${this.nameTag} connection quit 중 오류 발생
-          에러 메시지: ${error.message}
+          `${this.nameTag} connection quit 중 오류 발생:
+          메시지: ${error.message}
           스택 트레이스: ${error.stack}`
         );
       }
