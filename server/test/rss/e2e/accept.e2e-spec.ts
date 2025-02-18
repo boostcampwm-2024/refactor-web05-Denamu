@@ -8,21 +8,18 @@ import {
   RssAcceptRepository,
   RssRepository,
 } from '../../../src/rss/repository/rss.repository';
-import { AITagSummaryService } from '../../../src/rss/service/ai-tag-summary.service';
 
 describe('Rss Accept E2E Test', () => {
   let app: INestApplication;
   let rssRepository: Repository<Rss>;
   let rssAcceptRepository: Repository<RssAccept>;
   let redisService: RedisService;
-  let aiTagSummaryService: AITagSummaryService;
 
   beforeAll(async () => {
     app = global.testApp;
     rssRepository = app.get(RssRepository);
     rssAcceptRepository = app.get(RssAcceptRepository);
     redisService = app.get(RedisService);
-    aiTagSummaryService = app.get(AITagSummaryService);
   });
 
   beforeEach(async () => {
@@ -41,10 +38,6 @@ describe('Rss Accept E2E Test', () => {
             rssUrl: 'https://v2.velog.io/rss/@seok3765',
           }),
         );
-
-        jest
-          .spyOn(aiTagSummaryService, 'request')
-          .mockResolvedValue([['test1', 'test2'], 'test summary']);
 
         // when
         const response = await request(app.getHttpServer())
