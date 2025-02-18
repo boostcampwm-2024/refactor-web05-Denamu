@@ -80,6 +80,7 @@ The response should look exactly like this, without any surrounding characters:
 
 ## Do not assign any tags that are not in the predefined tag list.
 Strictly follow this rule.
+
 Tag List:
 ${ALLOWED_TAGS.map((tag) => `- ${tag}`).join("\n")}
 `;
