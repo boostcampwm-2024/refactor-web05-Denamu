@@ -16,7 +16,6 @@ export class FeedCrawler {
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly claudeService: ClaudeService,
     private readonly rssParser: RssParser
   ) {}
 
@@ -42,7 +41,7 @@ export class FeedCrawler {
     const insertedData: FeedDetail[] = await this.feedRepository.insertFeeds(
       newFeeds
     );
-    await this.claudeService.saveAiQueue(insertedData);
+    await this.feedRepository.saveAiQueue(insertedData);
     await this.feedRepository.setRecentFeedList(insertedData);
   }
 

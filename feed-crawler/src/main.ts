@@ -6,7 +6,6 @@ import { RssRepository } from "./repository/rss.repository";
 import { FeedRepository } from "./repository/feed.repository";
 import { DEPENDENCY_SYMBOLS } from "./types/dependency-symbols";
 import { DatabaseConnection } from "./types/database-connection";
-import { ClaudeService } from "./claude.service";
 
 async function main() {
   logger.info("==========작업 시작==========");
@@ -21,17 +20,10 @@ async function main() {
   const dbConnection = container.resolve<DatabaseConnection>(
     DEPENDENCY_SYMBOLS.DatabaseConnection
   );
-  const claudeService = container.resolve<ClaudeService>(
-    DEPENDENCY_SYMBOLS.ClaudeService
-  );
+
   const rssParser = container.resolve<RssParser>(DEPENDENCY_SYMBOLS.RssParser);
 
-  const feedCrawler = new FeedCrawler(
-    rssRepository,
-    feedRepository,
-    claudeService,
-    rssParser
-  );
+  const feedCrawler = new FeedCrawler(rssRepository, feedRepository, rssParser);
   await feedCrawler.start();
 
   const endTime = Date.now();
