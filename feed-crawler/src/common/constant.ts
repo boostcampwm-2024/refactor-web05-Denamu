@@ -15,7 +15,7 @@ export const INTERVAL =
     ? parseInt(process.env.TEST_TIME_INTERVAL)
     : parseInt(process.env.TIME_INTERVAL);
 
-export const FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE = `아직 AI가 요약을 진행중인 게시글 이에요!`;
+export const FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE = `아직 AI가 요약을 진행중인 게시글 이에요! 💭`;
 
 export const ALLOWED_TAGS = [
   "회고",
