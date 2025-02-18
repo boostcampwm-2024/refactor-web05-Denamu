@@ -55,19 +55,19 @@ export class FeedCrawlerService {
     feeds.forEach((feed) => (feed.blog = newRssAccept));
     const insertResult = await this.feedRepository.insert(feeds);
 
-    const successfulFeeds = feeds.filter((feed, index) => {
+    const insertedFeeds = feeds.filter((feed, index) => {
       const id = insertResult.identifiers[index]?.id;
       feed.id = id;
       return id !== undefined;
     });
 
-    return successfulFeeds;
+    return insertedFeeds;
   }
 
   async saveAiQueue(feeds: Partial<Feed & { content: string }>[]) {
     await Promise.all(
       feeds.map((feed) => {
-        this.redisService.lpush(
+        return this.redisService.lpush(
           redisKeys.FEED_AI_QUEUE,
           JSON.stringify({ id: feed.id, content: feed.content }),
         );
