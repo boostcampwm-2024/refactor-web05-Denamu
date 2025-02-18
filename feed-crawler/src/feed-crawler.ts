@@ -5,7 +5,11 @@ import { RssObj, FeedDetail, RawFeed } from "./common/types";
 import { XMLParser } from "fast-xml-parser";
 import { parse } from "node-html-parser";
 import { unescape } from "html-escaper";
-import { ONE_MINUTE, INTERVAL } from "./common/constant";
+import {
+  ONE_MINUTE,
+  INTERVAL,
+  FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
+} from "./common/constant";
 import { ClaudeService } from "./claude.service";
 
 export class FeedCrawler {
@@ -13,7 +17,7 @@ export class FeedCrawler {
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly claudeService: ClaudeService,
+    private readonly claudeService: ClaudeService
   ) {}
 
   async start() {
@@ -35,16 +39,16 @@ export class FeedCrawler {
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
-    // TODO: Refactor
-    const insertedData: FeedDetail[] =
-      await this.feedRepository.insertFeeds(newFeeds);
-    const createdData = await this.claudeService.useCaludeService(insertedData);
-    await this.feedRepository.setRecentFeedList(createdData);
+    const insertedData: FeedDetail[] = await this.feedRepository.insertFeeds(
+      newFeeds
+    );
+    await this.claudeService.saveAiQueue(insertedData);
+    await this.feedRepository.setRecentFeedList(insertedData);
   }
 
   private async findNewFeeds(
     rssObj: RssObj,
-    now: number,
+    now: number
   ): Promise<FeedDetail[]> {
     try {
       const TIME_INTERVAL = INTERVAL;
@@ -82,13 +86,14 @@ export class FeedCrawler {
             link: decodeURIComponent(feed.link),
             imageUrl: imageUrl,
             content: content,
+            summary: FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
           };
-        }),
+        })
       );
       return detailedFeeds;
     } catch (err) {
       logger.warn(
-        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`,
+        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`
       );
       return [];
     }
@@ -98,10 +103,10 @@ export class FeedCrawler {
     return Promise.all(
       rssObjects.map(async (rssObj: RssObj) => {
         logger.info(
-          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`,
+          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`
         );
         return await this.findNewFeeds(rssObj, currentTime.setSeconds(0, 0));
-      }),
+      })
     );
   }
 
@@ -149,7 +154,7 @@ class RssParser {
     const htmlData = await response.text();
     const htmlRootElement = parse(htmlData);
     const metaImage = htmlRootElement.querySelector(
-      'meta[property="og:image"]',
+      'meta[property="og:image"]'
     );
     let thumbnailUrl = metaImage?.getAttribute("content") ?? "";
 
