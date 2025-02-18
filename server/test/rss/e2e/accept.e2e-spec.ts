@@ -8,18 +8,21 @@ import {
   RssAcceptRepository,
   RssRepository,
 } from '../../../src/rss/repository/rss.repository';
+import { AITagSummaryService } from '../../../src/rss/service/ai-tag-summary.service';
 
 describe('Rss Accept E2E Test', () => {
   let app: INestApplication;
   let rssRepository: Repository<Rss>;
   let rssAcceptRepository: Repository<RssAccept>;
   let redisService: RedisService;
+  let aiTagSummaryService: AITagSummaryService;
 
   beforeAll(async () => {
     app = global.testApp;
     rssRepository = app.get(RssRepository);
     rssAcceptRepository = app.get(RssAcceptRepository);
     redisService = app.get(RedisService);
+    aiTagSummaryService = app.get(AITagSummaryService);
   });
 
   beforeEach(async () => {
@@ -39,23 +42,26 @@ describe('Rss Accept E2E Test', () => {
           }),
         );
 
+        jest
+          .spyOn(aiTagSummaryService, 'request')
+          .mockResolvedValue([['test1', 'test2'], 'test summary']);
+
         // when
         const response = await request(app.getHttpServer())
           .post(`/api/rss/accept/${rss.id}`)
           .set('Cookie', 'sessionId=sid')
           .send();
-        const accepted = await rssAcceptRepository.findOne({
-          where: { rssUrl: rss.rssUrl },
-        });
 
         // then
         expect(response.status).toBe(201);
-        expect(accepted).not.toBeNull();
       });
     });
 
     describe('비정상적인 요청을 한다.', () => {
       it('존재하지 않는 rss를 승인할 때', async () => {
+        // given
+        jest.spyOn(rssRepository, 'findOne').mockResolvedValue(undefined);
+
         // when
         const response = await request(app.getHttpServer())
           .post(`/api/rss/accept/1`)

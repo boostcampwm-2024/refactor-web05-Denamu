@@ -11,6 +11,7 @@ export class FeedResult {
     private thumbnail: string,
     private viewCount: number,
     private isNew: boolean,
+    private tag: string[],
   ) {}
 
   private static toResultDto(feed: FeedPaginationResult) {
@@ -24,6 +25,7 @@ export class FeedResult {
       feed.thumbnail,
       feed.viewCount,
       feed.isNew,
+      feed.tag?.split(',') ?? [],
     );
   }
 
@@ -60,6 +62,7 @@ export class FeedTrendResponseDto {
     private createdAt: Date,
     private thumbnail: string,
     private viewCount: number,
+    private tag: string[],
   ) {}
 
   private static toResponseDto(feed: FeedView) {
@@ -72,6 +75,7 @@ export class FeedTrendResponseDto {
       feed.createdAt,
       feed.thumbnail,
       feed.viewCount,
+      feed.tag?.split(',') ?? [],
     );
   }
 

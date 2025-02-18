@@ -16,7 +16,7 @@ module.exports = {
     },
     {
       name: "feed-crawler",
-      script: "./feed-crawler/dist/main.js",
+      script: "./feed-crawler/dist/src/main.js",
       instances: "1",
       exec_mode: "fork",
       cron_restart: `*/30 * * * *`, // 30분 마다 feed-crawler 재시작
