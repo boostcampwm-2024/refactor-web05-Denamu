@@ -116,20 +116,20 @@ export class FeedRepository {
   }
 
   public async updateSummary(feedId: number, summary: string) {
-    try {
-      const query = `
+    const query = `
               UPDATE feed 
               SET summary=?
               WHERE id=?
           `;
 
-      await this.dbConnection.executeQuery(query, [summary, feedId]);
-    } catch (error) {
-      logger.error(
-        `[DB] 게시글 요약 데이터를 갱신하는 도중 에러가 발생했습니다.
-      에러 메시지: ${error.message}
-      스택 트레이스: ${error.stack}`
-      );
-    }
+    this.dbConnection.executeQuery(query, [summary, feedId]);
+  }
+
+  public async updateNullSummary(feedId: number) {
+    const query = `
+          UPDATE feed
+          SET summary=NULL
+          WHERE id=?`;
+    this.dbConnection.executeQuery(query, [feedId]);
   }
 }
