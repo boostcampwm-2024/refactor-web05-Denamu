@@ -13,11 +13,11 @@ import {
 import { ClaudeService } from "./claude.service";
 
 export class FeedCrawler {
-  private rssParser: RssParser = new RssParser();
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly claudeService: ClaudeService
+    private readonly claudeService: ClaudeService,
+    private readonly rssParser: RssParser
   ) {}
 
   async start() {
@@ -139,7 +139,7 @@ export class FeedCrawler {
   }
 }
 
-class RssParser {
+export class RssParser {
   async getThumbnailUrl(feedUrl: string) {
     const response = await fetch(feedUrl, {
       headers: {

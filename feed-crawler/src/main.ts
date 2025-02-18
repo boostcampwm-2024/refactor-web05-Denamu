@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import logger from "./common/logger";
-import { FeedCrawler } from "./feed-crawler";
+import { FeedCrawler, RssParser } from "./feed-crawler";
 import { container } from "./container";
 import { RssRepository } from "./repository/rss.repository";
 import { FeedRepository } from "./repository/feed.repository";
@@ -13,22 +13,24 @@ async function main() {
   const startTime = Date.now();
 
   const rssRepository = container.resolve<RssRepository>(
-    DEPENDENCY_SYMBOLS.RssRepository,
+    DEPENDENCY_SYMBOLS.RssRepository
   );
   const feedRepository = container.resolve<FeedRepository>(
-    DEPENDENCY_SYMBOLS.FeedRepository,
+    DEPENDENCY_SYMBOLS.FeedRepository
   );
   const dbConnection = container.resolve<DatabaseConnection>(
-    DEPENDENCY_SYMBOLS.DatabaseConnection,
+    DEPENDENCY_SYMBOLS.DatabaseConnection
   );
   const claudeService = container.resolve<ClaudeService>(
-    DEPENDENCY_SYMBOLS.ClaudeService,
+    DEPENDENCY_SYMBOLS.ClaudeService
   );
+  const rssParser = container.resolve<RssParser>(DEPENDENCY_SYMBOLS.RssParser);
 
   const feedCrawler = new FeedCrawler(
     rssRepository,
     feedRepository,
     claudeService,
+    rssParser
   );
   await feedCrawler.start();
 
