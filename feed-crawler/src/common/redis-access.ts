@@ -47,6 +47,22 @@ export class RedisConnection {
     }
   }
 
+  async rpush(
+    key: string,
+    elements: (string | Buffer | number)[],
+    callback?: (err?: Error | null, result?: any) => void
+  ) {
+    try {
+      await this.redis.rpush(key, ...elements, callback);
+    } catch (error) {
+      logger.error(
+        `${this.nameTag} rpush 실행 중 오류 발생:
+        메시지: ${error.message}
+        스택 트레이스: ${error.stack}`
+      );
+    }
+  }
+
   async quit() {
     if (this.redis) {
       try {
