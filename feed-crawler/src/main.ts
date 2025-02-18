@@ -39,7 +39,15 @@ function startScheduler() {
 
   schedule.scheduleJob("0,30 * * * *", async () => {
     logger.info(`feed crawling 시작: ${new Date().toISOString()}`);
-    await main(rssRepository, feedRepository, rssParser);
+    try {
+      await main(rssRepository, feedRepository, rssParser);
+    } catch (error) {
+      logger.error(
+        `[Feed-Crawler] 피드 크롤링 작업 도중 에러가 발생했습니다.
+        에러 메시지: ${error.message}
+        스택 트레이스: ${error.stack}`,
+      );
+    }
   });
 
   process.on("SIGINT", async () => {
