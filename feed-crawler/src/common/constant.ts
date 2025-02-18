@@ -6,12 +6,16 @@ dotenv.config({
 export const CONNECTION_LIMIT = 50;
 export const redisConstant = {
   FEED_RECENT_ALL_KEY: "feed:recent:*",
+  FEED_AI_QUEUE: `feed:ai:queue`,
 };
+
 export const ONE_MINUTE = 60 * 1000;
 export const INTERVAL =
   process.env.NODE_ENV === "test"
     ? parseInt(process.env.TEST_TIME_INTERVAL)
     : parseInt(process.env.TIME_INTERVAL);
+
+export const FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE = `아직 AI가 요약을 진행중인 게시글 이에요!`;
 
 export const ALLOWED_TAGS = [
   "회고",
