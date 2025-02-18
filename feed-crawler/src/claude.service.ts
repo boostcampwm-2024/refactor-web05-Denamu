@@ -1,26 +1,57 @@
 import { injectable } from "tsyringe";
 import Anthropic from "@anthropic-ai/sdk";
-import { ClaudeResponse, FeedDetail } from "./common/types";
+import { ClaudeResponse, FeedAIQueueItem } from "./common/types";
 import { TagMapRepository } from "./repository/tag-map.repository";
 import { FeedRepository } from "./repository/feed.repository";
 import logger from "./common/logger";
-import { PROMPT_CONTENT } from "./common/constant";
+import { PROMPT_CONTENT, redisConstant } from "./common/constant";
+import { RedisConnection } from "./common/redis-access";
 
 @injectable()
 export class ClaudeService {
   private readonly client: Anthropic;
+  private readonly nameTag: string;
 
   constructor(
     private readonly tagMapRepository: TagMapRepository,
     private readonly feedRepository: FeedRepository,
+    private readonly redisConnection: RedisConnection
   ) {
     this.client = new Anthropic({
       apiKey: process.env.AI_API_KEY,
     });
+    this.nameTag = "[AI Service]";
   }
 
-  async useCaludeService(feeds: FeedDetail[]) {
-    const processedFeeds = await Promise.allSettled(
+  async startRequestAI() {
+    const feedList: FeedAIQueueItem[] = await this.loadFeeds();
+    const feedListWithAI = await this.requestAI(feedList);
+    await Promise.all([
+      this.insertTag(feedListWithAI),
+      this.updateSummary(feedListWithAI),
+    ]);
+  }
+
+  private async loadFeeds() {
+    try {
+      const feedListRedis = await this.redisConnection.rpop(
+        redisConstant.FEED_AI_QUEUE,
+        parseInt(process.env.AI_RATE_LIMIT_COUNT)
+      );
+      const parsedFeeds: FeedAIQueueItem[] = feedListRedis.map((feed) =>
+        JSON.parse(feed)
+      );
+      return parsedFeeds;
+    } catch (error) {
+      logger.error(`${this.nameTag} Redis 로드한 데이터 JSON Parse 중 오류 발생:
+        메시지: ${error.message}
+        스택 트레이스: ${error.stack}
+      `);
+    }
+  }
+
+  private async requestAI(feeds: FeedAIQueueItem[]) {
+    const feedsWithAIData = await Promise.all(
       feeds.map(async (feed) => {
         try {
           const params: Anthropic.MessageCreateParams = {
@@ -30,89 +61,49 @@ export class ClaudeService {
             model: "claude-3-5-haiku-latest",
           };
           const message = await this.client.messages.create(params);
-          let responseText: string = message.content[0]["text"];
-          responseText = responseText.replace(/\n/g, "");
-          const result: ClaudeResponse = JSON.parse(responseText);
 
-          await Promise.all([
-            this.generateTag(feed, result["tags"]),
-            this.summarize(feed, result["summary"]),
-          ]);
-          return {
-            succeeded: true,
-            feed,
-          };
+          let responseText: string = message.content[0]["text"];
+          responseText = responseText.replace(/[\n\r\t\s]+/g, " ");
+
+          const responseObject: ClaudeResponse = JSON.parse(responseText);
+          feed.summary = responseObject.summary;
+          feed.tagList = Object.keys(responseObject.tags);
+          return feed;
         } catch (error) {
           logger.error(
-            `${feed.id}의 태그 생성, 컨텐츠 요약 에러 발생: `,
-            error,
+            `${this.nameTag} ${feed.id}의 태그 생성, 컨텐츠 요약 에러 발생: 
+          메시지: ${error.message}
+          스택 트레이스: ${error.stack}`
           );
-          return {
-            succeeded: false,
-            feed,
-          };
-        }
-      }),
-    );
 
-    // TODO: Refactor
-    const successFeeds = processedFeeds
-      .map((result) =>
-        result.status === "fulfilled" && result.value.succeeded === true
-          ? result.value.feed
-          : null,
-      )
-      .filter((result) => result !== null);
-
-    // TODO: Refactor
-    const failedFeeds = processedFeeds
-      .map((result, index) => {
-        if (result.status === "rejected") {
-          const failedFeed = feeds[index];
-          return {
-            succeeded: false,
-            feed: failedFeed,
-          };
+          if (feed.deathCount < 3) {
+            feed.deathCount++;
+            this.redisConnection.rpush(redisConstant.FEED_AI_QUEUE, [
+              JSON.stringify(feed),
+            ]);
+          } else {
+            logger.error(
+              `${this.nameTag} ${feed.id}의 Death Count 3회 이상 발생 AI 요청 금지: 
+            메시지: ${error.message}
+            스택 트레이스: ${error.stack}`
+            );
+            this.feedRepository.updateNullSummary(feed.id);
+          }
         }
-        return result.status === "fulfilled" && result.value.succeeded === false
-          ? result.value
-          : null;
       })
-      .filter((result) => result !== null && result.succeeded === false)
-      .map((result) => result.feed);
-
-    logger.info(
-      `${successFeeds.length}개의 태그 생성 및 컨텐츠 요약이 성공했습니다.\n ${failedFeeds.length}개의 태그 생성 및 컨텐츠 요약이 실패했습니다.`,
     );
-
-    return [...successFeeds, ...failedFeeds];
+    return feedsWithAIData.filter((value) => value !== undefined);
   }
 
-  private async generateTag(feed: FeedDetail, tags: Record<string, number>) {
-    try {
-      const tagList = Object.keys(tags);
-      if (tagList.length === 0) return;
-      await this.tagMapRepository.insertTags(feed.id, tagList);
-      feed.tag = tagList;
-    } catch (error) {
-      logger.error(
-        `[DB] 태그 데이터를 저장하는 도중 에러가 발생했습니다.
-      에러 메시지: ${error.message}
-      스택 트레이스: ${error.stack}`,
-      );
-    }
+  private insertTag(feedWithAIList: FeedAIQueueItem[]) {
+    return feedWithAIList.map((feed) =>
+      this.tagMapRepository.insertTags(feed.id, feed.tagList)
+    );
   }
 
-  private async summarize(feed: FeedDetail, summary: string) {
-    try {
-      await this.feedRepository.insertSummary(feed.id, summary);
-      feed.summary = summary;
-    } catch (error) {
-      logger.error(
-        `[DB] 게시글 요약 데이터를 저장하는 도중 에러가 발생했습니다.
-      에러 메시지: ${error.message}
-      스택 트레이스: ${error.stack}`,
-      );
-    }
+  private updateSummary(feedWithAIList: FeedAIQueueItem[]) {
+    return feedWithAIList.map((feed) =>
+      this.feedRepository.updateSummary(feed.id, feed.summary)
+    );
   }
 }
