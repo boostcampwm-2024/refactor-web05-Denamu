@@ -38,7 +38,7 @@ function startScheduler() {
   const rssParser = container.resolve<RssParser>(DEPENDENCY_SYMBOLS.RssParser);
 
   schedule.scheduleJob("0,30 * * * *", async () => {
-    logger.info(`피드 크롤링 시작: ${new Date().toISOString()}`);
+    logger.info(`feed crawling 시작: ${new Date().toISOString()}`);
     await main(rssRepository, feedRepository, rssParser);
   });
 
