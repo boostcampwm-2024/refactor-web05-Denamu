@@ -17,8 +17,8 @@ export class FeedRepository {
 
   public async insertFeeds(resultData: FeedDetail[]) {
     const query = `
-            INSERT INTO feed (blog_id, created_at, title, path, thumbnail)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO feed (blog_id, created_at, title, path, thumbnail, summary)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
 
     const insertPromises = resultData.map(async (feed) => {
@@ -28,6 +28,7 @@ export class FeedRepository {
         feed.title,
         feed.link,
         feed.imageUrl,
+        feed.summary,
       ]);
     });
 
