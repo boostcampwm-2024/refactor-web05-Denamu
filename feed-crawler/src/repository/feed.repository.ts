@@ -17,8 +17,8 @@ export class FeedRepository {
 
   public async insertFeeds(resultData: FeedDetail[]) {
     const query = `
-            INSERT INTO feed (blog_id, created_at, title, path, thumbnail)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO feed (blog_id, created_at, title, path, thumbnail, summary)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
 
     const insertPromises = resultData.map(async (feed) => {
@@ -28,6 +28,7 @@ export class FeedRepository {
         feed.title,
         feed.link,
         feed.imageUrl,
+        feed.summary,
       ]);
     });
 
@@ -98,7 +99,6 @@ export class FeedRepository {
             thumbnail: feed.imageUrl,
             path: feed.link,
             title: feed.title,
-            summary: feed.summary || "",
             tag: Array.isArray(feed.tag) ? feed.tag : [],
           });
         }
@@ -131,5 +131,32 @@ export class FeedRepository {
           SET summary=NULL
           WHERE id=?`;
     this.dbConnection.executeQuery(query, [feedId]);
+  }
+
+  async saveAiQueue(feedLists: FeedDetail[]) {
+    try {
+      this.redisConnection.connect();
+      await this.redisConnection.executePipeline((pipeline) => {
+        for (const feed of feedLists) {
+          pipeline.lpush(
+            redisConstant.FEED_AI_QUEUE,
+            JSON.stringify({
+              id: feed.id,
+              content: feed.content,
+              deathCount: feed.deathCount,
+            })
+          );
+        }
+      });
+    } catch (error) {
+      logger.error(
+        `[Redis] AI Queue 데이터 삽입 중 에러가 발생했습니다.
+        에러 메시지: ${error.message}
+        스택 트레이스: ${error.stack}`
+      );
+    } finally {
+      await this.redisConnection.quit();
+    }
+    logger.info(`[Redis] AI Queue 데이터 삽입이 정상적으로 수행되었습니다.`);
   }
 }

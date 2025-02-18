@@ -5,15 +5,18 @@ import { RssObj, FeedDetail, RawFeed } from "./common/types";
 import { XMLParser } from "fast-xml-parser";
 import { parse } from "node-html-parser";
 import { unescape } from "html-escaper";
-import { ONE_MINUTE, INTERVAL } from "./common/constant";
+import {
+  ONE_MINUTE,
+  INTERVAL,
+  FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
+} from "./common/constant";
 import { ClaudeService } from "./claude.service";
 
 export class FeedCrawler {
-  private rssParser: RssParser = new RssParser();
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly claudeService: ClaudeService,
+    private readonly rssParser: RssParser,
   ) {}
 
   async start() {
@@ -35,11 +38,10 @@ export class FeedCrawler {
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
-    // TODO: Refactor
     const insertedData: FeedDetail[] =
       await this.feedRepository.insertFeeds(newFeeds);
-    const createdData = await this.claudeService.useCaludeService(insertedData);
-    await this.feedRepository.setRecentFeedList(createdData);
+    await this.feedRepository.saveAiQueue(insertedData);
+    await this.feedRepository.setRecentFeedList(insertedData);
   }
 
   private async findNewFeeds(
@@ -82,6 +84,8 @@ export class FeedCrawler {
             link: decodeURIComponent(feed.link),
             imageUrl: imageUrl,
             content: content,
+            summary: FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
+            deathCount: 0,
           };
         }),
       );
@@ -134,7 +138,7 @@ export class FeedCrawler {
   }
 }
 
-class RssParser {
+export class RssParser {
   async getThumbnailUrl(feedUrl: string) {
     const response = await fetch(feedUrl, {
       headers: {

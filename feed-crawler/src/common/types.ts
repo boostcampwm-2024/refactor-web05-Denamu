@@ -25,6 +25,7 @@ export interface FeedDetail {
   content?: string;
   summary?: string;
   tag?: string[];
+  deathCount?: number;
 }
 
 export interface ClaudeResponse {
