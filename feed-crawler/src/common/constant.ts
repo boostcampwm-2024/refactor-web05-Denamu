@@ -6,6 +6,7 @@ dotenv.config({
 export const CONNECTION_LIMIT = 50;
 export const redisConstant = {
   FEED_RECENT_ALL_KEY: "feed:recent:*",
+  FEED_AI_QUEUE: `feed:ai:queue`,
 };
 export const ONE_MINUTE = 60 * 1000;
 export const INTERVAL =
