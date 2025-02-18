@@ -15,17 +15,12 @@ import logo from "@/assets/logo-denamu-main.svg";
 
 import { useTapStore } from "@/store/useTapStore";
 
-export default function DesktopNavigation({
-  toggleModal,
-}: {
-  toggleModal: (modalType: "search" | "rss" | "login") => void;
-}) {
+export default function DesktopNavigation({ toggleModal }: { toggleModal: (modalType: "search" | "rss") => void }) {
   const navigate = useNavigate();
   const { setTap } = useTapStore();
 
   return (
     <div className="h-20 items-center flex justify-between relative px-[20px]">
-      {/* 로고 */}
       <button
         className="flex-shrink-0 relative z-50"
         onClick={() => {
@@ -36,11 +31,10 @@ export default function DesktopNavigation({
         <img className="h-14 w-auto cursor-pointer" src={logo} alt="Logo" />
       </button>
 
-      {/* 검색 */}
       <div className="absolute left-1/2 transform -translate-x-1/2 w-[25%] flex justify-center z-40">
         <SearchButton handleSearchModal={() => toggleModal("search")} />
       </div>
-      {/* 버튼 */}
+
       <div className="flex items-center z-50">
         <NavigationMenu>
           <NavigationMenuList>
@@ -59,8 +53,7 @@ export default function DesktopNavigation({
             <NavigationMenuItem>
               <NavigationMenuLink
                 className={`${navigationMenuTriggerStyle()} hover:text-primary hover:bg-primary/10`}
-                onClick={() => toggleModal("login")}
-                href="#"
+                href="/signin"
               >
                 로그인
               </NavigationMenuLink>

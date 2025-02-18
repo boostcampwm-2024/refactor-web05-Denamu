@@ -2,9 +2,12 @@ import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import PostDetail from "@/components/common/Card/PostDetail";
+import { Toaster } from "@/components/ui/toaster.tsx";
 
 import Loading from "@/pages/Loading.tsx";
 import PostDetailPage from "@/pages/PostDetailPage";
+import SignIn from "@/pages/SignIn.tsx";
+import SignUp from "@/pages/SignUp.tsx";
 
 import { useMediaQuery } from "@/hooks/common/useMediaQuery";
 
@@ -71,6 +74,22 @@ export default function App() {
           }
         />
         <Route
+          path="/signin"
+          element={
+            <Suspense fallback={<Loading />}>
+              <SignIn />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <Suspense fallback={<Loading />}>
+              <SignUp />
+            </Suspense>
+          }
+        />
+        <Route
           path="/:id"
           element={
             <Suspense fallback={<Loading />}>
@@ -84,6 +103,7 @@ export default function App() {
           <Route path="/:id" element={<PostDetail />} />
         </Routes>
       )}
+      <Toaster />
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
