@@ -1,10 +1,10 @@
-import { FeedDetail } from "../common/types";
-import logger from "../common/logger";
-import { redisConstant } from "../common/constant";
-import { RedisConnection } from "../common/redis-access";
-import { inject, injectable } from "tsyringe";
-import { DEPENDENCY_SYMBOLS } from "../types/dependency-symbols";
-import { DatabaseConnection } from "../types/database-connection";
+import { FeedDetail } from '../common/types';
+import logger from '../common/logger';
+import { redisConstant } from '../common/constant';
+import { RedisConnection } from '../common/redis-access';
+import { inject, injectable } from 'tsyringe';
+import { DEPENDENCY_SYMBOLS } from '../types/dependency-symbols';
+import { DatabaseConnection } from '../types/database-connection';
 
 @injectable()
 export class FeedRepository {
@@ -46,7 +46,9 @@ export class FeedRepository {
       .filter((feed) => feed);
 
     logger.info(
-      `${process.env.NODE_ENV === "test" ? "[SQLite]" : "[MySQL]"} ${insertedFeeds.length}개의 피드 데이터가 성공적으로 데이터베이스에 삽입되었습니다.`,
+      `${process.env.NODE_ENV === 'test' ? '[SQLite]' : '[MySQL]'} ${
+        insertedFeeds.length
+      }개의 피드 데이터가 성공적으로 데이터베이스에 삽입되었습니다.`,
     );
     return insertedFeeds;
   }
@@ -56,7 +58,7 @@ export class FeedRepository {
       this.redisConnection.connect();
 
       const keysToDelete = [];
-      let cursor = "0";
+      let cursor = '0';
       do {
         const [newCursor, keys] = await this.redisConnection.scan(
           cursor,
@@ -65,7 +67,7 @@ export class FeedRepository {
         );
         keysToDelete.push(...keys);
         cursor = newCursor;
-      } while (cursor !== "0");
+      } while (cursor !== '0');
 
       if (keysToDelete.length > 0) {
         await this.redisConnection.del(...keysToDelete);
@@ -96,7 +98,7 @@ export class FeedRepository {
             thumbnail: feed.imageUrl,
             path: feed.link,
             title: feed.title,
-            summary: feed.summary || "",
+            summary: feed.summary || '',
             tag: Array.isArray(feed.tag) ? feed.tag : [],
           });
         }

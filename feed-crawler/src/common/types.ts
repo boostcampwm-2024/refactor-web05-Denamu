@@ -3,7 +3,7 @@ export interface RawFeed {
   link: string;
   pubDate: string;
   description?: string;
-  "content:encoded"?: string;
+  'content:encoded'?: string;
 }
 
 export interface RssObj {
