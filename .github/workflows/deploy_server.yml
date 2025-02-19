@@ -36,7 +36,7 @@ jobs:
                   
             cd /var/web05-Denamu
             git pull origin main
-            cd /var/web05-Denmau/server
+            cd /var/web05-Denamu/server
        
             mkdir -p configs
             echo "PORT=${{ secrets.PRODUCT_PORT }}" > configs/.env.db.production

@@ -36,7 +36,7 @@ jobs:
             
             cd /var/web05-Denamu
             git pull origin main
-            cd /var/web05-Denmau/feed-crawler/
+            cd /var/web05-Denamu/feed-crawler/
 
             echo "PORT=${{ secrets.FEED_CRAWLER_PORT }}" > .env
             echo "DB_HOST=${{ secrets.FEED_CRAWLER_DB_HOST }}" >> .env
