@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card.tsx";
 
 import { Avatar, Banner, Info, Stats } from "./index";
+import { ActivityGraph } from "./ui/ActivityGraph.tsx";
 import { User } from "@/types/profile.ts";
 
 interface ProfileHeaderProps {
@@ -19,8 +20,10 @@ export const Header = ({ user }: ProfileHeaderProps) => {
             <Info user={user} />
           </div>
         </div>
-
         <Stats totalPosts={user.totalPosts} totalViews={user.totalViews} topicsCount={user.topics.length} />
+        <div className="mt-6">
+          <ActivityGraph dailyActivities={user.dailyActivities} />
+        </div>
       </CardContent>
     </Card>
   );
