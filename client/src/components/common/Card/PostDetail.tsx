@@ -10,18 +10,14 @@ import { PostHeader } from "@/components/common/Card/detail/PostHeader";
 import NotFound from "@/pages/NotFound";
 
 import { useHeaderVisibility } from "@/hooks/common/useHeaderVisibility";
-import { usePostCardActions } from "@/hooks/common/usePostCardActions";
 import { useScrollbarAdjustment } from "@/hooks/common/useScrollbarAdjustment";
 import { usePostDetail } from "@/hooks/queries/usePostDetail";
-
-import { POST_MODAL_DATA } from "@/constants/dummyData";
 
 export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const modalRef = useRef<HTMLDivElement>(null);
   const { data } = usePostDetail(Number(id));
-  const { handlePostClick } = usePostCardActions(data?.data || POST_MODAL_DATA.data);
   const scrollbarWidth = useScrollbarAdjustment();
   const [modalRoot, setModalRoot] = useState<Element | null>(null);
   const modalContainerRef = useCallback((node: HTMLDivElement | null) => {
@@ -43,10 +39,12 @@ export default function PostDetail() {
     [closeDetail]
   );
 
-  if (!data || (id && !/^\d+$/.test(id))) {
+  if (id && !/^\d+$/.test(id)) {
     return <NotFound />;
   }
-
+  if (!data) {
+    return;
+  }
   return (
     <div
       ref={modalContainerRef}
@@ -58,16 +56,15 @@ export default function PostDetail() {
           <FixedHeader title={data.data.title} onClose={closeDetail} scrollbarWidth={scrollbarWidth} />
         )}
 
-        <div ref={headerRef} className="w-full">
+        <div ref={headerRef} className="w-full border-b flex justify-end">
           <button onClick={closeDetail} className="rounded my-5 mx-5" aria-label="Close modal">
             <X size={15} />
           </button>
-          <hr />
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 px-10 pb-10">
+        <div className="mt-5 flex flex-col gap-2 px-10 ">
           <PostHeader data={data.data} />
-          <PostContent data={data.data} onPostClick={handlePostClick} />
+          <PostContent post={data.data} />
         </div>
       </div>
     </div>
