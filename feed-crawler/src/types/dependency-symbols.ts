@@ -5,4 +5,5 @@ export const DEPENDENCY_SYMBOLS = {
   RedisConnection: Symbol.for('RedisConnection'),
   TagMapRepository: Symbol.for('TagMapRepository'),
   ClaudeService: Symbol.for('ClaudeService'),
+  RssParser: Symbol.for('RssParser'),
 };
