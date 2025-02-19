@@ -53,12 +53,12 @@ jobs:
             echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> .env
             
             npm ci
-            cd /var
-            tar -czvf app.tar.gz web05-Denamu
+            cd /var/web05-Denamu
+            tar -czvf app.tar.gz feed-crawler
             scp -i /tmp/private_key /var/app.tar.gz root@172.16.0.22:/var/app.tar.gz
                            
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
-            cd /var
+            cd /var/web05-Denamu
             tar -xzvf app.tar.gz
             cd /var/web05-Denamu/feed-crawler
             nvm use 22
