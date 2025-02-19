@@ -54,16 +54,24 @@ jobs:
             
             npm ci
             cd /var/web05-Denamu
-            tar -czvf app_feed_crawler.tar.gz feed-crawler
-            scp -i /tmp/private_key /var/web05-Denamu/app_feed_crawler.tar.gz root@172.16.0.22:/var/web05-Denamu/app_feed_crawler.tar.gz
+            tar -czvf /tmp/app_feed_crawler.tar.gz feed-crawler
+            scp -i /tmp/private_key /tmp/app_feed_crawler.tar.gz root@172.16.0.22:/tmp/app_feed_crawler.tar.gz
                            
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             cd /var/web05-Denamu
+            pm2 delete all
+            
+            cd /tmp
             tar -xzvf app_feed_crawler.tar.gz
+            rm -rf /var/web05-Denamu/feed-crawler
+            mv /tmp/feed-crawler /var/web05-Denamu
+            
             cd /var/web05-Denamu/feed-crawler
             nvm use 22
             npm run build
             cd /var/web05-Denamu
-            pm2 delete all
+            
             pm2 start ecosystem.config.js
             EOF
