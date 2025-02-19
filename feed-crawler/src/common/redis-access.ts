@@ -15,6 +15,7 @@ export class RedisConnection {
 
   constructor() {
     this.nameTag = "[Redis]";
+    this.connect();
   }
 
   connect() {
@@ -30,13 +31,9 @@ export class RedisConnection {
     }
   }
 
-  async rpop(
-    key: string,
-    count: number | string,
-    callback?: (err?: Error | null, result?: any) => void
-  ) {
+  async rpop(key: string) {
     try {
-      return await this.redis.rpop(key, count, callback);
+      return await this.redis.rpop(key);
     } catch (error) {
       logger.error(
         `${this.nameTag} rpop 실행 중 오류 발생:
@@ -47,13 +44,9 @@ export class RedisConnection {
     }
   }
 
-  async rpush(
-    key: string,
-    elements: (string | Buffer | number)[],
-    callback?: (err?: Error | null, result?: any) => void
-  ) {
+  async rpush(key: string, elements: (string | Buffer | number)[]) {
     try {
-      await this.redis.rpush(key, ...elements, callback);
+      await this.redis.rpush(key, ...elements);
     } catch (error) {
       logger.error(
         `${this.nameTag} rpush 실행 중 오류 발생:
