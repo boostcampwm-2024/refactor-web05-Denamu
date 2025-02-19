@@ -62,6 +62,8 @@ jobs:
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 22
+            node -v
             cd /var/web05-Denamu
             pm2 delete all
             
@@ -72,6 +74,7 @@ jobs:
             
             cd /var/web05-Denamu/server
             nvm use 22
+            node -v
             npm run build
             cd /var/web05-Denamu
 
