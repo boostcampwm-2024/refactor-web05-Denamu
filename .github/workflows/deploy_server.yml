@@ -60,6 +60,7 @@ jobs:
             scp -i /tmp/private_key /tmp/app_server.tar.gz root@172.16.0.22:/tmp/app_server.tar.gz
 
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
+            
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use 22
@@ -73,8 +74,6 @@ jobs:
             mv /tmp/server /var/web05-Denamu
             
             cd /var/web05-Denamu/server
-            nvm use 22
-            node -v
             npm run build
             cd /var/web05-Denamu
 
