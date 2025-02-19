@@ -1,5 +1,5 @@
-import { setupTestContainer } from "./testContext.setup";
-import { redisConstant } from "../../src/common/constant";
+import { setupTestContainer } from './testContext.setup';
+import { redisConstant } from '../../src/common/constant';
 
 afterEach(async () => {
   const testContext = setupTestContainer();

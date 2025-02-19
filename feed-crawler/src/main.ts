@@ -1,12 +1,12 @@
-import "reflect-metadata";
-import logger from "./common/logger";
-import { FeedCrawler, RssParser } from "./feed-crawler";
-import { container } from "./container";
-import { RssRepository } from "./repository/rss.repository";
-import { FeedRepository } from "./repository/feed.repository";
-import { DEPENDENCY_SYMBOLS } from "./types/dependency-symbols";
-import { DatabaseConnection } from "./types/database-connection";
-import * as schedule from "node-schedule";
+import 'reflect-metadata';
+import logger from './common/logger';
+import { FeedCrawler, RssParser } from './feed-crawler';
+import { container } from './container';
+import { RssRepository } from './repository/rss.repository';
+import { FeedRepository } from './repository/feed.repository';
+import { DEPENDENCY_SYMBOLS } from './types/dependency-symbols';
+import { DatabaseConnection } from './types/database-connection';
+import * as schedule from 'node-schedule';
 
 async function main(rssRepository, feedRepository, rssParser) {
   logger.info("==========작업 시작==========");

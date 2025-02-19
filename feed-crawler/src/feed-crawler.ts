@@ -1,16 +1,16 @@
-import { FeedRepository } from "./repository/feed.repository";
-import { RssRepository } from "./repository/rss.repository";
-import logger from "./common/logger";
-import { RssObj, FeedDetail, RawFeed } from "./common/types";
-import { XMLParser } from "fast-xml-parser";
-import { parse } from "node-html-parser";
-import { unescape } from "html-escaper";
+import { FeedRepository } from './repository/feed.repository';
+import { RssRepository } from './repository/rss.repository';
+import logger from './common/logger';
+import { RssObj, FeedDetail, RawFeed } from './common/types';
+import { XMLParser } from 'fast-xml-parser';
+import { parse } from 'node-html-parser';
+import { unescape } from 'html-escaper';
 import {
   ONE_MINUTE,
   INTERVAL,
   FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
-} from "./common/constant";
-import { ClaudeService } from "./claude.service";
+} from './common/constant';
+import { ClaudeService } from './claude.service';
 
 export class FeedCrawler {
   constructor(
@@ -25,7 +25,7 @@ export class FeedCrawler {
     const rssObjects = await this.rssRepository.selectAllRss();
 
     if (!rssObjects || !rssObjects.length) {
-      logger.info("등록된 RSS가 없습니다.");
+      logger.info('등록된 RSS가 없습니다.');
       return;
     }
 
@@ -33,13 +33,14 @@ export class FeedCrawler {
     const newFeeds = newFeedsByRss.flat();
 
     if (!newFeeds.length) {
-      logger.info("새로운 피드가 없습니다.");
+      logger.info('새로운 피드가 없습니다.');
       return;
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
 
-    const insertedData: FeedDetail[] =
-      await this.feedRepository.insertFeeds(newFeeds);
+    const insertedData: FeedDetail[] = await this.feedRepository.insertFeeds(
+      newFeeds,
+    );
     await this.feedRepository.saveAiQueue(insertedData);
     await this.feedRepository.setRecentFeedList(insertedData);
   }
@@ -65,13 +66,13 @@ export class FeedCrawler {
           const formattedDate = date
             .toISOString()
             .slice(0, 19)
-            .replace("T", " ");
+            .replace('T', ' ');
 
-          const content = (feed.description ?? feed["content:encoded"] ?? "")
-            .replace(/<[^>]*>/g, "")
-            .replace(/&nbsp;|&#160;/g, " ")
-            .replace(/&[^;]+;/g, "")
-            .replace(/\s+/g, " ")
+          const content = (feed.description ?? feed['content:encoded'] ?? '')
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;|&#160;/g, ' ')
+            .replace(/&[^;]+;/g, '')
+            .replace(/\s+/g, ' ')
             .trim();
 
           return {
@@ -113,7 +114,7 @@ export class FeedCrawler {
     const xmlParser = new XMLParser();
     const response = await fetch(rssUrl, {
       headers: {
-        Accept: "application/rss+xml, application/xml, text/xml",
+        Accept: 'application/rss+xml, application/xml, text/xml',
       },
     });
 
@@ -133,7 +134,7 @@ export class FeedCrawler {
       pubDate: feed.pubDate,
       description: feed.description
         ? feed.description
-        : feed["content:encoded"],
+        : feed['content:encoded'],
     }));
   }
 }
@@ -142,7 +143,7 @@ export class RssParser {
   async getThumbnailUrl(feedUrl: string) {
     const response = await fetch(feedUrl, {
       headers: {
-        Accept: "text/html",
+        Accept: 'text/html',
       },
     });
 
@@ -155,7 +156,7 @@ export class RssParser {
     const metaImage = htmlRootElement.querySelector(
       'meta[property="og:image"]',
     );
-    let thumbnailUrl = metaImage?.getAttribute("content") ?? "";
+    let thumbnailUrl = metaImage?.getAttribute('content') ?? '';
 
     if (!thumbnailUrl.length) {
       logger.warn(`${feedUrl}에서 썸네일 추출 실패`);
@@ -179,12 +180,12 @@ export class RssParser {
 
   customUnescape(feedTitle: string): string {
     const escapeEntity = {
-      "&middot;": "·",
-      "&nbsp;": " ",
+      '&middot;': '·',
+      '&nbsp;': ' ',
     };
     Object.keys(escapeEntity).forEach((escapeKey) => {
       const value = escapeEntity[escapeKey];
-      const regex = new RegExp(escapeKey, "g");
+      const regex = new RegExp(escapeKey, 'g');
       feedTitle = feedTitle.replace(regex, value);
     });
 

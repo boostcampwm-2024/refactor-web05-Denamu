@@ -1,10 +1,10 @@
-import { injectable } from "tsyringe";
-import Anthropic from "@anthropic-ai/sdk";
-import { ClaudeResponse, FeedDetail } from "./common/types";
-import { TagMapRepository } from "./repository/tag-map.repository";
-import { FeedRepository } from "./repository/feed.repository";
-import logger from "./common/logger";
-import { PROMPT_CONTENT } from "./common/constant";
+import { injectable } from 'tsyringe';
+import Anthropic from '@anthropic-ai/sdk';
+import { ClaudeResponse, FeedDetail } from './common/types';
+import { TagMapRepository } from './repository/tag-map.repository';
+import { FeedRepository } from './repository/feed.repository';
+import logger from './common/logger';
+import { PROMPT_CONTENT } from './common/constant';
 
 @injectable()
 export class ClaudeService {
@@ -26,17 +26,17 @@ export class ClaudeService {
           const params: Anthropic.MessageCreateParams = {
             max_tokens: 8192,
             system: PROMPT_CONTENT,
-            messages: [{ role: "user", content: feed.content }],
-            model: "claude-3-5-haiku-latest",
+            messages: [{ role: 'user', content: feed.content }],
+            model: 'claude-3-5-haiku-latest',
           };
           const message = await this.client.messages.create(params);
-          let responseText: string = message.content[0]["text"];
-          responseText = responseText.replace(/\n/g, "");
+          let responseText: string = message.content[0]['text'];
+          responseText = responseText.replace(/\n/g, '');
           const result: ClaudeResponse = JSON.parse(responseText);
 
           await Promise.all([
-            this.generateTag(feed, result["tags"]),
-            this.summarize(feed, result["summary"]),
+            this.generateTag(feed, result['tags']),
+            this.summarize(feed, result['summary']),
           ]);
           return {
             succeeded: true,
@@ -58,7 +58,7 @@ export class ClaudeService {
     // TODO: Refactor
     const successFeeds = processedFeeds
       .map((result) =>
-        result.status === "fulfilled" && result.value.succeeded === true
+        result.status === 'fulfilled' && result.value.succeeded === true
           ? result.value.feed
           : null
       )
@@ -67,14 +67,14 @@ export class ClaudeService {
     // TODO: Refactor
     const failedFeeds = processedFeeds
       .map((result, index) => {
-        if (result.status === "rejected") {
+        if (result.status === 'rejected') {
           const failedFeed = feeds[index];
           return {
             succeeded: false,
             feed: failedFeed,
           };
         }
-        return result.status === "fulfilled" && result.value.succeeded === false
+        return result.status === 'fulfilled' && result.value.succeeded === false
           ? result.value
           : null;
       })

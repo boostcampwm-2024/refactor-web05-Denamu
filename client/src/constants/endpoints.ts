@@ -1,5 +1,5 @@
-export const BASE_URL = "https://denamu.site";
-export const CHAT_SERVER_URL = "https://denamu.site";
+export const BASE_URL = import.meta.env.VITE_DENAMU_URL;
+export const CHAT_SERVER_URL = import.meta.env.VITE_DENAMU_URL;
 export const ADMIN = {
   LOGIN: "/api/admin/login",
   CHECK: "/api/admin/sessionId",
@@ -17,6 +17,7 @@ export const ADMIN = {
 };
 export const BLOG = {
   POST: "/api/feed",
+  Trend:"/api/feed/trend/sse",
   RSS: {
     REGISTRER_RSS: "/api/rss",
   },
