@@ -35,7 +35,7 @@ function initializeDependencies() {
 function registerSchedulers(
   dependencies: ReturnType<typeof initializeDependencies>,
 ) {
-  schedule.scheduleJob('FEED CRAWLING', '0,37 * * * *', async () => {
+  schedule.scheduleJob('FEED CRAWLING', '0,30 * * * *', async () => {
     logger.info(`Feed Crawling Start: ${new Date().toISOString()}`);
     const feedCrawler = new FeedCrawler(
       dependencies.rssRepository,
