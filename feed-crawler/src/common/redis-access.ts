@@ -1,7 +1,7 @@
-import Redis, { ChainableCommander } from "ioredis";
-import Redis_Mock from "ioredis-mock";
-import logger from "../common/logger";
-import { injectable } from "tsyringe";
+import Redis, { ChainableCommander } from 'ioredis';
+import Redis_Mock from 'ioredis-mock';
+import logger from '../common/logger';
+import { injectable } from 'tsyringe';
 
 @injectable()
 export class RedisConnection {
@@ -9,11 +9,11 @@ export class RedisConnection {
   private nameTag: string;
 
   constructor() {
-    this.nameTag = "[Redis]";
+    this.nameTag = '[Redis]';
   }
 
   connect() {
-    if (process.env.NODE_ENV === "test") {
+    if (process.env.NODE_ENV === 'test') {
       this.redis = new Redis_Mock();
     } else {
       this.redis = new Redis({
@@ -50,10 +50,10 @@ export class RedisConnection {
   ): Promise<[cursor: string, keys: string[]]> {
     const result = await this.redis.scan(
       cursor,
-      "MATCH",
-      match || "*",
-      "COUNT",
-      count || 10
+      'MATCH',
+      match || '*',
+      'COUNT',
+      count || 10,
     );
     return [result[0], result[1]];
   }

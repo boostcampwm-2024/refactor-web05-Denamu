@@ -1,10 +1,10 @@
-import { FeedDetail } from "../common/types";
-import logger from "../common/logger";
-import { redisConstant } from "../common/constant";
-import { RedisConnection } from "../common/redis-access";
-import { inject, injectable } from "tsyringe";
-import { DEPENDENCY_SYMBOLS } from "../types/dependency-symbols";
-import { DatabaseConnection } from "../types/database-connection";
+import { FeedDetail } from '../common/types';
+import logger from '../common/logger';
+import { redisConstant } from '../common/constant';
+import { RedisConnection } from '../common/redis-access';
+import { inject, injectable } from 'tsyringe';
+import { DEPENDENCY_SYMBOLS } from '../types/dependency-symbols';
+import { DatabaseConnection } from '../types/database-connection';
 
 @injectable()
 export class FeedRepository {
@@ -17,8 +17,8 @@ export class FeedRepository {
 
   public async insertFeeds(resultData: FeedDetail[]) {
     const query = `
-            INSERT INTO feed (blog_id, created_at, title, path, thumbnail)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO feed (blog_id, created_at, title, path, thumbnail, summary)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
 
     const insertPromises = resultData.map(async (feed) => {
@@ -28,6 +28,7 @@ export class FeedRepository {
         feed.title,
         feed.link,
         feed.imageUrl,
+        feed.summary,
       ]);
     });
 
@@ -56,7 +57,7 @@ export class FeedRepository {
       this.redisConnection.connect();
 
       const keysToDelete = [];
-      let cursor = "0";
+      let cursor = '0';
       do {
         const [newCursor, keys] = await this.redisConnection.scan(
           cursor,
@@ -65,7 +66,7 @@ export class FeedRepository {
         );
         keysToDelete.push(...keys);
         cursor = newCursor;
-      } while (cursor !== "0");
+      } while (cursor !== '0');
 
       if (keysToDelete.length > 0) {
         await this.redisConnection.del(...keysToDelete);
@@ -96,6 +97,7 @@ export class FeedRepository {
             thumbnail: feed.imageUrl,
             path: feed.link,
             title: feed.title,
+            tag: Array.isArray(feed.tag) ? feed.tag : [],
           });
         }
       });
@@ -109,5 +111,42 @@ export class FeedRepository {
     } finally {
       await this.redisConnection.quit();
     }
+  }
+
+  public async insertSummary(feedId: number, summary: string) {
+    const query = `
+            UPDATE feed 
+            SET summary=?
+            WHERE id=?
+        `;
+
+    await this.dbConnection.executeQuery(query, [summary, feedId]);
+  }
+
+  async saveAiQueue(feedLists: FeedDetail[]) {
+    try {
+      this.redisConnection.connect();
+      await this.redisConnection.executePipeline((pipeline) => {
+        for (const feed of feedLists) {
+          pipeline.lpush(
+            redisConstant.FEED_AI_QUEUE,
+            JSON.stringify({
+              id: feed.id,
+              content: feed.content,
+              deathCount: feed.deathCount,
+            }),
+          );
+        }
+      });
+    } catch (error) {
+      logger.error(
+        `[Redis] AI Queue 데이터 삽입 중 에러가 발생했습니다.
+        에러 메시지: ${error.message}
+        스택 트레이스: ${error.stack}`,
+      );
+    } finally {
+      await this.redisConnection.quit();
+    }
+    logger.info(`[Redis] AI Queue 데이터 삽입이 정상적으로 수행되었습니다.`);
   }
 }

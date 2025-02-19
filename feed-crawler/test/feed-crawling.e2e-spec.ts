@@ -1,8 +1,8 @@
-import { setupTestContainer } from "./setup/testContext.setup";
-import { FeedCrawler } from "../src/feed-crawler";
-import { redisConstant } from "../src/common/constant";
+import { setupTestContainer } from './setup/testContext.setup';
+import { FeedCrawler } from '../src/feed-crawler';
+import { redisConstant } from '../src/common/constant';
 
-describe("feed crawling e2e-test", () => {
+describe('feed crawling e2e-test', () => {
   const testContext = setupTestContainer();
   let feedCrawler: FeedCrawler;
 
@@ -18,12 +18,13 @@ describe("feed crawling e2e-test", () => {
     jest.restoreAllMocks();
   });
 
-  it("RSS 피드가 정상적으로 DB, Redis에 저장된다.", async () => {
+  it('RSS 피드가 정상적으로 DB, Redis에 저장된다.', async () => {
     jest.spyOn(feedCrawler as any, "fetchRss").mockResolvedValue([
       {
         title: "Mock Title",
         link: "https://example.com/mock",
-        pubDate: "Tue, 06 Feb 2024 12:00:00 GMT",
+        pubDate: Date.now(),
+        description: "Mock Content",
       },
     ]);
 
@@ -35,25 +36,20 @@ describe("feed crawling e2e-test", () => {
     await testContext.dbConnection.executeQuery(
       `INSERT INTO rss_accept (name, user_name, email, rss_url, blog_platform) 
        VALUES (?, ?, ?, ?, ?)`,
-      [
-        "test blog name",
-        "test user name",
-        "test@test.com",
-        "https://test.com/rss",
-        "etc",
-      ]
+      ["test blog", "tester", "test@test.com", "https://test.com/rss", "etc"],
     );
+
     // when
     await feedCrawler.start();
 
     // then
     const feedsFromDB = await testContext.dbConnection.executeQuery(
-      "SELECT * FROM feed",
-      []
+      'SELECT * FROM feed',
+      [],
     );
 
     const recentFeedsKeys = [];
-    let cursor = "0";
+    let cursor = '0';
     do {
       const [newCursor, keys] = await testContext.redisConnection.scan(
         cursor,
@@ -62,31 +58,44 @@ describe("feed crawling e2e-test", () => {
       );
       recentFeedsKeys.push(...keys);
       cursor = newCursor;
-    } while (cursor !== "0");
+    } while (cursor !== '0');
+    const tags = await testContext.dbConnection.executeQuery(
+      'SELECT * FROM tag_map',
+      [],
+    );
+
+    const aiQueue = await testContext.redisConnection.executePipeline(
+      (pipeline) => {
+        pipeline.lrange(redisConstant.FEED_AI_QUEUE, 0, -1);
+      }
+    );
+    const aiQueueData = JSON.parse(aiQueue[0][1] as string);
+
     expect(feedsFromDB.length).not.toBe(0);
     expect(recentFeedsKeys.length).not.toBe(0);
+    expect(aiQueueData).toHaveProperty("content", "Mock Content");
   });
 
-  it("RSS URL이 잘못된 경우 에러 로그를 남기고 계속 진행한다", async () => {
+  it('RSS URL이 잘못된 경우 에러 로그를 남기고 계속 진행한다', async () => {
     // given
     await testContext.dbConnection.executeQuery(
       `INSERT INTO rss_accept (name, user_name, email, rss_url, blog_platform) 
        VALUES (?, ?, ?, ?, ?)`,
       [
-        "Wrong Test",
-        "tester",
-        "test@test.com",
-        "https://test.tistory.com/test",
-        "tistory",
-      ]
+        'Wrong Test',
+        'tester',
+        'test@test.com',
+        'https://test.tistory.com/test',
+        'tistory',
+      ],
     );
     // when
     await feedCrawler.start();
 
     // then
     const feeds = await testContext.dbConnection.executeQuery(
-      "SELECT * FROM feed",
-      []
+      'SELECT * FROM feed',
+      [],
     );
     expect(feeds.length).toBe(0);
   });

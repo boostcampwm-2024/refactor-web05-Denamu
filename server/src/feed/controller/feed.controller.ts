@@ -25,6 +25,8 @@ import { ApiUpdateFeedViewCount } from '../api-docs/updateFeedViewCount.api-docs
 import { ApiReadRecentFeedList } from '../api-docs/readRecentFeedList.api-docs';
 import { FeedTrendResponseDto } from '../dto/response/feed-pagination.dto';
 import { FeedViewUpdateRequestDto } from '../dto/request/feed-update.dto';
+import { FeedDetailRequestDto } from '../dto/request/feed-detail.dto';
+import { ApiReadFeedDetail } from '../api-docs/readFeedDetail.api-docs';
 
 @ApiTags('Feed')
 @Controller('feed')
@@ -109,6 +111,16 @@ export class FeedController {
     return ApiResponse.responseWithData(
       '최신 피드 업데이트 완료',
       await this.feedService.readRecentFeedList(),
+    );
+  }
+
+  @ApiReadFeedDetail()
+  @Get('/detail/:feedId')
+  @HttpCode(HttpStatus.OK)
+  async readFeedDetail(@Param() feedDetailRequestDto: FeedDetailRequestDto) {
+    return ApiResponse.responseWithData(
+      '요청이 성공적으로 처리되었습니다.',
+      await this.feedService.readFeedDetail(feedDetailRequestDto),
     );
   }
 }

@@ -1,16 +1,22 @@
-import { FeedRepository } from "./repository/feed.repository";
-import { RssRepository } from "./repository/rss.repository";
-import logger from "./common/logger";
-import { RssObj, FeedDetail, RawFeed } from "./common/types";
-import { XMLParser } from "fast-xml-parser";
-import { ONE_MINUTE, TIME_INTERVAL } from "./common/constant";
-import { RssParser } from "./common/rss-parser";
+import { FeedRepository } from './repository/feed.repository';
+import { RssRepository } from './repository/rss.repository';
+import logger from './common/logger';
+import { RssObj, FeedDetail, RawFeed } from './common/types';
+import { XMLParser } from 'fast-xml-parser';
+import { parse } from 'node-html-parser';
+import { unescape } from 'html-escaper';
+import {
+  ONE_MINUTE,
+  INTERVAL,
+  FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
+} from './common/constant';
+import { RssParser } from './common/rss-parser';
 
 export class FeedCrawler {
   constructor(
     private readonly rssRepository: RssRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly rssParser: RssParser
+    private readonly rssParser: RssParser,
   ) {}
 
   async start() {
@@ -18,7 +24,7 @@ export class FeedCrawler {
 
     const rssObjects = await this.rssRepository.selectAllRss();
     if (!rssObjects || !rssObjects.length) {
-      logger.info("등록된 RSS가 없습니다.");
+      logger.info('등록된 RSS가 없습니다.');
       return;
     }
 
@@ -26,12 +32,14 @@ export class FeedCrawler {
     const newFeeds = newFeedsByRss.flat();
 
     if (!newFeeds.length) {
-      logger.info("새로운 피드가 없습니다.");
+      logger.info('새로운 피드가 없습니다.');
       return;
     }
     logger.info(`총 ${newFeeds.length}개의 새로운 피드가 있습니다.`);
-    const insertedData = await this.feedRepository.insertFeeds(newFeeds);
-
+    const insertedData: FeedDetail[] = await this.feedRepository.insertFeeds(
+      newFeeds,
+    );
+    await this.feedRepository.saveAiQueue(insertedData);
     await this.feedRepository.setRecentFeedList(insertedData);
   }
 
@@ -54,7 +62,14 @@ export class FeedCrawler {
           const formattedDate = date
             .toISOString()
             .slice(0, 19)
-            .replace("T", " ");
+            .replace('T', ' ');
+
+          const content = (feed.description ?? feed['content:encoded'] ?? '')
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;|&#160;/g, ' ')
+            .replace(/&[^;]+;/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
 
           return {
             id: null,
@@ -65,10 +80,12 @@ export class FeedCrawler {
             title: feed.title,
             link: decodeURIComponent(feed.link),
             imageUrl: imageUrl,
+            content: content,
+            summary: FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
+            deathCount: 0,
           };
         })
       );
-
       return detailedFeeds;
     } catch (err) {
       logger.warn(
@@ -93,7 +110,7 @@ export class FeedCrawler {
     const xmlParser = new XMLParser();
     const response = await fetch(rssUrl, {
       headers: {
-        Accept: "application/rss+xml, application/xml, text/xml",
+        Accept: 'application/rss+xml, application/xml, text/xml',
       },
     });
 
@@ -111,6 +128,9 @@ export class FeedCrawler {
       title: this.rssParser.customUnescape(feed.title),
       link: feed.link,
       pubDate: feed.pubDate,
+      description: feed.description
+        ? feed.description
+        : feed['content:encoded'],
     }));
   }
 }

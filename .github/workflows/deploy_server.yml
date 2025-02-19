@@ -43,6 +43,7 @@ jobs:
             echo "REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}" >> configs/.env.db.production
             echo "EMAIL_USER=${{secrets.EMAIL_USER}}" >> configs/.env.db.production
             echo "EMAIL_PASSWORD=${{secrets.EMAIL_PASSWORD}}" >> configs/.env.db.production
+            echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> configs/.env.db.production
 
             npm ci
             npm run build

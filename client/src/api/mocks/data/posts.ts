@@ -11,6 +11,8 @@ export const generateMockPost = (id: number): Post => ({
   author: `작성자 ${(id % 5) + 1}`,
   thumbnail: `https://picsum.photos/640/480?random=${id}`,
   blogPlatform: "etc",
+  summary: "",
+  tag: [],
 });
 
 export const TOTAL_POSTS = Array.from({ length: 100 }, (_, i) => generateMockPost(i + 1));
