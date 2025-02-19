@@ -1,12 +1,12 @@
-import * as dotenv from "dotenv";
-import * as mysql from "mysql2/promise";
-import { CONNECTION_LIMIT } from "./constant";
-import { PoolConnection } from "mysql2/promise";
-import { DatabaseConnection } from "../types/database-connection";
-import logger from "./logger";
+import * as dotenv from 'dotenv';
+import * as mysql from 'mysql2/promise';
+import { CONNECTION_LIMIT } from './constant';
+import { PoolConnection } from 'mysql2/promise';
+import { DatabaseConnection } from '../types/database-connection';
+import logger from './logger';
 
 dotenv.config({
-  path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
+  path: process.env.NODE_ENV === 'production' ? 'feed-crawler/.env' : '.env',
 });
 
 export class MySQLConnection implements DatabaseConnection {
@@ -14,7 +14,7 @@ export class MySQLConnection implements DatabaseConnection {
   private nameTag: string;
   constructor() {
     this.pool = this.createPool();
-    this.nameTag = "[MySQL]";
+    this.nameTag = '[MySQL]';
   }
 
   private createPool() {

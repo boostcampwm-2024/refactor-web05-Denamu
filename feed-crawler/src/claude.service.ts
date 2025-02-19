@@ -1,11 +1,11 @@
-import { injectable } from "tsyringe";
-import Anthropic from "@anthropic-ai/sdk";
-import { ClaudeResponse, FeedAIQueueItem } from "./common/types";
-import { TagMapRepository } from "./repository/tag-map.repository";
-import { FeedRepository } from "./repository/feed.repository";
-import logger from "./common/logger";
-import { PROMPT_CONTENT, redisConstant } from "./common/constant";
-import { RedisConnection } from "./common/redis-access";
+import { injectable } from 'tsyringe';
+import Anthropic from '@anthropic-ai/sdk';
+import { ClaudeResponse, FeedAIQueueItem } from './common/types';
+import { TagMapRepository } from './repository/tag-map.repository';
+import { FeedRepository } from './repository/feed.repository';
+import logger from './common/logger';
+import { PROMPT_CONTENT, redisConstant } from './common/constant';
+import { RedisConnection } from './common/redis-access';
 
 @injectable()
 export class ClaudeService {
@@ -15,12 +15,12 @@ export class ClaudeService {
   constructor(
     private readonly tagMapRepository: TagMapRepository,
     private readonly feedRepository: FeedRepository,
-    private readonly redisConnection: RedisConnection
+    private readonly redisConnection: RedisConnection,
   ) {
     this.client = new Anthropic({
       apiKey: process.env.AI_API_KEY,
     });
-    this.nameTag = "[AI Service]";
+    this.nameTag = '[AI Service]';
   }
 
   async startRequestAI() {
@@ -39,7 +39,7 @@ export class ClaudeService {
           for (let i = 0; i < parseInt(process.env.AI_RATE_LIMIT_COUNT); i++) {
             pipeline.rpop(redisConstant.FEED_AI_QUEUE);
           }
-        }
+        },
       );
       const feedObjectList: FeedAIQueueItem[] = redisSearchResult
         .map((result) => JSON.parse(result[1] as string))
@@ -61,15 +61,14 @@ export class ClaudeService {
           const params: Anthropic.MessageCreateParams = {
             max_tokens: 8192,
             system: PROMPT_CONTENT,
-            messages: [{ role: "user", content: feed.content }],
-            model: "claude-3-5-haiku-latest",
+            messages: [{ role: 'user', content: feed.content }],
+            model: 'claude-3-5-haiku-latest',
           };
           const message = await this.client.messages.create(params);
-
-          let responseText: string = message.content[0]["text"];
-          responseText = responseText.replace(/[\n\r\t\s]+/g, " ");
+          let responseText: string = message.content[0]['text'];
+          responseText = responseText.replace(/[\n\r\t\s]+/g, ' ');
           logger.info(
-            `${this.nameTag} ${feed.id} AI 요청 응답: ${responseText}`
+            `${this.nameTag} ${feed.id} AI 요청 응답: ${responseText}`,
           );
           const responseObject: ClaudeResponse = JSON.parse(responseText);
           feed.summary = responseObject.summary;
@@ -79,7 +78,7 @@ export class ClaudeService {
           logger.error(
             `${this.nameTag} ${feed.id}의 태그 생성, 컨텐츠 요약 에러 발생: 
           메시지: ${error.message}
-          스택 트레이스: ${error.stack}`
+          스택 트레이스: ${error.stack}`,
           );
 
           if (feed.deathCount < 3) {
@@ -91,25 +90,25 @@ export class ClaudeService {
             logger.error(
               `${this.nameTag} ${feed.id}의 Death Count 3회 이상 발생 AI 요청 금지: 
             메시지: ${error.message}
-            스택 트레이스: ${error.stack}`
+            스택 트레이스: ${error.stack}`,
             );
             this.feedRepository.updateNullSummary(feed.id);
           }
         }
-      })
+      }),
     );
     return feedsWithAIData.filter((value) => value !== undefined);
   }
 
   private insertTag(feedWithAIList: FeedAIQueueItem[]) {
     return feedWithAIList.map((feed) =>
-      this.tagMapRepository.insertTags(feed.id, feed.tagList)
+      this.tagMapRepository.insertTags(feed.id, feed.tagList),
     );
   }
 
   private updateSummary(feedWithAIList: FeedAIQueueItem[]) {
     return feedWithAIList.map((feed) =>
-      this.feedRepository.updateSummary(feed.id, feed.summary)
+      this.feedRepository.updateSummary(feed.id, feed.summary),
     );
   }
 }

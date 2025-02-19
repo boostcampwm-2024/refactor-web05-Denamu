@@ -1,11 +1,11 @@
-import * as dotenv from "dotenv";
-import Redis, { ChainableCommander } from "ioredis";
-import Redis_Mock from "ioredis-mock";
-import logger from "../common/logger";
-import { injectable } from "tsyringe";
+import * as dotenv from 'dotenv';
+import Redis, { ChainableCommander } from 'ioredis';
+import Redis_Mock from 'ioredis-mock';
+import logger from '../common/logger';
+import { injectable } from 'tsyringe';
 
 dotenv.config({
-  path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
+  path: process.env.NODE_ENV === 'production' ? 'feed-crawler/.env' : '.env',
 });
 
 @injectable()
@@ -14,12 +14,12 @@ export class RedisConnection {
   private nameTag: string;
 
   constructor() {
-    this.nameTag = "[Redis]";
+    this.nameTag = '[Redis]';
     this.connect();
   }
 
   connect() {
-    if (process.env.NODE_ENV === "test") {
+    if (process.env.NODE_ENV === 'test') {
       this.redis = new Redis_Mock();
     } else {
       this.redis = new Redis({
@@ -38,7 +38,7 @@ export class RedisConnection {
       logger.error(
         `${this.nameTag} rpop 실행 중 오류 발생:
         메시지: ${error.message}
-        스택 트레이스: ${error.stack}`
+        스택 트레이스: ${error.stack}`,
       );
       throw error;
     }
@@ -51,7 +51,7 @@ export class RedisConnection {
       logger.error(
         `${this.nameTag} rpush 실행 중 오류 발생:
         메시지: ${error.message}
-        스택 트레이스: ${error.stack}`
+        스택 트레이스: ${error.stack}`,
       );
     }
   }
@@ -64,7 +64,7 @@ export class RedisConnection {
         logger.error(
           `${this.nameTag} connection quit 중 오류 발생:
           메시지: ${error.message}
-          스택 트레이스: ${error.stack}`
+          스택 트레이스: ${error.stack}`,
         );
       }
     }
@@ -77,14 +77,14 @@ export class RedisConnection {
   async scan(
     cursor: string | number,
     match?: string,
-    count?: number
+    count?: number,
   ): Promise<[cursor: string, keys: string[]]> {
     const result = await this.redis.scan(
       cursor,
-      "MATCH",
-      match || "*",
-      "COUNT",
-      count || 10
+      'MATCH',
+      match || '*',
+      'COUNT',
+      count || 10,
     );
     return [result[0], result[1]];
   }
@@ -98,7 +98,7 @@ export class RedisConnection {
       logger.error(
         `${this.nameTag} 파이프라인 실행 중 오류 발생:
         메시지: ${error.message}
-        스택 트레이스: ${error.stack}`
+        스택 트레이스: ${error.stack}`,
       );
       throw error;
     }
