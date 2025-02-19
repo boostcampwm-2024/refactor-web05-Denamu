@@ -1,41 +1,45 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 
 dotenv.config({
-  path: process.env.NODE_ENV === "production" ? "feed-crawler/.env" : ".env",
+  path: process.env.NODE_ENV === 'production' ? 'feed-crawler/.env' : '.env',
 });
 export const CONNECTION_LIMIT = 50;
 export const redisConstant = {
-  FEED_RECENT_ALL_KEY: "feed:recent:*",
+  FEED_RECENT_ALL_KEY: 'feed:recent:*',
+  FEED_AI_QUEUE: `feed:ai:queue`,
 };
+
 export const ONE_MINUTE = 60 * 1000;
 export const INTERVAL =
-  process.env.NODE_ENV === "test"
+  process.env.NODE_ENV === 'test'
     ? parseInt(process.env.TEST_TIME_INTERVAL)
     : parseInt(process.env.TIME_INTERVAL);
 
+export const FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE = `아직 AI가 요약을 진행중인 게시글 이에요! 💭`;
+
 export const ALLOWED_TAGS = [
-  "회고",
-  "Frontend",
-  "Backend",
-  "DB",
-  "Network",
-  "OS",
-  "Algorithm",
-  "Infra",
-  "TypeScript",
-  "JavaScript",
-  "Java",
-  "React",
-  "Vue.JS",
-  "Nest.JS",
-  "Express.JS",
-  "Spring",
-  "MySQL",
-  "SQLite",
-  "PostgreSQL",
-  "MongoDB",
-  "Redis",
-  "Docker",
+  '회고',
+  'Frontend',
+  'Backend',
+  'DB',
+  'Network',
+  'OS',
+  'Algorithm',
+  'Infra',
+  'TypeScript',
+  'JavaScript',
+  'Java',
+  'React',
+  'Vue.JS',
+  'Nest.JS',
+  'Express.JS',
+  'Spring',
+  'MySQL',
+  'SQLite',
+  'PostgreSQL',
+  'MongoDB',
+  'Redis',
+  'Docker',
 ];
 
 export const PROMPT_CONTENT = `[System]
@@ -77,5 +81,5 @@ The response should look exactly like this, without any surrounding characters:
 ## Do not assign any tags that are not in the predefined tag list.
 Strictly follow this rule.
 Tag List:
-${ALLOWED_TAGS.map((tag) => `- ${tag}`).join("\n")}
+${ALLOWED_TAGS.map((tag) => `- ${tag}`).join('\n')}
 `;

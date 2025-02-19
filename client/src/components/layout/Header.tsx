@@ -5,24 +5,18 @@ import DesktopNavigation from "@/components/layout/navigation/DesktopNavigation"
 import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
 import SearchModal from "@/components/search/SearchModal";
 
-import { useCustomToast } from "@/hooks/common/useCustomToast.ts";
 import { useKeyboardShortcut } from "@/hooks/common/useKeyboardShortcut";
-
-import { TOAST_MESSAGES } from "@/constants/messages";
 
 import { useMediaStore } from "@/store/useMediaStore";
 
 export default function Header() {
   const [modals, setModals] = useState({ search: false, rss: false, login: false, chat: false });
-  const { toast } = useCustomToast();
   const isMobile = useMediaStore((state) => state.isMobile);
-  const toggleModal = (modalType: "search" | "rss" | "login" | "chat") => {
-    if (modalType === "login") {
-      toast(TOAST_MESSAGES.SERVICE_NOT_PREPARED);
-      return;
-    }
+
+  const toggleModal = (modalType: "search" | "rss" | "chat") => {
     setModals((prev) => ({ ...prev, [modalType]: !prev[modalType] }));
   };
+
   useKeyboardShortcut("k", () => toggleModal("search"), true);
 
   return (
