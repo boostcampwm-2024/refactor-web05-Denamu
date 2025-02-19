@@ -108,7 +108,7 @@ export class FeedRepository {
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
   }
 
-  public async updateSummary(feedId: number, summary: string) {
+  public updateSummary(feedId: number, summary: string) {
     const query = `
               UPDATE feed 
               SET summary=?
@@ -118,7 +118,7 @@ export class FeedRepository {
     this.dbConnection.executeQuery(query, [summary, feedId]);
   }
 
-  public async updateNullSummary(feedId: number) {
+  public updateNullSummary(feedId: number) {
     const query = `
           UPDATE feed
           SET summary=NULL
