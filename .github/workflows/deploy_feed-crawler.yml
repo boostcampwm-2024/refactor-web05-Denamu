@@ -16,17 +16,24 @@ jobs:
       - name: ssh connection
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ secrets.CLOUD_INSTANCE_HOST }}
-          username: ${{ secrets.CLOUD_INSTANCE_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.CLOUD_INSTANCE_SSH_PORT }}
+          host: ${{ secrets.CLOUD_PUBLIC_INSTANCE_HOST }}
+          username: ${{ secrets.CLOUD_PUBLIC_INSTANCE_USERNAME }}
+          key: ${{ secrets.CLOUD_PUBLIC_INSTANCE_SSH_KEY }}
+          port: ${{ secrets.CLOUD_PUBLIC_INSTANCE_PORT }}
           script: |
+#           nvm 설정
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
-
+            
+#           private 서버로 접속을 위한 ssh key 생성
+            set -e
+            echo "${{ secrets.CLOUD_PRIVATE_INSTANCE_SSH_KEY }}" > /tmp/private_key
+            chmod 600 /tmp/private_key
+            
+#           깃헙 소스코드 업데이트
             cd /var/web05-Denamu
             git pull origin main
-            cd feed-crawler/
+            cd /var/web05-Denmau/feed-crawler/
 
             echo "PORT=${{ secrets.FEED_CRAWLER_PORT }}" > .env
             echo "DB_HOST=${{ secrets.FEED_CRAWLER_DB_HOST }}" >> .env
@@ -41,6 +48,20 @@ jobs:
             echo "REDIS_USERNAME=${{secrets.REDIS_USERNAME}}" >> .env
             echo "REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}" >> .env
             echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> .env
-
+            
+#           내부망으로의 전달을 위한 의존성 설치 & 압축 & 전달
             npm ci
+            cd /var
+            tar -czvf app.tar.gz web05-Denamu
+            scp -i /tmp/private_key /var/app.tar.gz root@172.16.0.22:/var/app.tar.gz
+            
+#           private 서버로 접속 후 압축 해제 & 빌드 & 실행 (Heredoc 을 사용해 라인 구분)               
+            ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USER }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
+            cd /var
+            tar -xzvf app.tar.gz
+            cd /var/web05-Denamu/feed-crawler
             npm run build
+            cd /var/web05-Denamu
+            pm2 delete all
+            pm2 start ecosystem.config.js
+            EOF
