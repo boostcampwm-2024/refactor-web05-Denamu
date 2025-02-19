@@ -57,6 +57,7 @@ tags: { }
 The summary of the content should be returned in the summary field.
 The summary must be in Korean.
 When summarizing, make it engaging and intriguing so that a first-time reader would want to click on the original post.
+Include appropriate emojis and keep the tone light and upbeat.
 
 If possible, organize the summary using Markdown format.
 The first line of the summary must be the title and should be displayed in **bold**.
