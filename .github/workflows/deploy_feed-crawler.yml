@@ -58,8 +58,11 @@ jobs:
             scp -i /tmp/private_key /tmp/app_feed_crawler.tar.gz root@172.16.0.22:/tmp/app_feed_crawler.tar.gz
                            
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
+            
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 22
+            
             cd /var/web05-Denamu
             pm2 delete all
             
@@ -69,7 +72,6 @@ jobs:
             mv /tmp/feed-crawler /var/web05-Denamu
             
             cd /var/web05-Denamu/feed-crawler
-            nvm use 22
             npm run build
             cd /var/web05-Denamu
             
