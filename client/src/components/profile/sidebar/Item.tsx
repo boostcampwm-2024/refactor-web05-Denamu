@@ -8,9 +8,10 @@ interface ProfileSidebarItemProps {
 
 export const Item = ({ icon: Icon, label, id }: ProfileSidebarItemProps) => {
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (sectionId === "profile") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
     }
   };
 

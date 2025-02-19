@@ -9,21 +9,19 @@ interface ProfileHeaderProps {
 
 export const Header = ({ user }: ProfileHeaderProps) => {
   return (
-    <section id="profile">
-      <Card className="mb-8 overflow-hidden">
-        {user.rssRegistered && <Banner lastPosted={user.lastPosted} />}
+    <Card className="mb-8 overflow-hidden">
+      {user.rssRegistered && <Banner lastPosted={user.lastPosted} />}
 
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex space-x-6">
-              <Avatar user={user} />
-              <Info user={user} />
-            </div>
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex space-x-6">
+            <Avatar user={user} />
+            <Info user={user} />
           </div>
+        </div>
 
-          <Stats totalPosts={user.totalPosts} totalViews={user.totalViews} topicsCount={user.topics.length} />
-        </CardContent>
-      </Card>
-    </section>
+        <Stats totalPosts={user.totalPosts} totalViews={user.totalViews} topicsCount={user.topics.length} />
+      </CardContent>
+    </Card>
   );
 };
