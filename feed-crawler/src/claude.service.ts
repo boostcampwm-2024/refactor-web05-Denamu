@@ -34,14 +34,17 @@ export class ClaudeService {
 
   private async loadFeeds() {
     try {
-      const feedListRedis = await this.redisConnection.rpop(
-        redisConstant.FEED_AI_QUEUE,
-        parseInt(process.env.AI_RATE_LIMIT_COUNT)
+      const redisSearchResult = await this.redisConnection.executePipeline(
+        (pipeline) => {
+          for (let i = 0; i < parseInt(process.env.AI_RATE_LIMIT_COUNT); i++) {
+            pipeline.rpop(redisConstant.FEED_AI_QUEUE);
+          }
+        }
       );
-      const parsedFeeds: FeedAIQueueItem[] = feedListRedis.map((feed) =>
-        JSON.parse(feed)
-      );
-      return parsedFeeds;
+      const feedObjectList: FeedAIQueueItem[] = redisSearchResult
+        .map((result) => JSON.parse(result[1] as string))
+        .filter((value) => value !== null);
+      return feedObjectList;
     } catch (error) {
       logger.error(`${this.nameTag} Redis 로드한 데이터 JSON Parse 중 오류 발생:
         메시지: ${error.message}
@@ -54,6 +57,7 @@ export class ClaudeService {
     const feedsWithAIData = await Promise.all(
       feeds.map(async (feed) => {
         try {
+          logger.info(`${this.nameTag} AI 요청: ${JSON.stringify(feed)}`);
           const params: Anthropic.MessageCreateParams = {
             max_tokens: 8192,
             system: PROMPT_CONTENT,
@@ -64,7 +68,9 @@ export class ClaudeService {
 
           let responseText: string = message.content[0]["text"];
           responseText = responseText.replace(/[\n\r\t\s]+/g, " ");
-
+          logger.info(
+            `${this.nameTag} ${feed.id} AI 요청 응답: ${responseText}`
+          );
           const responseObject: ClaudeResponse = JSON.parse(responseText);
           feed.summary = responseObject.summary;
           feed.tagList = Object.keys(responseObject.tags);
