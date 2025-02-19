@@ -55,7 +55,7 @@ jobs:
             npm ci
             cd /var/web05-Denamu
             tar -czvf app_feed_crawler.tar.gz feed-crawler
-            scp -i /tmp/private_key /var/app_feed_crawler.tar.gz root@172.16.0.22:/var/app_feed_crawler.tar.gz
+            scp -i /tmp/private_key /var/web05-Denamu/app_feed_crawler.tar.gz root@172.16.0.22:/var/web05-Denamu/app_feed_crawler.tar.gz
                            
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
             cd /var/web05-Denamu
