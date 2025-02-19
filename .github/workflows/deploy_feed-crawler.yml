@@ -61,6 +61,7 @@ jobs:
             cd /var
             tar -xzvf app.tar.gz
             cd /var/web05-Denamu/feed-crawler
+            nvm use 22
             npm run build
             cd /var/web05-Denamu
             pm2 delete all
