@@ -1,6 +1,6 @@
-import { DatabaseConnection } from "../types/database-connection";
-import { DEPENDENCY_SYMBOLS } from "../types/dependency-symbols";
-import { inject, injectable } from "tsyringe";
+import { DatabaseConnection } from '../types/database-connection';
+import { DEPENDENCY_SYMBOLS } from '../types/dependency-symbols';
+import { inject, injectable } from 'tsyringe';
 
 @injectable()
 export class TagMapRepository {
@@ -11,7 +11,7 @@ export class TagMapRepository {
 
   public async insertTags(feedId: number, tags: string[]) {
     const insertPromises = tags.map((tagName) => {
-      const query = "INSERT INTO tag_map (feed_id, tag) VALUES (?, ?)";
+      const query = 'INSERT INTO tag_map (feed_id, tag) VALUES (?, ?)';
       return this.dbConnection.executeQuery(query, [feedId, tagName]);
     });
 

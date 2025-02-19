@@ -1,15 +1,15 @@
-import "reflect-metadata";
-import logger from "./common/logger";
-import { FeedCrawler } from "./feed-crawler";
-import { container } from "./container";
-import { RssRepository } from "./repository/rss.repository";
-import { FeedRepository } from "./repository/feed.repository";
-import { DEPENDENCY_SYMBOLS } from "./types/dependency-symbols";
-import { DatabaseConnection } from "./types/database-connection";
-import { ClaudeService } from "./claude.service";
+import 'reflect-metadata';
+import logger from './common/logger';
+import { FeedCrawler } from './feed-crawler';
+import { container } from './container';
+import { RssRepository } from './repository/rss.repository';
+import { FeedRepository } from './repository/feed.repository';
+import { DEPENDENCY_SYMBOLS } from './types/dependency-symbols';
+import { DatabaseConnection } from './types/database-connection';
+import { ClaudeService } from './claude.service';
 
 async function main() {
-  logger.info("==========작업 시작==========");
+  logger.info('==========작업 시작==========');
   const startTime = Date.now();
 
   const rssRepository = container.resolve<RssRepository>(
@@ -37,7 +37,7 @@ async function main() {
 
   await dbConnection.end();
   logger.info(`실행 시간: ${executionTime / 1000}seconds`);
-  logger.info("==========작업 완료==========");
+  logger.info('==========작업 완료==========');
 }
 
 main();
