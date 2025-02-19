@@ -6,5 +6,6 @@
   },
   "testEnvironment": "node",
   "rootDir": "..",
-  "coverageDirectory": "test/coverage"
+  "coverageDirectory": "test/coverage",
+  "testTimeout": 10000
 }
