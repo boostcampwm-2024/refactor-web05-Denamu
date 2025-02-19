@@ -65,13 +65,13 @@ export class FeedCrawlerService {
   }
 
   async saveAiQueue(feeds: Partial<Feed & { content: string }>[]) {
-    await Promise.all(
-      feeds.map((feed) => {
-        return this.redisService.lpush(
+    await this.redisService.executePipeline((pipeline) => {
+      feeds.forEach((feed) => {
+        pipeline.lpush(
           redisKeys.FEED_AI_QUEUE,
           JSON.stringify({ id: feed.id, content: feed.content, deathCount: 0 }),
         );
-      }),
-    );
+      });
+    });
   }
 }
