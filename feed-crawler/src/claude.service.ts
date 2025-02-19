@@ -1,10 +1,10 @@
-import { injectable } from "tsyringe";
-import Anthropic from "@anthropic-ai/sdk";
-import { ClaudeResponse, FeedDetail } from "./common/types";
-import { TagMapRepository } from "./repository/tag-map.repository";
-import { FeedRepository } from "./repository/feed.repository";
-import logger from "./common/logger";
-import { PROMPT_CONTENT } from "./common/constant";
+import { injectable } from 'tsyringe';
+import Anthropic from '@anthropic-ai/sdk';
+import { ClaudeResponse, FeedDetail } from './common/types';
+import { TagMapRepository } from './repository/tag-map.repository';
+import { FeedRepository } from './repository/feed.repository';
+import logger from './common/logger';
+import { PROMPT_CONTENT } from './common/constant';
 
 @injectable()
 export class ClaudeService {
@@ -12,7 +12,7 @@ export class ClaudeService {
 
   constructor(
     private readonly tagMapRepository: TagMapRepository,
-    private readonly feedRepository: FeedRepository,
+    private readonly feedRepository: FeedRepository
   ) {
     this.client = new Anthropic({
       apiKey: process.env.AI_API_KEY,
@@ -26,17 +26,17 @@ export class ClaudeService {
           const params: Anthropic.MessageCreateParams = {
             max_tokens: 8192,
             system: PROMPT_CONTENT,
-            messages: [{ role: "user", content: feed.content }],
-            model: "claude-3-5-haiku-latest",
+            messages: [{ role: 'user', content: feed.content }],
+            model: 'claude-3-5-haiku-latest',
           };
           const message = await this.client.messages.create(params);
-          let responseText: string = message.content[0]["text"];
-          responseText = responseText.replace(/\n/g, "");
+          let responseText: string = message.content[0]['text'];
+          responseText = responseText.replace(/\n/g, '');
           const result: ClaudeResponse = JSON.parse(responseText);
 
           await Promise.all([
-            this.generateTag(feed, result["tags"]),
-            this.summarize(feed, result["summary"]),
+            this.generateTag(feed, result['tags']),
+            this.summarize(feed, result['summary']),
           ]);
           return {
             succeeded: true,
@@ -45,36 +45,36 @@ export class ClaudeService {
         } catch (error) {
           logger.error(
             `${feed.id}의 태그 생성, 컨텐츠 요약 에러 발생: `,
-            error,
+            error
           );
           return {
             succeeded: false,
             feed,
           };
         }
-      }),
+      })
     );
 
     // TODO: Refactor
     const successFeeds = processedFeeds
       .map((result) =>
-        result.status === "fulfilled" && result.value.succeeded === true
+        result.status === 'fulfilled' && result.value.succeeded === true
           ? result.value.feed
-          : null,
+          : null
       )
       .filter((result) => result !== null);
 
     // TODO: Refactor
     const failedFeeds = processedFeeds
       .map((result, index) => {
-        if (result.status === "rejected") {
+        if (result.status === 'rejected') {
           const failedFeed = feeds[index];
           return {
             succeeded: false,
             feed: failedFeed,
           };
         }
-        return result.status === "fulfilled" && result.value.succeeded === false
+        return result.status === 'fulfilled' && result.value.succeeded === false
           ? result.value
           : null;
       })
@@ -82,7 +82,7 @@ export class ClaudeService {
       .map((result) => result.feed);
 
     logger.info(
-      `${successFeeds.length}개의 태그 생성 및 컨텐츠 요약이 성공했습니다.\n ${failedFeeds.length}개의 태그 생성 및 컨텐츠 요약이 실패했습니다.`,
+      `${successFeeds.length}개의 태그 생성 및 컨텐츠 요약이 성공했습니다.\n ${failedFeeds.length}개의 태그 생성 및 컨텐츠 요약이 실패했습니다.`
     );
 
     return [...successFeeds, ...failedFeeds];
@@ -98,7 +98,7 @@ export class ClaudeService {
       logger.error(
         `[DB] 태그 데이터를 저장하는 도중 에러가 발생했습니다.
       에러 메시지: ${error.message}
-      스택 트레이스: ${error.stack}`,
+      스택 트레이스: ${error.stack}`
       );
     }
   }
@@ -111,8 +111,12 @@ export class ClaudeService {
       logger.error(
         `[DB] 게시글 요약 데이터를 저장하는 도중 에러가 발생했습니다.
       에러 메시지: ${error.message}
-      스택 트레이스: ${error.stack}`,
+      스택 트레이스: ${error.stack}`
       );
     }
+  }
+
+  public async saveAiQueue(feeds: FeedDetail[]) {
+    await this.feedRepository.saveAiQueue(feeds);
   }
 }

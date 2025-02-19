@@ -1,4 +1,4 @@
-import { setupTestContainer } from "./testContext.setup";
+import { setupTestContainer } from './testContext.setup';
 
 export default async function globalSetup() {
   const testContext = setupTestContainer();
@@ -15,7 +15,7 @@ export default async function globalSetup() {
           blog_platform VARCHAR(255) NOT NULL DEFAULT 'etc'
         );
       `,
-    [],
+    []
   );
 
   await testContext.dbConnection.executeQuery(
@@ -29,10 +29,11 @@ export default async function globalSetup() {
           path       VARCHAR(512)     NOT NULL UNIQUE,
           thumbnail  VARCHAR(255),
           blog_id    INTEGER  NOT NULL,
+          summary    Text,
           FOREIGN KEY (blog_id) REFERENCES rss_accept (id)
         );
       `,
-    [],
+    []
   );
 
   await testContext.dbConnection.executeQuery(
@@ -45,6 +46,6 @@ export default async function globalSetup() {
           FOREIGN KEY (feed_id) REFERENCES feed (id) ON DELETE CASCADE ON UPDATE CASCADE
         );
       `,
-    [],
+    []
   );
 }

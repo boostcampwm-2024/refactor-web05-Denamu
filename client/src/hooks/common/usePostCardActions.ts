@@ -23,6 +23,9 @@ export const usePostCardActions = (post: Post) => {
   const incrementView = ({ post, isWindowOpened }: PostWithState): PostWithState => {
     if (isWindowOpened) {
       mutate(undefined, {
+        onSuccess: () => {
+          console.log("조회수 증가 성공");
+        },
         onError: (error) => {
           console.error("조회수 증가 실패", error);
         },

@@ -19,6 +19,7 @@ import { RssAcceptHistoryResponseDto } from '../dto/response/rss-accept-history.
 import { RssRejectHistoryResponseDto } from '../dto/response/rss-reject-history.dto';
 import { RssManagementRequestDto } from '../dto/request/rss-management.dto';
 import { RejectRssRequestDto } from '../dto/request/rss-reject.dto';
+
 @Injectable()
 export class RssService {
   constructor(
@@ -165,7 +166,7 @@ export class RssService {
       feeds,
       rssAccept,
     );
-    this.feedCrawlerService.saveFeedsTags(feedsWithId);
+    this.feedCrawlerService.saveAiQueue(feedsWithId);
     this.emailService.sendMail(rssAccept, true);
   }
 }
