@@ -69,7 +69,7 @@ export class FeedCrawlerService {
       feeds.map((feed) => {
         return this.redisService.lpush(
           redisKeys.FEED_AI_QUEUE,
-          JSON.stringify({ id: feed.id, content: feed.content }),
+          JSON.stringify({ id: feed.id, content: feed.content, deathCount: 0 }),
         );
       }),
     );
