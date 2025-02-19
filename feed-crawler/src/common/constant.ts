@@ -68,6 +68,9 @@ Do not wrap the response in code blocks.
 Do not provide any additional explanations.
 Do not use any markdown formatting for the JSON output itself.
 
+Important:
+Make sure that the last property in the JSON does not have a trailing comma.
+If there are multiple properties, ensure that a comma follows every property except the last one.
 The response should look exactly like this, without any surrounding characters:
 {
   "tags": {
