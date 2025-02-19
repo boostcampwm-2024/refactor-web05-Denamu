@@ -101,9 +101,22 @@ export class ClaudeService {
   }
 
   private insertTag(feedWithAIList: FeedAIQueueItem[]) {
-    return feedWithAIList.map((feed) =>
-      this.tagMapRepository.insertTags(feed.id, feed.tagList),
-    );
+    return feedWithAIList.map(async (feed) => {
+      try {
+        await this.tagMapRepository.insertTags(feed.id, feed.tagList);
+        await this.redisConnection.hset(
+          `feed:recent:${feed.id}`,
+          'tag',
+          feed.tagList.join(','),
+        );
+      } catch (error) {
+        logger.error(
+          `${this.nameTag} ${feed.id}의 태그 저장 중 에러 발생: 
+        메시지: ${error.message}
+        스택 트레이스: ${error.stack}`,
+        );
+      }
+    });
   }
 
   private updateSummary(feedWithAIList: FeedAIQueueItem[]) {
