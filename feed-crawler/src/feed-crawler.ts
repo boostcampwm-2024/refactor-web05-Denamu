@@ -3,11 +3,9 @@ import { RssRepository } from './repository/rss.repository';
 import logger from './common/logger';
 import { RssObj, FeedDetail, RawFeed } from './common/types';
 import { XMLParser } from 'fast-xml-parser';
-import { parse } from 'node-html-parser';
-import { unescape } from 'html-escaper';
 import {
   ONE_MINUTE,
-  INTERVAL,
+  TIME_INTERVAL,
   FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
 } from './common/constant';
 import { RssParser } from './common/rss-parser';
@@ -45,7 +43,7 @@ export class FeedCrawler {
 
   private async findNewFeeds(
     rssObj: RssObj,
-    now: number
+    now: number,
   ): Promise<FeedDetail[]> {
     try {
       const feeds = await this.fetchRss(rssObj.rssUrl);
@@ -84,12 +82,12 @@ export class FeedCrawler {
             summary: FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
             deathCount: 0,
           };
-        })
+        }),
       );
       return detailedFeeds;
     } catch (err) {
       logger.warn(
-        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`
+        `[${rssObj.rssUrl}] 에서 데이터 조회 중 오류 발생으로 인한 스킵 처리. 오류 내용 : ${err}`,
       );
       return [];
     }
@@ -99,10 +97,10 @@ export class FeedCrawler {
     return Promise.all(
       rssObjects.map(async (rssObj: RssObj) => {
         logger.info(
-          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`
+          `${rssObj.blogName}(${rssObj.rssUrl}) 에서 데이터 조회하는 중...`,
         );
         return await this.findNewFeeds(rssObj, currentTime.setSeconds(0, 0));
-      })
+      }),
     );
   }
 
