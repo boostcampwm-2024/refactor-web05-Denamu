@@ -55,14 +55,15 @@ jobs:
             echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> configs/.env.db.production
 
             npm ci
-            cd /var
-            tar -czvf app.tar.gz web05-Denamu
-            scp -i /tmp/private_key /var/app.tar.gz root@172.16.0.22:/var/app.tar.gz
-                           
+            cd /var/web05-Denamu
+            tar -czvf app_server.tar.gz server
+            scp -i /tmp/private_key /var/web05-Denamu/app_server.tar.gz root@172.16.0.22:/var/web05-Denamu/app_server.tar.gz
+
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
-            cd /var
-            tar -xzvf app.tar.gz
+            cd /var/web05-Denamu
+            tar -xzvf app_server.tar.gz
             cd /var/web05-Denamu/server
+            nvm use 22
             npm run build
             cd /var/web05-Denamu
             pm2 delete all
