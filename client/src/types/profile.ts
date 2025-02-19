@@ -1,5 +1,10 @@
 import { LucideIcon } from "lucide-react";
 
+export interface DailyActivity {
+  date: string;
+  viewCount: number;
+}
+
 export interface User {
   name: string;
   email: string;
@@ -11,6 +16,9 @@ export interface User {
   totalPosts: number;
   totalViews: number;
   topics: string[];
+  dailyActivities: DailyActivity[];
+  streakCount: number;
+  longestStreak: number;
 }
 
 export interface SidebarItem {
