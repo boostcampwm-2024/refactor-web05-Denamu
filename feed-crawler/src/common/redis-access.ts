@@ -103,4 +103,8 @@ export class RedisConnection {
       throw error;
     }
   }
+
+  async hset(key: string, ...fieldValues: (string | Buffer | number)[]) {
+    await this.redis.hset(key, fieldValues);
+  }
 }
