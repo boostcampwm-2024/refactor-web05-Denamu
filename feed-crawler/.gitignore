@@ -4,3 +4,4 @@
 /dist
 /logs
 /test/coverage
+.env
