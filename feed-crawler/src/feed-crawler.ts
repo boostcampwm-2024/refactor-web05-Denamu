@@ -10,7 +10,6 @@ import {
   INTERVAL,
   FEED_AI_SUMMARY_IN_PROGRESS_MESSAGE,
 } from './common/constant';
-import { ClaudeService } from './claude.service';
 
 export class FeedCrawler {
   constructor(
@@ -20,6 +19,9 @@ export class FeedCrawler {
   ) {}
 
   async start() {
+    logger.info('==========작업 시작==========');
+    const startTime = Date.now();
+
     await this.feedRepository.deleteRecentFeed();
 
     const rssObjects = await this.rssRepository.selectAllRss();
@@ -43,6 +45,12 @@ export class FeedCrawler {
     );
     await this.feedRepository.saveAiQueue(insertedData);
     await this.feedRepository.setRecentFeedList(insertedData);
+
+    const endTime = Date.now();
+    const executionTime = endTime - startTime;
+
+    logger.info(`실행 시간: ${executionTime / 1000}seconds`);
+    logger.info('==========작업 완료==========');
   }
 
   private async findNewFeeds(

@@ -56,8 +56,6 @@ export class FeedRepository {
 
   async deleteRecentFeed() {
     try {
-      this.redisConnection.connect();
-
       const keysToDelete = [];
       let cursor = '0';
       do {
@@ -79,15 +77,12 @@ export class FeedRepository {
         에러 메시지: ${error.message}
         스택 트레이스: ${error.stack}`,
       );
-    } finally {
-      await this.redisConnection.quit();
     }
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 삭제되었습니다.`);
   }
 
   async setRecentFeedList(feedLists: FeedDetail[]) {
     try {
-      this.redisConnection.connect();
       await this.redisConnection.executePipeline((pipeline) => {
         for (const feed of feedLists) {
           pipeline.hset(`feed:recent:${feed.id}`, {
@@ -109,25 +104,30 @@ export class FeedRepository {
         에러 메시지: ${error.message}
         스택 트레이스: ${error.stack}`,
       );
-    } finally {
-      await this.redisConnection.quit();
     }
     logger.info(`[Redis] 최근 게시글 캐시가 정상적으로 저장되었습니다.`);
   }
 
-  public async insertSummary(feedId: number, summary: string) {
+  public updateSummary(feedId: number, summary: string) {
     const query = `
-            UPDATE feed 
-            SET summary=?
-            WHERE id=?
-        `;
+              UPDATE feed 
+              SET summary=?
+              WHERE id=?
+          `;
 
-    await this.dbConnection.executeQuery(query, [summary, feedId]);
+    this.dbConnection.executeQuery(query, [summary, feedId]);
+  }
+
+  public updateNullSummary(feedId: number) {
+    const query = `
+          UPDATE feed
+          SET summary=NULL
+          WHERE id=?`;
+    this.dbConnection.executeQuery(query, [feedId]);
   }
 
   async saveAiQueue(feedLists: FeedDetail[]) {
     try {
-      this.redisConnection.connect();
       await this.redisConnection.executePipeline((pipeline) => {
         for (const feed of feedLists) {
           pipeline.lpush(
@@ -146,8 +146,6 @@ export class FeedRepository {
         에러 메시지: ${error.message}
         스택 트레이스: ${error.stack}`,
       );
-    } finally {
-      await this.redisConnection.quit();
     }
     logger.info(`[Redis] AI Queue 데이터 삽입이 정상적으로 수행되었습니다.`);
   }

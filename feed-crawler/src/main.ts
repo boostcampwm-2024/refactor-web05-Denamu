@@ -6,56 +6,79 @@ import { RssRepository } from './repository/rss.repository';
 import { FeedRepository } from './repository/feed.repository';
 import { DEPENDENCY_SYMBOLS } from './types/dependency-symbols';
 import { DatabaseConnection } from './types/database-connection';
+import { ClaudeService } from './claude.service';
 import * as schedule from 'node-schedule';
+import { RedisConnection } from './common/redis-access';
+import { TagMapRepository } from './repository/tag-map.repository';
 
-async function main(rssRepository, feedRepository, rssParser) {
-  logger.info("==========작업 시작==========");
-  const startTime = Date.now();
+function initializeDependencies() {
+  return {
+    rssRepository: container.resolve<RssRepository>(
+      DEPENDENCY_SYMBOLS.RssRepository,
+    ),
+    feedRepository: container.resolve<FeedRepository>(
+      DEPENDENCY_SYMBOLS.FeedRepository,
+    ),
+    tagMapRepository: container.resolve<TagMapRepository>(
+      DEPENDENCY_SYMBOLS.TagMapRepository,
+    ),
+    dbConnection: container.resolve<DatabaseConnection>(
+      DEPENDENCY_SYMBOLS.DatabaseConnection,
+    ),
+    redisConnection: container.resolve<RedisConnection>(
+      DEPENDENCY_SYMBOLS.RedisConnection,
+    ),
+    rssParser: container.resolve<RssParser>(DEPENDENCY_SYMBOLS.RssParser),
+  };
+}
 
-  const feedCrawler = new FeedCrawler(rssRepository, feedRepository, rssParser);
-  await feedCrawler.start();
+function registerSchedulers(
+  dependencies: ReturnType<typeof initializeDependencies>,
+) {
+  schedule.scheduleJob('FEED CRAWLING', '0,30 * * * *', async () => {
+    logger.info(`Feed Crawling Start: ${new Date().toISOString()}`);
+    const feedCrawler = new FeedCrawler(
+      dependencies.rssRepository,
+      dependencies.feedRepository,
+      dependencies.rssParser,
+    );
+    feedCrawler.start();
+  });
 
-  const endTime = Date.now();
-  const executionTime = endTime - startTime;
+  schedule.scheduleJob(
+    'AI API PER MINUTE REQUEST RATE LIMIT',
+    '*/1 * * * *',
+    () => {
+      logger.info(`AI Request Start: ${new Date().toISOString()}`);
+      const aiRequest = new ClaudeService(
+        dependencies.tagMapRepository,
+        dependencies.feedRepository,
+        dependencies.redisConnection,
+      );
+      aiRequest.startRequestAI();
+    },
+  );
+}
 
-  logger.info(`실행 시간: ${executionTime / 1000}seconds`);
-  logger.info("==========작업 완료==========");
+async function handleShutdown(
+  dependencies: ReturnType<typeof initializeDependencies>,
+  signal: string,
+) {
+  logger.info(`${signal} 신호 수신, feed-crawler 종료 중...`);
+  await dependencies.dbConnection.end();
+  await dependencies.redisConnection.quit();
+  logger.info('DB 및 Redis 연결 종료');
+  process.exit(0);
 }
 
 function startScheduler() {
-  logger.info("feed-crawler 스케줄러 시작");
+  logger.info('[Feed Crawler Scheduler Start]');
 
-  const rssRepository = container.resolve<RssRepository>(
-    DEPENDENCY_SYMBOLS.RssRepository,
-  );
-  const feedRepository = container.resolve<FeedRepository>(
-    DEPENDENCY_SYMBOLS.FeedRepository,
-  );
-  const dbConnection = container.resolve<DatabaseConnection>(
-    DEPENDENCY_SYMBOLS.DatabaseConnection,
-  );
+  const dependencies = initializeDependencies();
+  registerSchedulers(dependencies);
 
-  const rssParser = container.resolve<RssParser>(DEPENDENCY_SYMBOLS.RssParser);
-
-  schedule.scheduleJob("0,30 * * * *", async () => {
-    logger.info(`feed crawling 시작: ${new Date().toISOString()}`);
-    try {
-      await main(rssRepository, feedRepository, rssParser);
-    } catch (error) {
-      logger.error(
-        `[Feed-Crawler] 피드 크롤링 작업 도중 에러가 발생했습니다.
-        에러 메시지: ${error.message}
-        스택 트레이스: ${error.stack}`,
-      );
-    }
-  });
-
-  process.on("SIGINT", async () => {
-    logger.info("SIGINT 신호 수신, feed-crawler 종료 중...");
-    await dbConnection.end();
-    logger.info("DB 연결 종료");
-    process.exit(0);
-  });
+  process.on('SIGINT', () => handleShutdown(dependencies, 'SIGINT'));
+  process.on('SIGTERM', () => handleShutdown(dependencies, 'SIGTERM'));
 }
 
 startScheduler();
