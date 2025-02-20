@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card.tsx";
 
 import { Avatar, Banner, Info, Stats } from "./index";
-import { ActivityGraph } from "./ui/ActivityGraph.tsx";
+import { ActivityGraph } from "./ui/ActivityGraph/ActivityGraph.tsx";
 import { User } from "@/types/profile.ts";
 
 interface ProfileHeaderProps {

@@ -34,3 +34,13 @@ export const detailFormatDate = (dateString: string | undefined | null) => {
     return "-";
   }
 };
+
+export const formatActivityDate = (date: Date): string => date.toISOString().split("T")[0]; // "2025-02-20"
+
+export const subtractDays = (date: Date, days: number): Date => {
+  const result = new Date(date);
+  result.setDate(date.getDate() - days);
+  return result;
+};
+
+export const getShortMonthName = (date: Date): string => date.toLocaleString("en-US", { month: "short" });
