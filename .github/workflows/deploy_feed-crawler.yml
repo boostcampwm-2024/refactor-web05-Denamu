@@ -25,7 +25,7 @@ jobs:
           # 3. 깃헙 소스코드 업데이트
           # 4. 환경변수 설정
           # 5. 내부망으로의 전달을 위한 의존성 설치 & 압축 & 전달
-          # 6. private 서버로 접속 후 압축 해제 & 빌드 & 실행 (Heredoc 을 사용해 라인 구분)
+          # 6. private 서버로 접속 후 압축 해제 & 기존 버전 제거 & 새 버전 적용 & 빌드 & 실행 (Heredoc 을 사용해 라인 구분)
           script: |
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
@@ -54,16 +54,26 @@ jobs:
             
             npm ci
             cd /var/web05-Denamu
-            tar -czvf app_feed_crawler.tar.gz feed-crawler
-            scp -i /tmp/private_key /var/web05-Denamu/app_feed_crawler.tar.gz root@172.16.0.22:/var/web05-Denamu/app_feed_crawler.tar.gz
+            tar -czvf /tmp/app_feed_crawler.tar.gz feed-crawler
+            scp -i /tmp/private_key /tmp/app_feed_crawler.tar.gz root@172.16.0.22:/tmp/app_feed_crawler.tar.gz
                            
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
-            cd /var/web05-Denamu
-            tar -xzvf app_feed_crawler.tar.gz
-            cd /var/web05-Denamu/feed-crawler
+            
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use 22
-            npm run build
+            
             cd /var/web05-Denamu
             pm2 delete all
+            
+            cd /tmp
+            tar -xzvf app_feed_crawler.tar.gz
+            rm -rf /var/web05-Denamu/feed-crawler
+            mv /tmp/feed-crawler /var/web05-Denamu
+            
+            cd /var/web05-Denamu/feed-crawler
+            npm run build
+            cd /var/web05-Denamu
+            
             pm2 start ecosystem.config.js
             EOF

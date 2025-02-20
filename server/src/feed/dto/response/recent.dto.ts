@@ -9,6 +9,7 @@ export class FeedRecentResponseDto {
     private thumbnail: string,
     private viewCount: number,
     private isNew: boolean,
+    private tag: string[] | string,
   ) {}
 
   static toResponseDto(feed: FeedRecentRedis) {
@@ -22,6 +23,7 @@ export class FeedRecentResponseDto {
       feed.thumbnail,
       feed.viewCount,
       feed.isNew,
+      feed.tagList,
     );
   }
 
@@ -40,4 +42,5 @@ export type FeedRecentRedis = {
   path: string;
   title: string;
   isNew?: boolean;
+  tagList: string[] | string;
 };

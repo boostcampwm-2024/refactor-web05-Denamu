@@ -214,6 +214,8 @@ export class FeedService {
 
     let recentFeedList: FeedRecentRedis[] = recentFeeds.map(
       ([, feed]: [any, FeedRecentRedis]) => {
+        const redisTagList = feed.tagList as string;
+        feed.tagList = redisTagList ? redisTagList.split(',') : [];
         return { ...feed, isNew: true };
       },
     );
