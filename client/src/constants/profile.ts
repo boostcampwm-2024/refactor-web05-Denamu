@@ -8,15 +8,12 @@ const generateDailyActivities = () => {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
 
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const baseCount = isWeekend ? 12 : 6;
-    const randomVariation = Math.floor(Math.random() * 6);
-
+    const randomVariation = Math.floor(Math.random() * 10);
     const recencyBoost = Math.floor((364 - i) / 60);
 
     activities.push({
       date: date.toISOString().split("T")[0],
-      viewCount: Math.max(0, baseCount + randomVariation + recencyBoost),
+      viewCount: randomVariation + recencyBoost,
     });
   }
 
