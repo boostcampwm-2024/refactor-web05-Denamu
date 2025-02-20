@@ -1,41 +1,41 @@
-import * as Database from "better-sqlite3";
-import { DatabaseConnection } from "../types/database-connection";
-import logger from "./logger";
+import * as Database from 'better-sqlite3';
+import { DatabaseConnection } from '../types/database-connection';
+import logger from './logger';
 
 export class SQLiteConnection implements DatabaseConnection {
   private db: Database.Database;
   private nameTag: string;
 
   constructor() {
-    this.nameTag = "[SQLite]";
+    this.nameTag = '[SQLite]';
     this.db = this.createConnection();
   }
 
   private createConnection() {
-    return new Database(":memory:");
+    return new Database(':memory:');
   }
 
   async executeQuery<T>(query: string, params: any[] = []): Promise<T> {
     try {
       const lowercaseQuery = query.toLowerCase().trim();
 
-      if (lowercaseQuery.startsWith("create")) {
+      if (lowercaseQuery.startsWith('create')) {
         this.db.exec(query);
         return [] as T;
       }
 
-      if (lowercaseQuery.startsWith("delete")) {
+      if (lowercaseQuery.startsWith('delete')) {
         const deleteResult = this.db.prepare(query).run(params);
         return { affectedRows: deleteResult.changes } as T;
       }
 
-      if (lowercaseQuery.startsWith("insert")) {
+      if (lowercaseQuery.startsWith('insert')) {
         const result = this.db.prepare(query).run(params);
         return {
           insertId: result.lastInsertRowid,
           affectedRows: result.changes,
         } as T;
-      } else if (lowercaseQuery.startsWith("select")) {
+      } else if (lowercaseQuery.startsWith('select')) {
         return this.db.prepare(query).all(params) as T;
       }
     } catch (error) {

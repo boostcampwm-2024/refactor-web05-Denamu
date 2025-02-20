@@ -1,3 +1,5 @@
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { Card, MCard } from "@/components/ui/card";
 
 import { usePostCardActions } from "@/hooks/common/usePostCardActions";
@@ -19,13 +21,18 @@ export const PostCard = ({ post, className }: PostCardProps) => {
 };
 
 const DesktopCard = ({ post, className }: PostCardProps) => {
-  const { handlePostClick } = usePostCardActions(post);
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { incrementView } = usePostCardActions(post);
+  const openPostDetail = (modalUrl: string) => {
+    incrementView({ post, isWindowOpened: true });
+    navigate(modalUrl, { state: { backgroundLocation: location } });
+  };
   return (
     <Card
-      onClick={handlePostClick}
+      onClick={() => openPostDetail(`/${post.id}`)}
       className={cn(
-        "h-[240px] group shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border-none rounded-xl cursor-pointer",
+        "h-[270px] group shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border-none rounded-xl cursor-pointer",
         className
       )}
     >
@@ -35,11 +42,13 @@ const DesktopCard = ({ post, className }: PostCardProps) => {
   );
 };
 const MobileCard = ({ post, className }: PostCardProps) => {
-  const { handlePostClick } = usePostCardActions(post);
+  const navigate = useNavigate();
 
   return (
     <MCard
-      onClick={handlePostClick}
+      onClick={() => {
+        navigate(`/${post.id}`);
+      }}
       className={cn("aspect-[5/3] transition-all duration-300 flex flex-col gap-2", className)}
     >
       <PostCardImage thumbnail={post.thumbnail} alt={post.title} />

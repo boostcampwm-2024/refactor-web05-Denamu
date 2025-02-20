@@ -1,13 +1,15 @@
-import "reflect-metadata";
-import { DatabaseConnection } from "../../src/types/database-connection";
-import { DEPENDENCY_SYMBOLS } from "../../src/types/dependency-symbols";
-import { SQLiteConnection } from "../../src/common/sqlite-access";
-import { RedisConnection } from "../../src/common/redis-access";
-import { RssRepository } from "../../src/repository/rss.repository";
-import { FeedRepository } from "../../src/repository/feed.repository";
-import { container } from "tsyringe";
-import { DependencyContainer } from "tsyringe";
-import { RssParser } from "../../src/common/rss-parser";
+import 'reflect-metadata';
+import { DatabaseConnection } from '../../src/types/database-connection';
+import { DEPENDENCY_SYMBOLS } from '../../src/types/dependency-symbols';
+import { SQLiteConnection } from '../../src/common/sqlite-access';
+import { RedisConnection } from '../../src/common/redis-access';
+import { RssRepository } from '../../src/repository/rss.repository';
+import { FeedRepository } from '../../src/repository/feed.repository';
+import { container } from 'tsyringe';
+import { DependencyContainer } from 'tsyringe';
+import { RssParser } from '../../src/common/rss-parser';
+import { ClaudeService } from '../../src/claude.service';
+import { TagMapRepository } from '../../src/repository/tag-map.repository';
 
 export interface TestContext {
   container: DependencyContainer;
@@ -15,6 +17,8 @@ export interface TestContext {
   feedRepository: FeedRepository;
   dbConnection: DatabaseConnection;
   redisConnection: RedisConnection;
+  claudeService: ClaudeService;
+  tagMapRepository: TagMapRepository;
   rssParser: RssParser;
 }
 
@@ -46,14 +50,14 @@ export function setupTestContainer(): TestContext {
       FeedRepository
     );
 
-    testContainer.registerSingleton<RssRepository>(
-      DEPENDENCY_SYMBOLS.RssRepository,
-      RssRepository
+    testContainer.registerSingleton<ClaudeService>(
+      DEPENDENCY_SYMBOLS.ClaudeService,
+      ClaudeService
     );
 
-    testContainer.registerSingleton<FeedRepository>(
-      DEPENDENCY_SYMBOLS.FeedRepository,
-      FeedRepository
+    testContainer.registerSingleton<TagMapRepository>(
+      DEPENDENCY_SYMBOLS.TagMapRepository,
+      TagMapRepository
     );
 
     testContainer.registerSingleton<RssParser>(
@@ -63,6 +67,12 @@ export function setupTestContainer(): TestContext {
 
     global.testContext = {
       container: testContainer,
+      tagMapRepository: testContainer.resolve<TagMapRepository>(
+        DEPENDENCY_SYMBOLS.TagMapRepository
+      ),
+      claudeService: testContainer.resolve<ClaudeService>(
+        DEPENDENCY_SYMBOLS.ClaudeService
+      ),
       rssRepository: testContainer.resolve<RssRepository>(
         DEPENDENCY_SYMBOLS.RssRepository
       ),
