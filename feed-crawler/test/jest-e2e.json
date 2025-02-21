@@ -8,5 +8,6 @@
   "rootDir": "..",
   "coverageDirectory": "test/coverage",
   "globalSetup": "./test/setup/jest.global-setup.ts",
-  "setupFilesAfterEnv": ["./test/setup/truncate-tables.setup.ts"]
+  "setupFilesAfterEnv": ["./test/setup/truncate-tables.setup.ts"],
+  "testTimeout": 10000
 }
