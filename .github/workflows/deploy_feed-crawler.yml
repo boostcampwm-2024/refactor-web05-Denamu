@@ -29,21 +29,20 @@ jobs:
           script: |
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
-            
+
             set -e
             echo "${{ secrets.CLOUD_PRIVATE_INSTANCE_SSH_KEY }}" > /tmp/private_key
             chmod 600 /tmp/private_key
-            
+
             cd /var/web05-Denamu
             git pull origin main
             cd /var/web05-Denamu/feed-crawler/
 
-            echo "PORT=${{ secrets.FEED_CRAWLER_PORT }}" > .env
+            echo "DB_PORT=${{ secrets.FEED_CRAWLER_DB_PORT }}" > .env
             echo "DB_HOST=${{ secrets.FEED_CRAWLER_DB_HOST }}" >> .env
             echo "DB_NAME=${{ secrets.FEED_CRAWLER_DB_NAME }}" >> .env
             echo "DB_USER=${{ secrets.FEED_CRAWLER_DB_USER }}" >> .env
             echo "DB_PASS=${{ secrets.FEED_CRAWLER_DB_PASSWORD }}" >> .env
-            echo "DB_TABLE=${{ secrets.FEED_CRAWLER_DB_TABLE }}" >> .env
             echo "TIME_INTERVAL=${{ vars.FEED_CRAWLER_TIME_INTERVAL }}" >> .env
             echo "TEST_TIME_INTERVAL=${{ vars.FEED_CRAWLER_TEST_TIME_INTERVAL }}" >> .env
             echo "REDIS_HOST=${{secrets.REDIS_HOST }}" >> .env
@@ -51,29 +50,30 @@ jobs:
             echo "REDIS_USERNAME=${{secrets.REDIS_USERNAME}}" >> .env
             echo "REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}" >> .env
             echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> .env
-            
+            echo "AI_RATE_LIMIT_COUNT=${{ secrets.AI_RATE_LIMIT_COUNT }}" >> .env
+
             npm ci
             cd /var/web05-Denamu
             tar -czvf /tmp/app_feed_crawler.tar.gz feed-crawler
             scp -i /tmp/private_key /tmp/app_feed_crawler.tar.gz root@172.16.0.22:/tmp/app_feed_crawler.tar.gz
                            
             ssh -i /tmp/private_key ${{ secrets.CLOUD_PRIVATE_INSTANCE_USERNAME }}@${{ secrets.CLOUD_PRIVATE_INSTANCE_HOST }} << 'EOF'
-            
+
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use 22
-            
+
             cd /var/web05-Denamu
             pm2 delete all
-            
+
             cd /tmp
             tar -xzvf app_feed_crawler.tar.gz
             rm -rf /var/web05-Denamu/feed-crawler
             mv /tmp/feed-crawler /var/web05-Denamu
-            
+
             cd /var/web05-Denamu/feed-crawler
             npm run build
             cd /var/web05-Denamu
-            
+
             pm2 start ecosystem.config.js
             EOF
