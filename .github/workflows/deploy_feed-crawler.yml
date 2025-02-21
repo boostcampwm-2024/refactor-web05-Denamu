@@ -50,7 +50,7 @@ jobs:
             echo "REDIS_USERNAME=${{secrets.REDIS_USERNAME}}" >> .env
             echo "REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}" >> .env
             echo "AI_API_KEY=${{secrets.AI_API_KEY}}" >> .env
-            echo "AI_RATE_LIMIT_COUNT=${{ secrets.AI_RATE_LIMIT_COUNT }}" >> .env
+            echo "AI_RATE_LIMIT_COUNT=${{ vars.AI_RATE_LIMIT_COUNT }}" >> .env
 
             npm ci
             cd /var/web05-Denamu
