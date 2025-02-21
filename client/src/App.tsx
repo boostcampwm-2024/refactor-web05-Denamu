@@ -2,16 +2,17 @@ import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import PostDetail from "@/components/common/Card/PostDetail";
-import { Toaster } from "@/components/ui/toaster.tsx";
+import { Toaster } from "@/components/ui/toaster";
 
-import Loading from "@/pages/Loading.tsx";
+import Loading from "@/pages/Loading";
 import PostDetailPage from "@/pages/PostDetailPage";
-import SignIn from "@/pages/SignIn.tsx";
-import SignUp from "@/pages/SignUp.tsx";
+import Profile from "@/pages/Profile";
+import SignIn from "@/pages/SignIn";
+import SignUp from "@/pages/SignUp";
 
 import { useMediaQuery } from "@/hooks/common/useMediaQuery";
 
-import { denamuAscii } from "@/constants/denamuAscii.ts";
+import { denamuAscii } from "@/constants/denamuAscii";
 
 import { useMediaStore } from "@/store/useMediaStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -86,6 +87,14 @@ export default function App() {
           element={
             <Suspense fallback={<Loading />}>
               <SignUp />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Suspense fallback={<Loading />}>
+              <Profile />
             </Suspense>
           }
         />
