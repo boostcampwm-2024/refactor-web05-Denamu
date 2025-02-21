@@ -47,6 +47,7 @@ describe('feed crawling e2e-test', () => {
       'SELECT * FROM feed',
       [],
     );
+
     const recentFeedsKeys = [];
     let cursor = '0';
     do {
