@@ -1,4 +1,5 @@
-import { DayCell } from "./DayCell.tsx";
+import { DayCell } from "@/components/profile/header/ui/ActivityGraph/DayCell.tsx";
+
 import { WeekInfo } from "@/types/activity.ts";
 
 export const Week = ({ weekInfo }: { weekInfo: WeekInfo }) => (

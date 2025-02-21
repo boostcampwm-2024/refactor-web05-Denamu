@@ -1,11 +1,11 @@
+import { DayLabels } from "@/components/profile/header/ui/ActivityGraph/DayLabels.tsx";
+import { Legend } from "@/components/profile/header/ui/ActivityGraph/Legend.tsx";
+import { MonthLabels } from "@/components/profile/header/ui/ActivityGraph/MonthLabels.tsx";
+import { Week } from "@/components/profile/header/ui/ActivityGraph/Week.tsx";
 import { TooltipProvider } from "@/components/ui/tooltip.tsx";
 
 import { processActivityData } from "@/utils/activity.ts";
 
-import { DayLabels } from "./DayLabels.tsx";
-import { Legend } from "./Legend.tsx";
-import { MonthLabels } from "./MonthLabels.tsx";
-import { Week } from "./Week.tsx";
 import { DailyActivity } from "@/types/profile.ts";
 
 interface ActivityGraphProps {

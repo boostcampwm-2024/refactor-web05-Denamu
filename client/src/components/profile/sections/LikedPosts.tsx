@@ -1,4 +1,4 @@
-import { Section } from "../common/Section.tsx";
+import { Section } from "@/components/profile/common/Section.tsx";
 
 export const LikedPosts = () => {
   return (
