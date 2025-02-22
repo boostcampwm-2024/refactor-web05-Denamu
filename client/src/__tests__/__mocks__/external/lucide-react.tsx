@@ -9,4 +9,10 @@ export const mockLucideIcons = {
   ChevronLeft: () => <div data-testid="chevron-left-icon">Mock Chevron Left Icon</div>,
   ChevronRight: () => <div data-testid="chevron-right-icon">Mock Chevron Right Icon</div>,
   MoreHorizontal: () => <div data-testid="more-horizontal-icon">Mock More Horizontal Icon</div>,
+  LogOut: () => <div data-testid="logout-icon">Mock Logout Icon</div>,
+  Eye: () => <div data-testid="eye-icon">Mock Eye Icon</div>,
+  EyeOff: () => <div data-testid="eyeoff-icon">Mock EyeOff Icon</div>,
+  CheckCircle: () => <div data-testid="check-circle-icon">Mock Check Circle Icon</div>,
+  XCircle: () => <div data-testid="x-circle-icon">Mock X Circle Icon</div>,
+  TriangleAlert: () => <div data-testid="triangle-alert-icon">Mock Triangle Alert Icon</div>,
 };
