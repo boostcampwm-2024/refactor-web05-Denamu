@@ -16,6 +16,7 @@ if (process.env.NODE_ENV !== 'test') {
           ? 'feed-crawler/logs/feed-crawler.log'
           : 'logs/feed-crawler.log'
       }`,
+      maxFiles: 750,
     }),
   );
 }

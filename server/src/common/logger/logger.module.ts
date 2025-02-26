@@ -21,7 +21,7 @@ const winstonModule = WinstonModule.forRoot({
             datePattern: 'YYYY-MM-DD',
             dirname: logDir,
             filename: `%DATE%.log`,
-            maxFiles: 30,
+            maxFiles: 750,
             zippedArchive: true,
           }),
           //error 레벨 로그 파일 설정
@@ -30,7 +30,7 @@ const winstonModule = WinstonModule.forRoot({
             datePattern: 'YYYY-MM-DD',
             dirname: `${logDir}/error`,
             filename: `%DATE%.error.log`,
-            maxFiles: 30,
+            maxFiles: 750,
             zippedArchive: true,
           }),
         ]
